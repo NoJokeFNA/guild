@@ -1,0 +1,28 @@
+name: Guild-Spigot
+version: 1.0.0
+author: NoJokeFNA
+
+main: io.github.nojokefna.guild.spigot.Guild
+softdepend:
+  - Vault
+
+commands:
+  guild:
+    description: Send you the guild help message
+    aliases: [gilde]
+    permission: guild.use
+
+  adminguild:
+    description: Send you the admin guild help message
+    permission: guild.admin
+
+permissions:
+  guild.admin:
+    description: Gives access to all Guild commands
+    default: op
+    children:
+      guild.use: true
+
+  guild.use:
+    description: Send you the guild help message
+    default: true

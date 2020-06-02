@@ -1,0 +1,12 @@
+# If you have any questions, you can add me on Discord: NoJokeFNA | Julian#4166
+# or join our Discord: https://discord.gg/UHkUuFD
+
+mysql:
+  username: 'username'
+  password: 'password'
+  hostname: 'hostname'
+  database: 'database'
+
+# Select your language!
+# You can create your own language file: language_LANGUAGE.yml
+language: 'en'

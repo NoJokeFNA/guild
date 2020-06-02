@@ -1,0 +1,96 @@
+# If you have any questions, you can add me on Discord: NoJokeFNA | Julian#4166
+# or join our Discord: https://discord.gg/UHkUuFD
+
+#--------------------------------------------
+# Parameters:
+# {PLAYER}      returns the player's name
+# {DISPLAYNAME} returns the player's displayname
+# {GROUPPLAYER} » Required LuckPerms, PermissionsEx or CloudNet « Only callback the group's prefix!
+
+# If you activate 'bypass', the join/quit message was not send
+
+join:
+  enable: true
+  message: '&a{PLAYER} joined the server.'
+  admin:
+    permission: 'guild.join.admin'
+    bypass: false
+
+quit:
+  enable: true
+  message: '&c{PLAYER} has left the server.'
+  admin:
+    permission: 'guild.left.admin'
+    bypass: false
+
+kick:
+  enable: true
+  message: '&c{PLAYER} got kicked.'
+  admin:
+    permission: 'guild.left.admin'
+    bypass: false
+#--------------------------------------------
+
+#--------------------------------------------
+tablist:
+  labymod:
+    # Parameters:
+    # {PLAYER}      returns the player's name
+    # {DISPLAYNAME} returns the player's displayname
+    # {GROUPPLAYER} » Required LuckPerms, PermissionsEx or CloudNet « Only callback the group's prefix!
+    # {GUILD}       returns the player's guild
+
+    # Use 'UpperCase' for [GUILD], 'lowerCase' for [guild] or 'normal' for [Guild]
+    guild_format: 'UpperCase'
+
+    use_labymod: true
+    subTitle_normal: '{GROUPPLAYER} &e{PLAYER}'
+    subTitle_member: '{GROUPPLAYER} &e{PLAYER} &8- &4{GUILD} &aMember'
+    subTitle_officer: '{GROUPPLAYER} &e{PLAYER} &8- &4{GUILD} &2Officer'
+    subTitle_master: '{GROUPPLAYER} &e{PLAYER} &8- &4{GUILD} &6Master'
+
+
+  use_header_footer: true
+  header: 'This is the header'
+  footer: 'This is the footer'
+
+  # Use 'UpperCase' for [GUILD], 'lowerCase' for [guild] or 'normal' for [Guild]
+  guild_format: 'UpperCase'
+
+  # If you activate this, you use permissions instead of groups
+  # So, you can ignore the 'permission' path under your 'group' if you have deactivated this function
+  use_permissions: false
+
+  # 'admin'           is your team name
+  # '&4Admin &8| &4'  is for the tablist prefix
+  # '&8[&6{GUILD}&8]' is behind your nametag
+  # 'Admin'           is the group which you need, when you've got LuckPerms, PermissionsEx or CloudPerms enabled
+  # 'guild.tab.admin' is is the permission you need, when you have activated 'use_permissions'
+  # '01'              is your rank position || 01 = Highest
+
+  # Parameters:
+  # {GUILD} return players guild
+
+  prefix:
+    admin:
+      - '&4Admin &8| &4'
+      - '&8[&6{GUILD}&8]'
+      - 'Admin'
+      - 'guild.tab.admin'
+      - 01
+    developer:
+      - '&bDev &8| &b'
+      - '&8[&6{GUILD}&8]'
+      - 'Developer'
+      - 'guild.tab.developer'
+      - 02
+#--------------------------------------------
+
+#--------------------------------------------
+# Parameters:
+# {NL} return new line
+
+motd:
+  use_motd: true
+  text: '&aThis is{NL}&a&lyour MOTD'
+#--------------------------------------------

@@ -1,0 +1,89 @@
+# If you have any questions, you can add me on Discord: NoJokeFNA | Julian#4166
+# or join our Discord: https://discord.gg/UHkUuFD
+
+chat:
+  # Disable "use_chat" if you use "use_chat_feature"!
+  # Default: false
+  use_chat: false
+
+  # You can only use LuckPerms, PermissionsEx, CloudNet (Only CloudNetV2)
+  # Default: LuckPerms
+  permission_plugin: 'LuckPerms'
+
+  # If you use CloudNet, you are able to setup the variable 'GROUPPLAYER'
+  # You are free to use:
+  # » 'display' returns player's display prefix on CloudNet «
+  # » 'prefix'  returns player's prefix on CloudNet «
+  cloudnet:
+    use: 'display'
+
+  # You can setup a custom command/chat cooldown
+  # Time in seconds
+  chat_settings:
+    chat: true
+    time_chat: 2
+    message_chat: '&cPlease do not spam any chat messages.'
+    bypass_chat_permission: 'guild.chat.chat.bypass'
+
+    commands: true
+    time_commands: 3
+    message_commands: '&cPlease do not spam any commands.'
+    bypass_commands_permission: 'guild.chat.commands.bypass'
+
+    # Set it to true, if you want the last message the player sent, to be cancelled
+    repeat: false
+    repeat_message: '&cDo not send the same message'
+    bypass_repeat_permission: 'guild.chat.repeat.bypass'
+
+  # {GUILD}       returns the player's guild
+  # {PLAYER}      returns the player's name
+  # {MESSAGE}     returns the player's message
+  # {DISPLAYNAME} returns the player's displayname
+  # {GUILDPREFIX} returns the guild prefix
+  # {GROUPPLAYER} » Required LuckPerms, PermissionsEx or CloudNet « Only callback the group's prefix!
+
+  #--------------------------------------------------------------------
+  # This are the configurations if you have activated "use_chat"
+  chat_format_guild: '&8[&6{GUILD}&8] {DISPLAYNAME} &8» &b{MESSAGE}'
+  chat_format: '{DISPLAYNAME} &8» &b{MESSAGE}'
+  # This are the configurations if you have activated "use_chat"
+  #--------------------------------------------------------------------
+
+  # Use 'UpperCase' for [GUILD], 'lowerCase' for [guild] or 'normal' for [Guild]
+  guild_format: 'UpperCase'
+
+  # Setup the permission node, that you want to use color codes
+  guild_chat_color_permission: 'guild.chat.color'
+
+  # This is an extra feature for the chat system
+  # You can use the above parameters
+  # Default: true
+  use_chat_feature: true
+  permissions:
+    # IMPORTANT
+    # Disable "use_chat" if you use "use_chat_feature"!
+    # You can add custom permissions and chat formats!
+
+    # This is the chat prefix if you belong to a guild
+    # '&8[&6{GUILD}&8] {DISPLAYNAME} &8» &a&l{MESSAGE}'
+
+    # This is the normal chat prefix, when you are not in a guild
+    # '{DISPLAYNAME} &8» &a&l{MESSAGE}'
+
+    # This is the permission node for the chat prefix
+    # guild.chat.green
+
+    guild_chat_normal:
+      - '&8[&6{GUILD}&8] {DISPLAYNAME} &8» &b{MESSAGE}'
+      - '{DISPLAYNAME} &8» &b{MESSAGE}'
+      - 'guild.chat.normal'
+
+    guild_chat_blue:
+      - '&8[&6{GUILD}&8] {DISPLAYNAME} &8» &b&l{MESSAGE}'
+      - '{DISPLAYNAME} &8» &b&l{MESSAGE}'
+      - 'guild.chat.blue'
+
+    guild_chat_green:
+      - '&8[&6{GUILD}&8] {DISPLAYNAME} &8» &a&l{MESSAGE}'
+      - '{DISPLAYNAME} &8» &a&l{MESSAGE}'
+      - 'guild.chat.green'

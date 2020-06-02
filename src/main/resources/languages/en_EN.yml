@@ -1,0 +1,123 @@
+# If you have any questions, you can add me on Discord: NoJokeFNA | Julian#4166
+# or join our Discord: https://discord.gg/UHkUuFD
+
+# Parameters:
+# {NL}, %nl%, %newLine%, %nw% » returns a new line
+# {PREFIX} » returns the prefix
+# {COSTS} » returns the guild cost
+
+prefix: '&8[&2Guild&8]'
+
+guild:
+  is_in_guild: '&cYou are already in a guild.'
+  is_in_no_guild: '&cYou are not in a guild.'
+  is_not_the_guild_Meister: '&cYou are not the guild master.'
+
+  help_message_guild:
+    header:
+      line1: ' '
+      line2: '&8&m----------&r {PREFIX} &8&m----------'
+      line3: ' '
+
+    pageOne:
+      line1: '&2/guild &8- &7Shows all commands.'
+      line2: '&2/guild help <Page> &8- &7Shows all commands.'
+      line3: '&2/guild create <GuildName> <GuildTag> &8- &7Creates the guild.'
+      line4: '&2/guild leave &8- &7You leave your guild.'
+      line5: '&2/guild delete &8- &7You delete your guild.'
+      line6: '&2/guild info &8- &7Shows all guild information.'
+      line7: '&2/guild members &8- &7Shows all guild members.'
+      line8: '&2/guild info <GuildTag> &8- &7Displays information about the specified guild.'
+      line9: '&2/guild setMaster <Player> &8- &7Sets a new guild master.'
+      line10: '&2/guild kick <Player> &8- &7Kick a player out of your guild.'
+
+    pageTwo:
+      line1: '&2/guild chat &8- &7(De-)activates the guild  chat.'
+      line2: '&2/guild invites &8- &7Shows you all invites.'
+      line3: '&2/guild bank <credit / deposit / withdraw> &8- &7Shows the bank balance.{NL} &7Deposits or withdraws money.'
+      line4: '&2/guild master &8- &7Shows the guild master.'
+      line5: '&2/guild accept <GuildName> &8- &7Accepts a guild invite.'
+      line6: '&2/guild deny <GuildName> &8- &7Denies a guild invite.'
+      line7: '&2/guild officers  &8- &7Displays the guild officers.'
+      line8: '&2/guild promote <Player> &8- &7Promotes the player to the officer.'
+      line9: '&2/guild demote <Player> &8- &7Demotes the player to member.'
+      line10: '&2/guild quests info &8- &7Shows the guild tasks completed so far.'
+
+  create_guild:
+    costs: 50000
+    no_letters: '&cYou can only use letters.'
+    guild_exists: '&cThis guild already exists.'
+    guild_name_to_long: '&cThe guild name cannot be longer than 12 characters.'
+    guild_name_to_tag: '&cThe guild tag cannot be longer than 5 characters.'
+    not_enough_money: '&cYou do not have &b${COSTS}&c.'
+    security_message_1: '&aAre you sure that you want to &acreate the guild &6{GUILD}&a?'
+    security_message_2: '&aYou have 10 seconds to execute the command again.'
+    security_message_3: '&aPrice: &b${COSTS}'
+    security_countdown: 10
+    successfully_created: '&aYou have successfully established your guild.'
+
+  delete_guild:
+    is_no_guild_Meister: '&cYou are not the guild master.'
+    security_message_1: '&cAre you sure you want to delete the guild &6{GUILD} &c?'
+    security_message_2: '&aYou have 10 seconds to execute the command again.'
+    security_countdown: 10
+    successfully_deleted: '&aYou have successfully deleted your guild.'
+
+  guild_invites:
+    target_is_in_guild: '&cThe specified player is already in a guild.'
+    target_is_offline: '&cThe specified player must be online.'
+    already_invite_target: '&cThe specified player has already been invited to your guild.'
+    target_is_in_player_guild: '&cThe specified player is already in the guild.'
+    player_is_not_Meister: '&cYou cannot invite other players.'
+    invited_target: '&aYou invited &6 {TARGET} &a in your guild.'
+    invited_target_message: '&aYou were invited to &6{GUILD} &aby &6{PLAYER}&a.{NL}&8[&aAccept&8] &8[&cDeny&8]'
+
+  guild_kick:
+    target_in_no_guild: '&cThe specified player is not in a guild.'
+    kick_himself: '&cYou cannot throw yourself out of the guild!'
+    security_message_1: '&cAre you sure you want to throw &6{TARGET} &cof the guild?'
+    security_message_2: '&aYou have 10 seconds to execute the command again.'
+    security_countdown: 10
+    target_kick: '&aYou kicked &6 {TARGET} &a out of the guild.'
+
+  guild_chat:
+    toggle_chat_active: '&6You have activated the guild chat.'
+    toggle_chat_inactive: '&cYou have deactivated the guild chat.'
+    guild_chat_format:
+      master: '&6{PLAYER} &8» &b{MESSAGE}'
+      officer: '&2{PLAYER} &8» &b{MESSAGE}'
+      member: '&a{PLAYER} &8» &b{MESSAGE}'
+
+  set_guild_master:
+    target_is_in_guild: '&cDer Angegebene Spieler ist bereits in einer Gilde.'
+    security_message_1: '&aBist du dir Sicher, &6{TARGET} &als neuen Gilden Master zu setzen?'
+    security_message_2: '&aDu hast 10 Sekunden Zeit, um den Befehl erneut auszuführen.'
+    security_countdown: 10
+    set_master: '&aDu hast &6{TARGET} &aals neuen Gilden Master gesetzt.'
+
+  leave_guild:
+    security_message_1: '&cBist du dir Sicher das du die Gilde &6{GUILD} &cverlassen möchtest?'
+    security_message_2: '&aDu hast 10 Sekunden Zeit, um den Befehl erneut auszuführen.'
+    security_countdown: 10
+    leaved: '&aDu hast deine Gilde erfolgreich verlassen.'
+
+  parameters:
+    member:
+      line1: '{NL}'
+      line2: '&aMembers:{NL}'
+      line3: '&8» &a{MEMBERS}'
+    officer:
+      line1: '{NL}'
+      line2: '&2Offiziere:{NL}'
+      line3: '&8» &2{OFFICERS}'
+    send_master: '{NL}&6Guilden Meister: &6{MASTER}'
+
+  send_guild_info:
+    guild_does_not_exists: '&cDie Angegebene Gilde existiert nicht.'
+    line1: '{HEADER}'
+    line2: '&cGilden-Tag: {TAG}'
+    line3: ''
+    line4: '{MASTER}'
+    line5: '{OFFICERS}'
+    line6: '{MEMBERS}'
+    line7: '{HEADER}'
