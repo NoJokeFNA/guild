@@ -21,11 +21,12 @@ public class RankCache {
         return null;
     }
 
-    private final String[] prefix, suffix;
+    private final String[] prefix, nameTag, suffix;
     private final String tagId;
 
-    public RankCache( String group, String[] prefix, String[] suffix, String tagId ) {
+    public RankCache( String group, String[] prefix, String[] nameTag, String[] suffix, String tagId ) {
         this.prefix = prefix;
+        this.nameTag = nameTag;
         this.suffix = suffix;
         this.tagId = tagId;
         CACHE_MAP.put( group, this );

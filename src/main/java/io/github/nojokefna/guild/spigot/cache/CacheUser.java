@@ -28,7 +28,7 @@ public class CacheUser {
     private final Map<UUID, String> message;
 
     // tabList
-    private String[] prefix, suffix;
+    private String[] prefix, nameTag, suffix;
     private String tagId;
 
     // guild

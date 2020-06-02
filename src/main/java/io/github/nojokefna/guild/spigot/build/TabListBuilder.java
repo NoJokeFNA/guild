@@ -5,6 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
+import java.util.Arrays;
+
 /**
  * @author NoJokeFNA
  * @version 1.0.0
@@ -26,17 +28,21 @@ public class TabListBuilder {
                             ? all.getScoreboard().getTeam( user.getTagId() + playerName )
                             : all.getScoreboard().registerNewTeam( user.getTagId() + playerName );
 
-                    if ( !team.getEntries().contains( playerName ) )
+                    if ( ! team.getEntries().contains( playerName ) )
                         team.addEntry( playerName );
 
-                    if ( !user.isInGuild() )
+                    if ( ! user.isInGuild() )
                         team.setPrefix( user.getPrefix()[0] );
                     else {
                         team.setPrefix( user.getPrefix()[0] );
                         team.setSuffix( user.getSuffix()[0] );
                     }
 
-                    players.setPlayerListName( team.getPrefix() + playerName );
+                    String nameTag = "" + Arrays.toString( user.getNameTag() )
+                            .replace( "[", "" )
+                            .replace( "]", "" );
+
+                    players.setPlayerListName( nameTag + playerName );
                     players.setDisplayName( team.getPrefix() + playerName );
                 }
             }

@@ -61,12 +61,13 @@ tablist:
   # So, you can ignore the 'permission' path under your 'group' if you have deactivated this function
   use_permissions: false
 
-  # 'admin'           is your team name
-  # '&4Admin &8| &4'  is for the tablist prefix
-  # '&8[&6{GUILD}&8]' is behind your nametag
-  # 'Admin'           is the group which you need, when you've got LuckPerms, PermissionsEx or CloudPerms enabled
-  # 'guild.tab.admin' is is the permission you need, when you have activated 'use_permissions'
-  # '01'              is your rank position || 01 = Highest
+  # 'admin'                  is your team name
+  # '&4Admin &8| &4'         is for the tablist prefix
+  # '&4Administrator &8| &4' is for the tablist prefix
+  # '&8[&6{GUILD}&8]'        is behind your nametag
+  # 'Admin'                  is the group which you need, when you've got LuckPerms, PermissionsEx or CloudPerms enabled
+  # 'guild.tab.admin'        is is the permission you need, when you have activated 'use_permissions'
+  # '01'                     is your rank position || 01 = Highest
 
   # Parameters:
   # {GUILD} return players guild
@@ -74,16 +75,25 @@ tablist:
   prefix:
     admin:
       - '&4Admin &8| &4'
+      - '&4Administrator &8| &4'
       - '&8[&6{GUILD}&8]'
       - 'Admin'
       - 'guild.tab.admin'
       - 01
     developer:
       - '&bDev &8| &b'
+      - '&bDeveloper &8| &b'
       - '&8[&6{GUILD}&8]'
       - 'Developer'
       - 'guild.tab.developer'
       - 02
+    default:
+      - '&7Player &8| &7'
+      - '&7Player &8| &7'
+      - '&8[&6{GUILD}&8]'
+      - 'default'
+      - 'guild.tab.default'
+      - 03
 #--------------------------------------------
 
 #--------------------------------------------

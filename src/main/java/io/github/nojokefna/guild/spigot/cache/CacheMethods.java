@@ -53,7 +53,8 @@ public class CacheMethods {
                 .map( permissionName -> this.serverSection.getStringList( "tablist.prefix." + permissionName ) ).forEach( permissionNameValues -> {
 
             if ( user.isInGuild() ) {
-                String guildSuffix = permissionNameValues.get( 1 ).replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildName( player ) );
+                String guildSuffix = permissionNameValues.get( 2 )
+                        .replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildName( player ) );
 
                 switch ( this.serverSection.getString( "tablist.guild_format" ) ) {
                     case "UpperCase":
@@ -69,17 +70,19 @@ public class CacheMethods {
                 }
 
                 new RankCache(
-                        permissionNameValues.get( 2 ),
+                        permissionNameValues.get( 3 ),
                         new String[] { this.sendColoredMessage( permissionNameValues.get( 0 ) ) },
+                        new String[] { this.sendColoredMessage( permissionNameValues.get( 1 ) ) },
                         new String[] { " " + this.sendColoredMessage( guildSuffix ) },
-                        permissionNameValues.get( 4 )
+                        permissionNameValues.get( 5 )
                 );
             } else {
                 new RankCache(
-                        permissionNameValues.get( 2 ),
+                        permissionNameValues.get( 3 ),
                         new String[] { this.sendColoredMessage( permissionNameValues.get( 0 ) ) },
+                        new String[] { this.sendColoredMessage( permissionNameValues.get( 1 ) ) },
                         new String[] { " " },
-                        permissionNameValues.get( 4 )
+                        permissionNameValues.get( 5 )
                 );
             }
         } );
@@ -91,18 +94,28 @@ public class CacheMethods {
         this.serverSection.getConfigurationSection( "tablist.prefix" ).getKeys( false ).stream()
                 .map( permissionName -> this.serverSection.getStringList( "tablist.prefix." + permissionName ) ).forEach( permissionNameValues -> {
 
-            String rank = permissionNameValues.get( 2 );
-            String permission = permissionNameValues.get( 3 );
+            String rank = permissionNameValues.get( 3 );
+            String permission = permissionNameValues.get( 4 );
+
+            System.out.println( "Prefix: " + permissionNameValues.get( 0 ) );
+            System.out.println( "NameTag: " + permissionNameValues.get( 1 ) );
+            System.out.println( "Suffix: " + permissionNameValues.get( 2 ) );
+            System.out.println( "Group: " + permissionNameValues.get( 3 ) );
+            System.out.println( "Permission: " + permissionNameValues.get( 4 ) );
+            System.out.println( "TagId: " + permissionNameValues.get( 5 ) );
+            System.out.println( " " );
 
             if ( this.serverSection.getBoolean( "tablist.use_permissions" ) ) {
                 if ( player.hasPermission( permission ) ) {
                     user.setPrefix( RankCache.getRank( rank ).getPrefix() );
+                    user.setNameTag( RankCache.getRank( rank ).getNameTag() );
                     user.setSuffix( RankCache.getRank( rank ).getSuffix() );
                     user.setTagId( RankCache.getRank( rank ).getTagId() );
                 }
             } else {
                 if ( Guild.getPlugin().getPerms().playerInGroup( player, rank ) ) {
                     user.setPrefix( RankCache.getRank( rank ).getPrefix() );
+                    user.setNameTag( RankCache.getRank( rank ).getNameTag() );
                     user.setSuffix( RankCache.getRank( rank ).getSuffix() );
                     user.setTagId( RankCache.getRank( rank ).getTagId() );
                 }
