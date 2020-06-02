@@ -97,14 +97,6 @@ public class CacheMethods {
             String rank = permissionNameValues.get( 3 );
             String permission = permissionNameValues.get( 4 );
 
-            System.out.println( "Prefix: " + permissionNameValues.get( 0 ) );
-            System.out.println( "NameTag: " + permissionNameValues.get( 1 ) );
-            System.out.println( "Suffix: " + permissionNameValues.get( 2 ) );
-            System.out.println( "Group: " + permissionNameValues.get( 3 ) );
-            System.out.println( "Permission: " + permissionNameValues.get( 4 ) );
-            System.out.println( "TagId: " + permissionNameValues.get( 5 ) );
-            System.out.println( " " );
-
             if ( this.serverSection.getBoolean( "tablist.use_permissions" ) ) {
                 if ( player.hasPermission( permission ) ) {
                     user.setPrefix( RankCache.getRank( rank ).getPrefix() );
