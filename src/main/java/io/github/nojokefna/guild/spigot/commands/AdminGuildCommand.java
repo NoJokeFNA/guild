@@ -31,9 +31,6 @@ public class AdminGuildCommand implements CommandExecutor {
                             break;
 
                         case "info":
-                            this.sendHelpMessage( player, guildBuilder );
-                            break;
-
                         default:
                             this.sendHelpMessage( player, guildBuilder );
                             break;

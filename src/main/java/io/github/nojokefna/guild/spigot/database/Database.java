@@ -16,10 +16,7 @@ public class Database {
 
     private final Guild plugin;
 
-    private final String username;
-    private final String password;
-    private final String hostname;
-    private final String database;
+    private final String username, password, hostname, database;
 
     private Connection connection;
 
@@ -33,9 +30,9 @@ public class Database {
 
     public void connect() {
         try {
-            synchronized ( this ) {
-                if ( this.getConnection() != null && ! this.getConnection().isClosed() ) return;
+            if ( this.getConnection() != null && ! this.getConnection().isClosed() ) return;
 
+            synchronized ( this ) {
                 Class.forName( "com.mysql.jdbc.Driver" );
                 this.setConnection( DriverManager.getConnection( "jdbc:mysql://" + hostname + ":" + "3306" + "/" + database + "?autoReconnect=true",
                         username, password ) );
@@ -87,6 +84,7 @@ public class Database {
 
     public void queryUpdate( String query ) {
         this.checkConnection();
+
         try ( PreparedStatement preparedStatement = this.connection.prepareStatement( query ) ) {
             this.queryUpdate( preparedStatement );
         } catch ( Exception ex ) {
@@ -103,6 +101,7 @@ public class Database {
         } catch ( InterruptedException | ExecutionException ex ) {
             ex.printStackTrace();
         }
+
         try {
             preparedStatement.executeUpdate();
         } catch ( Exception ex ) {
@@ -119,6 +118,7 @@ public class Database {
 
     public ResultSet query( String query ) {
         this.checkConnection();
+
         try {
             return query( this.connection.prepareStatement( query ) );
         } catch ( Exception ex ) {
@@ -129,17 +129,24 @@ public class Database {
 
     public ResultSet query( PreparedStatement preparedStatement ) {
         this.checkConnection();
+
         try {
             return preparedStatement.executeQuery();
         } catch ( Exception ex ) {
             ex.printStackTrace();
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch ( SQLException ex ) {
+                ex.printStackTrace();
+            }
         }
         return null;
     }
 
     public void checkConnection() {
         try {
-            if ( this.connection == null || ! this.connection.isValid( 10 ) || this.connection.isClosed() ) connect();
+            if ( this.connection == null || ! this.connection.isValid( 10 ) || this.connection.isClosed() ) this.connect();
         } catch ( Exception ex ) {
             ex.printStackTrace();
         }
