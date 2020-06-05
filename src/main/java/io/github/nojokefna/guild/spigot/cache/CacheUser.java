@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -16,17 +18,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CacheUser {
 
     private static final Map<UUID, CacheUser> USER_MAP = new HashMap<>();
-
-    // startup
-    private AtomicBoolean loaded;
-
     // init
     private final CacheMethods cacheMethods;
-
     // settings
     private final Map<UUID, Long> commandCoolDown, messageCoolDown;
     private final Map<UUID, String> message;
-
+    // startup
+    private AtomicBoolean loaded;
     // tabList
     private String[] prefix, nameTag, suffix;
     private String tagId;
@@ -47,7 +45,7 @@ public class CacheUser {
     }
 
     public static CacheUser getUserByUuid( UUID uuid ) {
-        if ( !USER_MAP.containsKey( uuid ) )
+        if ( ! USER_MAP.containsKey( uuid ) )
             USER_MAP.put( uuid, new CacheUser() );
 
         return USER_MAP.get( uuid );

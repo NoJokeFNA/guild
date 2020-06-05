@@ -56,12 +56,12 @@ public class Data {
                 switch ( this.section.getString( "chat.cloudnet.use" ) ) {
                     case "display":
                         return this.sendColoredMessage( CloudAPI.getInstance().getOnlinePlayer( player.getUniqueId() ).getPermissionEntity()
-                                                                .getHighestPermissionGroup( CloudAPI.getInstance().getPermissionPool() ).getDisplay()
-                                                                + player.getName() );
+                                .getHighestPermissionGroup( CloudAPI.getInstance().getPermissionPool() ).getDisplay()
+                                + player.getName() );
                     case "prefix":
                         return this.sendColoredMessage( CloudAPI.getInstance().getOnlinePlayer( player.getUniqueId() ).getPermissionEntity()
-                                                                .getHighestPermissionGroup( CloudAPI.getInstance().getPermissionPool() ).getPrefix()
-                                                                + player.getName() );
+                                .getHighestPermissionGroup( CloudAPI.getInstance().getPermissionPool() ).getPrefix()
+                                + player.getName() );
 
                     default:
                         player.sendMessage( "§4Unsupported value in §cchat_settings.yml » chat.cloudnet.use" );

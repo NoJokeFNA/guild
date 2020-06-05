@@ -136,7 +136,7 @@ public class CacheMethods {
         subtitle.addProperty( "size", 0.8d );
 
         if ( this.serverSection.getBoolean( "tablist.labymod.use_labymod" ) ) {
-            if ( !user.isInGuild() )
+            if ( ! user.isInGuild() )
                 subtitle.addProperty( "value", this.server.getKey( "tablist.labymod.subTitle_normal" )
                         .replace( "{PLAYER}", receiver.getName() )
                         .replace( "{DISPLAYNAME}", receiver.getDisplayName() )

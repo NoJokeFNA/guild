@@ -50,7 +50,7 @@ chat:
   #--------------------------------------------------------------------
 
   # Use 'UpperCase' for [GUILD], 'lowerCase' for [guild] or 'normal' for [Guild]
-  guild_format: 'UpperCase'
+  guild_format: 'normal'
 
   # Setup the permission node, that you want to use color codes
   guild_chat_color_permission: 'guild.chat.color'

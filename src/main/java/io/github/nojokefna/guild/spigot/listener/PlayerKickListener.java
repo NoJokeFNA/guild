@@ -34,9 +34,9 @@ public class PlayerKickListener implements Listener {
             }
 
             event.setLeaveMessage( Guild.getPlugin().getServerSettingsManager().getKey( "kick.message" )
-                                           .replace( "{PLAYER}", player.getName() )
-                                           .replace( "{DISPLAYNAME}", player.getDisplayName() )
-                                           .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
+                    .replace( "{PLAYER}", player.getName() )
+                    .replace( "{DISPLAYNAME}", player.getDisplayName() )
+                    .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
 
             );
         }

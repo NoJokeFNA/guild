@@ -27,7 +27,7 @@ public class GuildInvitesAPI extends MySQL {
                 PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
                         .getConnection()
                         .prepareStatement( "INSERT INTO `guild_invites` (player_uuid, player_name, invited_name, guild_name, guild_tag)" +
-                                                   " VALUES (?, ?, ?, ?, ?)" );
+                                " VALUES (?, ?, ?, ?, ?)" );
 
                 preparedStatement.setString( 1, playerUuid.toString() );
                 preparedStatement.setString( 2, player.getName() );

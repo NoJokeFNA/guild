@@ -58,7 +58,7 @@ public abstract class MySQL {
      * @param setWhereKey - Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      */
     public void updateKey( String table, String setterKey, String setSetKey, String whereKey, String setWhereKey ) {
-        Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
+        Guild.getPlugin().getExecutorService().execute( () -> {
             if ( this.keyExists( table, whereKey, setWhereKey ) ) {
                 try {
                     PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
@@ -86,7 +86,7 @@ public abstract class MySQL {
      * @param setWhereKey - Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      */
     public void updateKey( String table, String setterKey, int setSetKey, String whereKey, String setWhereKey ) {
-        Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
+        Guild.getPlugin().getExecutorService().execute( () -> {
             if ( this.keyExists( table, whereKey, setWhereKey ) ) {
                 try {
                     PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
@@ -278,7 +278,7 @@ public abstract class MySQL {
      * @param setKey   - Set the {@code #setKey} you want to set for the {@code #whereKey}
      */
     public void deleteKey( String table, String whereKey, String setKey ) {
-        Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
+        Guild.getPlugin().getExecutorService().execute( () -> {
             if ( this.keyExists( table, whereKey, setKey ) ) {
                 try {
                     PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
@@ -328,7 +328,7 @@ public abstract class MySQL {
      * @param getKey   - Set the {@code #getKey} you want to get from {@code #setKey}
      * @param callback - Create the {@code callback}
      */
-    public void getDataAsync( String table, String whereKey, String setKey, String getKey, Consumer<String> callback ) {
+    public void getDataStringAsync( String table, String whereKey, String setKey, String getKey, Consumer<String> callback ) {
         Guild.getPlugin().getExecutorService().execute( () -> callback.accept( this.getKey( table, whereKey, setKey, getKey ) ) );
     }
 
@@ -341,7 +341,20 @@ public abstract class MySQL {
      * @param getKey   - Set the {@code #getKey} you want to get from {@code #setKey}
      * @param callback - Create the {@code callback}
      */
-    public void getListAsync( String table, String whereKey, String setKey, String getKey, Consumer<List<String>> callback ) {
+    public void getDataIntegerAsync( String table, String whereKey, String setKey, String getKey, Consumer<Integer> callback ) {
+        Guild.getPlugin().getExecutorService().execute( () -> callback.accept( this.getKeyByInteger( table, whereKey, setKey, getKey ) ) );
+    }
+
+    /**
+     * Get the setKey you want Asynch.
+     *
+     * @param table    - Set the table that you want to use
+     * @param whereKey - Enter the value you want to receive
+     * @param setKey   - Set the {@code #setKey} you want to set for the {@code #whereKey}
+     * @param getKey   - Set the {@code #getKey} you want to get from {@code #setKey}
+     * @param callback - Create the {@code callback}
+     */
+    public void getDataListAsync( String table, String whereKey, String setKey, String getKey, Consumer<List<String>> callback ) {
         Guild.getPlugin().getExecutorService().execute( () -> callback.accept( this.getList( table, whereKey, setKey, getKey ) ) );
     }
 }

@@ -50,6 +50,14 @@ public class FileBuilder {
         return ChatColor.translateAlternateColorCodes( '&', new String( configValue.getBytes(), StandardCharsets.UTF_8 ) );
     }
 
+    public int getInt( String key ) {
+        return this.fileConfiguration.getInt( key );
+    }
+
+    public boolean getBoolean( String key ) {
+        return this.fileConfiguration.getBoolean( key );
+    }
+
     public void setKey( String path, Object value ) {
         this.fileConfiguration.set( path, value );
         this.saveConfig();

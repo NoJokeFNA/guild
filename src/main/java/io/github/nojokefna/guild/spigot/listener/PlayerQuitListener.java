@@ -34,9 +34,9 @@ public class PlayerQuitListener implements Listener {
             }
 
             event.setQuitMessage( Guild.getPlugin().getServerSettingsManager().getKey( "quit.message" )
-                                          .replace( "{PLAYER}", player.getName() )
-                                          .replace( "{DISPLAYNAME}", player.getDisplayName() )
-                                          .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
+                    .replace( "{PLAYER}", player.getName() )
+                    .replace( "{DISPLAYNAME}", player.getDisplayName() )
+                    .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
             );
         }
 

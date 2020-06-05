@@ -4,6 +4,8 @@ import io.github.nojokefna.guild.spigot.Guild;
 import org.bukkit.Bukkit;
 
 import java.sql.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 /**
@@ -32,43 +34,44 @@ public class Database {
     public void connect() {
         try {
             synchronized ( this ) {
-                if ( getConnection() != null && !getConnection().isClosed() ) return;
+                if ( this.getConnection() != null && ! this.getConnection().isClosed() ) return;
 
                 Class.forName( "com.mysql.jdbc.Driver" );
-                setConnection( DriverManager.getConnection( "jdbc:mysql://" + hostname + ":" + "3306" + "/" + database + "?autoReconnect=true", username, password ) );
+                this.setConnection( DriverManager.getConnection( "jdbc:mysql://" + hostname + ":" + "3306" + "/" + database + "?autoReconnect=true",
+                        username, password ) );
                 Bukkit.getServer().getLogger().info( this.plugin.getData().getPrefix() + "§bEine Verbindung wurde zur Datenbank aufgebaut." );
             }
-        } catch ( SQLException | ClassNotFoundException e ) {
-            e.printStackTrace();
+        } catch ( SQLException | ClassNotFoundException ex ) {
+            ex.printStackTrace();
         }
     }
 
     public void disconnect() {
         try {
-            connection.close();
+            this.connection.close();
         } catch ( SQLException ex ) {
             ex.printStackTrace();
         }
     }
 
-    public void update( PreparedStatement statement ) {
-        this.plugin.getExecutorService().execute( () -> this.queryUpdate( statement ) );
+    public void update( PreparedStatement preparedStatement ) {
+        this.plugin.getExecutorService().execute( () -> this.queryUpdate( preparedStatement ) );
     }
 
-    public void update( String statement ) {
-        this.plugin.getExecutorService().execute( () -> this.queryUpdate( statement ) );
+    public void update( String preparedStatement ) {
+        this.plugin.getExecutorService().execute( () -> this.queryUpdate( preparedStatement ) );
     }
 
-    public void query( PreparedStatement statement, Consumer<ResultSet> consumer ) {
+    public void query( PreparedStatement preparedStatement, Consumer<ResultSet> consumer ) {
         this.plugin.getExecutorService().execute( () -> {
-            ResultSet result = this.query( statement );
+            ResultSet result = this.query( preparedStatement );
             consumer.accept( result );
         } );
     }
 
-    public void query( String statement, Consumer<ResultSet> consumer ) {
+    public void query( String preparedStatement, Consumer<ResultSet> consumer ) {
         this.plugin.getExecutorService().execute( () -> {
-            ResultSet result = this.query( statement );
+            ResultSet result = this.query( preparedStatement );
             consumer.accept( result );
         } );
     }
@@ -76,70 +79,78 @@ public class Database {
     public PreparedStatement prepare( String query ) {
         try {
             return this.connection.prepareStatement( query );
-        } catch ( Exception e ) {
-            e.printStackTrace();
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
         }
         return null;
     }
 
     public void queryUpdate( String query ) {
-        checkConnection();
-        try ( PreparedStatement statement = this.connection.prepareStatement( query ) ) {
-            queryUpdate( statement );
-        } catch ( Exception e ) {
-            e.printStackTrace();
+        this.checkConnection();
+        try ( PreparedStatement preparedStatement = this.connection.prepareStatement( query ) ) {
+            this.queryUpdate( preparedStatement );
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
         }
     }
 
-    public void queryUpdate( PreparedStatement preparedStatement ) {
-        checkConnection();
+    public ResultSet queryUpdate( PreparedStatement preparedStatement ) {
+        this.checkConnection();
+
+        Future<ResultSet> resultSetFuture = this.plugin.getExecutorService().submit( () -> this.query( preparedStatement ) );
+        try {
+            return resultSetFuture.get();
+        } catch ( InterruptedException | ExecutionException ex ) {
+            ex.printStackTrace();
+        }
         try {
             preparedStatement.executeUpdate();
-        } catch ( Exception e ) {
-            e.printStackTrace();
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
         } finally {
             try {
                 preparedStatement.close();
-            } catch ( Exception e ) {
-                e.printStackTrace();
+            } catch ( Exception ex ) {
+                ex.printStackTrace();
             }
-        }
-    }
-
-    public ResultSet query( String query ) {
-        checkConnection();
-        try {
-            return query( this.connection.prepareStatement( query ) );
-        } catch ( Exception e ) {
-            e.printStackTrace();
         }
         return null;
     }
 
-    public ResultSet query( PreparedStatement statement ) {
-        checkConnection();
+    public ResultSet query( String query ) {
+        this.checkConnection();
         try {
-            return statement.executeQuery();
-        } catch ( Exception e ) {
-            e.printStackTrace();
+            return query( this.connection.prepareStatement( query ) );
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public ResultSet query( PreparedStatement preparedStatement ) {
+        this.checkConnection();
+        try {
+            return preparedStatement.executeQuery();
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
         }
         return null;
     }
 
     public void checkConnection() {
         try {
-            if ( this.connection == null || !this.connection.isValid( 10 ) || this.connection.isClosed() ) connect();
-        } catch ( Exception e ) {
-            e.printStackTrace();
+            if ( this.connection == null || ! this.connection.isValid( 10 ) || this.connection.isClosed() ) connect();
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
         }
     }
 
     public boolean isConnected() {
-        return connection != null;
+        return this.connection != null;
     }
 
     public Connection getConnection() {
-        return connection;
+        return this.connection;
     }
 
     public void setConnection( Connection connection ) {

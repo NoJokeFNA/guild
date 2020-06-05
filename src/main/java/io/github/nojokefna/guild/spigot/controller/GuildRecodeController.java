@@ -289,77 +289,306 @@ public class GuildRecodeController implements GuildRecodeInterface {
             }
         }
 
+        for ( int i = 0; i < inviteList.size(); i++ ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_invites.format.line1" ) );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_invites.format.line2" )
+                    .replace( "{NAME}", inviteList.get( i ) ) );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_invites.format.line3" )
+                    .replace( "{GUILD}", inviteNameList.get( i ) ) );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_invites.format.line4" )
+                    .replace( "{TAG}", inviteTagList.get( i ) ) );
+        }
+
         this.guildBuilder.sendHeader( player );
     }
 
     @Override
     public String getInvitedGuildName( OfflinePlayer player ) {
-        return null;
+        return this.guildUserAPI.getKey( player.getUniqueId(), "guild_name" );
     }
 
     @Override
     public String getInvitedGuildTag( OfflinePlayer player ) {
-        return null;
+        return this.guildUserAPI.getKey( player.getUniqueId(), "guild_tag" );
     }
 
     @Override
     public void setGuildMaster( Player player, OfflinePlayer target ) {
+        CacheUser user = CacheUser.getUser( player );
 
+        long time = Long.parseLong( this.fileBuilder.getKey( "guild.set_guild_master.security_countdown" ) );
+
+        if ( ! user.isInGuild() ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
+            return;
+        }
+
+        if ( ! user.isMaster() ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_not_the_guild_master" ) );
+            return;
+        }
+
+        if ( ! this.guildUserAPI.keyExists( target.getUniqueId() ) ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.target_is_in_no_guild" ) );
+            return;
+        }
+
+        if ( ! this.guildList.contains( player.getName() ) ) {
+            this.guildList.add( player.getName() );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.security_message_1" )
+                    .replace( "{TARGET}", target.getName() ) );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.security_message_2" ) );
+            return;
+        }
+
+        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.set_master" ) );
+
+        this.guildAPI.updateGuild( "guild_leader", target.getName(), this.getGuildName( player ) );
+        this.guildUserAPI.updateKey( "guild_rank", "Officer", player.getUniqueId() );
+        this.guildUserAPI.updateKey( "guild_rank", "Master", target.getUniqueId() );
+
+        this.guildList.remove( player.getName() );
+        Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
 
     @Override
     public void promotePlayer( Player player, OfflinePlayer target ) {
+        CacheUser user = CacheUser.getUser( player );
 
+        long time = Long.parseLong( this.fileBuilder.getKey( "guild.promote_player.security_countdown" ) );
+
+        if ( ! user.isInGuild() ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
+            return;
+        }
+
+        if ( ! user.isMaster() ) {
+            this.guildBuilder.sendMessage( player, fileBuilder.getKey( "guild.is_not_the_guild_master" ) );
+            return;
+        }
+
+        if ( user.isOfficer() ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.promote_player.target_is_officer" ) );
+            return;
+        }
+
+        if ( ! this.guildList.contains( player.getName() ) ) {
+            this.guildList.add( player.getName() );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.promote_player.security_message_1" )
+                    .replace( "{TARGET}", target.getName() ) );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.promote_player.security_message_2" ) );
+            return;
+        }
+
+        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.promote_player.promote_player" )
+                .replace( "{TARGET}", target.getName() ) );
+
+        this.guildUserAPI.updateKey( "guild_rank", "Officer", target.getUniqueId() );
+
+        this.guildList.remove( player.getName() );
+        Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
 
     @Override
     public void demotePlayer( Player player, OfflinePlayer target ) {
+        CacheUser user = CacheUser.getUser( player );
 
+        if ( ! user.isInGuild() ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
+            return;
+        }
+
+        if ( ! user.isMaster() ) {
+            this.guildBuilder.sendMessage( player, fileBuilder.getKey( "guild.is_not_the_guild_master" ) );
+            return;
+        }
+
+        if ( user.isMember() ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.demote_player.target_is_officer" ) );
+            return;
+        }
+
+        if ( ! this.guildList.contains( player.getName() ) ) {
+            this.guildList.add( player.getName() );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.demote_player.security_message_1" )
+                    .replace( "{TARGET}", target.getName() ) );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.demote_player.security_message_2" ) );
+            return;
+        }
+
+        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.demote_player.demote_player" )
+                .replace( "{TARGET}", target.getName() ) );
+
+        this.guildUserAPI.updateKey( "guild_rank", "Member", target.getUniqueId() );
+
+        this.guildList.remove( player.getName() );
+        Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * 10L );
     }
 
     @Override
     public void kickPlayer( Player player, OfflinePlayer target ) {
+        CacheUser user = CacheUser.getUser( player );
 
+        long time = Long.parseLong( this.fileBuilder.getKey( "guild.delete_guild.security_countdown" ) );
+
+        if ( ! user.isInGuild() ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
+            return;
+        }
+
+        if ( ! this.guildUserAPI.keyExists( target.getUniqueId() ) ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.target_in_no_guild" ) );
+            return;
+        }
+
+        if ( this.getGuildMaster( player ).equals( target.getName() ) ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.kick_himself" ) );
+            return;
+        }
+
+        if ( ! user.isMaster() ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_not_the_guild_master" ) );
+            return;
+        }
+
+        if ( ! this.guildList.contains( player.getName() ) ) {
+            this.guildList.add( player.getName() );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.security_message_1" )
+                    .replace( "{TARGET}", target.getName() ) );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.security_message_2" ) );
+            return;
+        }
+
+        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.target_kick" )
+                .replace( "{TARGET}", target.getName() ) );
+
+        this.guildUserAPI.deleteKey( target.getUniqueId() );
+
+        this.guildList.remove( player.getName() );
+
+        Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
 
     @Override
     public void toggleChat( Player player ) {
+        CacheUser user = CacheUser.getUser( player );
 
+        if ( ! user.isInGuild() ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
+            return;
+        }
+
+        if ( ! this.guildMessageList.contains( player.getName() ) ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_chat.toggle_chat_active" ) );
+            this.guildMessageList.add( player.getName() );
+            return;
+        }
+
+        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_chat.toggle_chat_inactive" ) );
+        this.guildMessageList.remove( player.getName() );
     }
 
     @Override
     public void sendMessage( Player player, String... message ) {
+        List<String> masterList = this.guildUserAPI.getList(
+                "guild_name", this.getGuildName( player ),
+                "guild_rank", "Master", "player_name"
+        );
 
+        List<String> officerList = this.guildUserAPI.getList(
+                "guild_name", this.getGuildName( player ),
+                "guild_rank", "Officer", "player_name"
+        );
+
+        List<String> memberList = this.guildUserAPI.getList(
+                "guild_name", this.getGuildName( player ),
+                "guild_rank", "Member", "player_name"
+        );
+
+        if ( ! masterList.contains( player.getName() ) ) masterList.add( String.valueOf( masterList ) );
+        if ( ! officerList.contains( player.getName() ) ) officerList.add( String.valueOf( officerList ) );
+        if ( ! memberList.contains( player.getName() ) ) memberList.add( String.valueOf( memberList ) );
+
+        StringBuilder builder = new StringBuilder();
+        for ( String output : message )
+            builder.append( output );
+
+        this.sendMessage( masterList, player, "guild.guild_chat.guild_chat_format.master", builder.toString() );
+        this.sendMessage( officerList, player, "guild.guild_chat.guild_chat_format.officer", builder.toString() );
+        this.sendMessage( memberList, player, "guild.guild_chat.guild_chat_format.member", builder.toString() );
     }
 
     @Override
     public void sendMembers( Player player ) {
+        List<String> memberList = this.guildUserAPI.getList(
+                "guild_name", this.getGuildMaster( player ),
+                "guild_rank", "Member", "player_name"
+        );
 
+        player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line1" ) );
+
+        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.parameters.member.line2" ) );
+
+        for ( String output : memberList )
+            player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line3" ) );
     }
 
     @Override
     public void sendMembers( Player player, String guild ) {
+        List<String> memberList = this.guildUserAPI.getList( "guild_tag", guild,
+                "guild_rank", "Member", "player_name" );
 
+        player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line1" ) );
+        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.parameters.member.line2" ) );
+
+        for ( String output : memberList )
+            player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line3" ) );
     }
 
     @Override
     public void sendOfficers( Player player ) {
+        List<String> officerList = this.guildUserAPI.getList(
+                "guild_name", this.getGuildName( player ),
+                "guild_rank", "Officer", "player_name"
+        );
 
+        player.sendMessage( this.fileBuilder.getKey( "guild.parameters.officer.line1" ) );
+        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.parameters.officer.line2" ) );
+
+        for ( String output : officerList )
+            player.sendMessage( this.fileBuilder.getKey( "guild.parameters.officer.line3" ) );
     }
 
     @Override
     public void sendOfficers( Player player, String guild ) {
+        List<String> officerList = this.guildUserAPI.getList(
+                "guild_name", guild,
+                "guild_rank", "Officer", "player_name"
+        );
 
-    }
+        player.sendMessage( this.fileBuilder.getKey( "guild.parameters.officer.line1" ) );
+        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.parameters.officer.line2" ) );
 
-    @Override
-    public void sendGuildInfo( Player player ) {
-
+        for ( String output : officerList )
+            player.sendMessage( this.fileBuilder.getKey( "guild.parameters.officer.line3" ) );
     }
 
     @Override
     public void sendGuildInfo( Player player, String guild ) {
+        if ( ! this.guildAPI.guildExists( "guild_tag", guild ) ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.send_guild_info.guild_does_not_exists" ) );
+            return;
+        }
 
+        this.guildBuilder.sendHeader( player );
+
+        this.guildBuilder.sendMessage( player, "§cGilden-Tag: " + guild );
+        player.sendMessage( "" );
+        this.guildBuilder.sendMessage( player, "§6Gilden Meister: " + this.getGuildMaster( player ) );
+        this.sendOfficers( player, guild );
+        this.sendMembers( player, guild );
+
+        this.guildBuilder.sendHeader( player );
     }
 
     @Override
@@ -415,6 +644,23 @@ public class GuildRecodeController implements GuildRecodeInterface {
     @Override
     public boolean isGuildMember( UUID playerUuid ) {
         return false;
+    }
+
+    private void sendMessage( List<String> list, Player player, String key, String... message ) {
+        for ( String string : list ) {
+            if ( this.guildMessageList.contains( string ) ) {
+                for ( Player players : Bukkit.getOnlinePlayers() ) {
+                    StringBuilder builder = new StringBuilder();
+                    for ( String output : message )
+                        builder.append( output );
+
+                    if ( string.contains( player.getName() ) )
+                        this.guildBuilder.sendMessage( players, this.fileBuilder.getKey( key )
+                                .replace( "{PLAYER}", player.getName() )
+                                .replace( "{MESSAGE}", builder ) );
+                }
+            }
+        }
     }
 
     private boolean isInteger( String value ) {

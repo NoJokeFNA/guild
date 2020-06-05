@@ -26,7 +26,7 @@ public class GuildCommand implements CommandExecutor {
             GuildController guildController = Guild.getPlugin().getGuildController();
             GuildRecodeController guildRecodeController = Guild.getPlugin().getGuildRecodeController();
 
-            if ( !Guild.getPlugin().getDatabaseBuilder().isMySqlConfigured() ) {
+            if ( ! Guild.getPlugin().getDatabaseBuilder().isMySqlConfigured() ) {
                 if ( Guild.getPlugin().getDatabaseBuilder().getDatabase().getConnection() == null )
                     Guild.getPlugin().getDatabaseBuilder().getDatabase().disconnect();
                 guildBuilder.sendMessage( player, "§cThe database is not configured! Please contact an administrator!" );

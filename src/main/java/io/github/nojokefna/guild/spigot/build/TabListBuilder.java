@@ -38,12 +38,13 @@ public class TabListBuilder {
                         team.setSuffix( user.getSuffix()[0] );
                     }
 
-                    String nameTag = "" + Arrays.toString( user.getNameTag() )
+                    String prefix = "" + Arrays.toString( user.getNameTag() )
                             .replace( "[", "" )
-                            .replace( "]", "" );
+                            .replace( "]", "" )
+                            + playerName;
 
-                    players.setPlayerListName( nameTag + playerName );
-                    players.setDisplayName( team.getPrefix() + playerName );
+                    players.setPlayerListName( prefix );
+                    players.setDisplayName( prefix );
                 }
             }
         }

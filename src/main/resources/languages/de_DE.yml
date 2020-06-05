@@ -104,12 +104,26 @@ guild:
     security_message_2: '&aDu hast 10 Sekunden Zeit, um den Befehl erneut auszuführen.'
     security_countdown: 10
     set_master: '&aDu hast &6{TARGET} &aals neuen Gilden Master gesetzt.'
-    
+
   leave_guild:
     security_message_1: '&cBist du dir Sicher das du die Gilde &6{GUILD} &cverlassen möchtest?'
     security_message_2: '&aDu hast 10 Sekunden Zeit, um den Befehl erneut auszuführen.'
     security_countdown: 10
     leaved: '&aDu hast deine Gilde erfolgreich verlassen.'
+
+  promote_player:
+    target_is_officer: '&cDer Angegebene Spieler ist bereits Offizier.'
+    security_message_1: '&aBist du dir Sicher, &6{TARGET} &aals Gilden Offizier zu setzen?'
+    security_message_2: '&aDu hast 10 Sekunden Zeit, um den Befehl erneut auszuführen.'
+    security_countdown: 10
+    promote_player: '&aDu hast &6{TARGET} &aals Gilden Offizier gesetzt.'
+
+  demote_player:
+    target_is_member: '&cDer Angegebene Spieler ist bereits Mitglied.'
+    security_message_1: '&aBist du dir Sicher, &6{TARGET} &aals Gilden Mitglied zu setzen?'
+    security_message_2: '&aDu hast 10 Sekunden Zeit, um den Befehl erneut auszuführen.'
+    security_countdown: 10
+    demote_player: '&aDu hast &6{TARGET} &aals neuen Gilden Mitglied gesetzt.'
 
   parameters:
     member:
