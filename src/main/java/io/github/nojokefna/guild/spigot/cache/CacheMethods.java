@@ -23,8 +23,8 @@ public class CacheMethods {
     private final ConfigurationSection section, serverSection;
 
     public CacheMethods() {
-        this.section = Guild.getPlugin().getSettingsManager().getFileConfiguration();
-        this.serverSection = Guild.getPlugin().getServerSettingsManager().getFileConfiguration();
+        this.section = Guild.getPlugin().getSettingsManager().getConfigurationSection();
+        this.serverSection = Guild.getPlugin().getServerSettingsManager().getConfigurationSection();
         this.server = Guild.getPlugin().getServerSettingsManager();
     }
 

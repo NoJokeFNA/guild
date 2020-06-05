@@ -23,7 +23,7 @@ public class AsyncPlayerChatListener implements Listener {
     private final ConfigurationSection section;
 
     public AsyncPlayerChatListener() {
-        this.section = Guild.getPlugin().getSettingsManager().getFileConfiguration();
+        this.section = Guild.getPlugin().getSettingsManager().getConfigurationSection();
     }
 
     @EventHandler( priority = EventPriority.HIGH, ignoreCancelled = true )

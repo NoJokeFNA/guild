@@ -2,6 +2,7 @@ package io.github.nojokefna.guild.spigot.utils;
 
 import de.dytanic.cloudnet.api.CloudAPI;
 import io.github.nojokefna.guild.spigot.Guild;
+import io.github.nojokefna.guild.spigot.config.FileBuilder;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.cacheddata.CachedMetaData;
@@ -12,7 +13,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.chat.Chat;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -25,10 +25,10 @@ import java.util.Objects;
  */
 public class Data {
 
-    private final ConfigurationSection section;
+    private final FileBuilder fileBuilder;
 
     public Data() {
-        this.section = Guild.getPlugin().getSettingsManager().getFileConfiguration();
+        this.fileBuilder = Guild.getPlugin().getSettingsManager();
     }
 
     public String getPrefix() {
@@ -36,7 +36,7 @@ public class Data {
     }
 
     public String getGroup( Player player ) {
-        switch ( this.section.getString( "chat.permission_plugin" ) ) {
+        switch ( this.fileBuilder.getKey( "chat.permission_plugin" ) ) {
             case "LuckPerms":
                 LuckPerms luckPerms = LuckPermsProvider.get();
                 ContextManager contextManager = luckPerms.getContextManager();
@@ -53,7 +53,7 @@ public class Data {
             }
 
             case "CloudNet":
-                switch ( this.section.getString( "chat.cloudnet.use" ) ) {
+                switch ( this.fileBuilder.getKey( "chat.cloudnet.use" ) ) {
                     case "display":
                         return this.sendColoredMessage( CloudAPI.getInstance().getOnlinePlayer( player.getUniqueId() ).getPermissionEntity()
                                 .getHighestPermissionGroup( CloudAPI.getInstance().getPermissionPool() ).getDisplay()

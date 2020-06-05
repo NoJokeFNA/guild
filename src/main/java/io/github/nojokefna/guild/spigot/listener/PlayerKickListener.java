@@ -2,8 +2,8 @@ package io.github.nojokefna.guild.spigot.listener;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.cache.CacheUser;
+import io.github.nojokefna.guild.spigot.config.FileBuilder;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,18 +17,18 @@ import java.util.Objects;
  */
 public class PlayerKickListener implements Listener {
 
-    private final ConfigurationSection section;
+    private final FileBuilder fileBuilder;
 
     public PlayerKickListener() {
-        this.section = Guild.getPlugin().getServerSettingsManager().getFileConfiguration();
+        this.fileBuilder = Guild.getPlugin().getServerSettingsManager();
     }
 
     @EventHandler
     public void onPlayerKick( PlayerKickEvent event ) {
         Player player = event.getPlayer();
 
-        if ( this.section.getBoolean( "kick.enable" ) ) {
-            if ( this.section.getBoolean( "kick.admin.bypass" ) && player.hasPermission( this.section.getString( "kick.admin.permission" ) ) ) {
+        if ( this.fileBuilder.getBoolean( "kick.enable" ) ) {
+            if ( this.fileBuilder.getBoolean( "kick.admin.bypass" ) && player.hasPermission( this.fileBuilder.getKey( "kick.admin.permission" ) ) ) {
                 event.setLeaveMessage( null );
                 return;
             }

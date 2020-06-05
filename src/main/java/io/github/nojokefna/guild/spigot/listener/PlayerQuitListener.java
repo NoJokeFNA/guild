@@ -2,7 +2,7 @@ package io.github.nojokefna.guild.spigot.listener;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.cache.CacheUser;
-import org.bukkit.configuration.ConfigurationSection;
+import io.github.nojokefna.guild.spigot.config.FileBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,18 +17,18 @@ import java.util.Objects;
  */
 public class PlayerQuitListener implements Listener {
 
-    private final ConfigurationSection section;
+    private final FileBuilder fileBuilder;
 
     public PlayerQuitListener() {
-        this.section = Guild.getPlugin().getServerSettingsManager().getFileConfiguration();
+        this.fileBuilder = Guild.getPlugin().getServerSettingsManager();
     }
 
     @EventHandler( priority = EventPriority.HIGH, ignoreCancelled = true )
     public void onPlayerQuit( PlayerQuitEvent event ) {
         Player player = event.getPlayer();
 
-        if ( this.section.getBoolean( "quit.enable" ) ) {
-            if ( this.section.getBoolean( "quit.admin.bypass" ) && player.hasPermission( this.section.getString( "quit.admin.permission" ) ) ) {
+        if ( this.fileBuilder.getBoolean( "quit.enable" ) ) {
+            if ( this.fileBuilder.getBoolean( "quit.admin.bypass" ) && player.hasPermission( this.fileBuilder.getKey( "quit.admin.permission" ) ) ) {
                 event.setQuitMessage( null );
                 return;
             }

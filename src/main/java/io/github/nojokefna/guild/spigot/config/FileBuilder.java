@@ -1,8 +1,8 @@
 package io.github.nojokefna.guild.spigot.config;
 
 import io.github.nojokefna.guild.spigot.Guild;
-import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,7 +16,6 @@ import java.text.DecimalFormat;
  * @author NoJokeFNA
  * @version 1.0.0
  */
-@Getter
 public class FileBuilder {
 
     private final File file;
@@ -56,6 +55,10 @@ public class FileBuilder {
 
     public boolean getBoolean( String key ) {
         return this.fileConfiguration.getBoolean( key );
+    }
+
+    public ConfigurationSection getConfigurationSection() {
+        return this.fileConfiguration;
     }
 
     public void setKey( String path, Object value ) {
