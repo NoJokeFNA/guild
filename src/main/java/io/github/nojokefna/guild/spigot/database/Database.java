@@ -131,15 +131,9 @@ public class Database {
         this.checkConnection();
 
         try {
-            return preparedStatement.executeQuery();
+            preparedStatement.close();
         } catch ( Exception ex ) {
             ex.printStackTrace();
-        } finally {
-            try {
-                preparedStatement.close();
-            } catch ( SQLException ex ) {
-                ex.printStackTrace();
-            }
         }
         return null;
     }

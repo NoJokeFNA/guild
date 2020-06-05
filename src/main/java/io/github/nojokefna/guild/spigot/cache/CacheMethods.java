@@ -67,6 +67,9 @@ public class CacheMethods {
 
                     case "normal":
                         break;
+
+                    default:
+                        throw new IllegalStateException( "Unexpected value: " + this.serverSection.getString( "tablist.guild_format" ) );
                 }
 
                 new RankCache(
@@ -114,17 +117,6 @@ public class CacheMethods {
             }
         } );
     }
-
-    /*RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration( LuckPerms.class );
-                if ( provider != null ) {
-                    LuckPerms api = provider.getProvider();
-
-                    if ( api.getUserManager().getUser( player.getName() ).getPrimaryGroup().equals( rank ) ) {
-                        user.setPrefix( RankCache.getRank( rank ).getPrefix() );
-                        user.setSuffix( RankCache.getRank( rank ).getSuffix() );
-                        user.setTagId( RankCache.getRank( rank ).getTagId() );
-                    }
-                }*/
 
     public void setSubtitle( Player receiver, UUID subtitlePlayer, Player target ) {
         CacheUser user = CacheUser.getUser( receiver );

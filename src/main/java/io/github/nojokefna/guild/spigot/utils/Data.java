@@ -3,12 +3,6 @@ package io.github.nojokefna.guild.spigot.utils;
 import de.dytanic.cloudnet.api.CloudAPI;
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.config.FileBuilder;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.cacheddata.CachedMetaData;
-import net.luckperms.api.context.ContextManager;
-import net.luckperms.api.model.user.User;
-import net.luckperms.api.query.QueryOptions;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.chat.Chat;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
@@ -17,7 +11,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
-import java.util.Objects;
 
 /**
  * @author NoJokeFNA
@@ -38,19 +31,9 @@ public class Data {
     public String getGroup( Player player ) {
         switch ( this.fileBuilder.getKey( "chat.permission_plugin" ) ) {
             case "LuckPerms":
-                LuckPerms luckPerms = LuckPermsProvider.get();
-                ContextManager contextManager = luckPerms.getContextManager();
-
-                User user = luckPerms.getUserManager().getUser( player.getUniqueId() );
-                QueryOptions queryOptions = contextManager.getQueryOptions( Objects.requireNonNull( user ) ).orElse( contextManager.getStaticQueryOptions() );
-                CachedMetaData metaData = user.getCachedData().getMetaData( queryOptions );
-
-                return this.sendColoredMessage( metaData.getPrefix() );
-
-            case "PermissionsEx": {
+            case "PermissionsEx":
                 Chat chat = Guild.getPlugin().getChat();
                 return this.sendColoredMessage( chat.getGroupPrefix( player.getWorld(), chat.getPrimaryGroup( player ) ) );
-            }
 
             case "CloudNet":
                 switch ( this.fileBuilder.getKey( "chat.cloudnet.use" ) ) {
@@ -64,15 +47,14 @@ public class Data {
                                 + player.getName() );
 
                     default:
-                        player.sendMessage( "§4Unsupported value in §cchat_settings.yml » chat.cloudnet.use" );
-                        break;
+                        throw new UnsupportedOperationException( "§4Unsupported value in §cchat_settings.yml » chat.cloudnet.use » "
+                                + this.fileBuilder.getKey( "chat.cloudnet.use" ) );
                 }
 
             default:
-                player.sendMessage( "§4§lPlease use §cLuckPerms§4§l, §cPermissionsEx §4§lor §cCloudNet§4§l!" );
-                break;
+                throw new IllegalStateException( "§4§lPlease use §cLuckPerms§4§l, §cPermissionsEx §4§lor §cCloudNet§4§l! » "
+                        + this.fileBuilder.getKey( "chat.permission_plugin" ) );
         }
-        return null;
     }
 
     public void sendTablist( Player player, String header, String footer ) {
@@ -88,8 +70,8 @@ public class Data {
             Field field = packet.getClass().getDeclaredField( "b" );
             field.setAccessible( true );
             field.set( packet, tabFooter );
-        } catch ( Exception e ) {
-            e.printStackTrace();
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
         } finally {
             ( ( CraftPlayer ) player ).getHandle().playerConnection.sendPacket( packet );
         }

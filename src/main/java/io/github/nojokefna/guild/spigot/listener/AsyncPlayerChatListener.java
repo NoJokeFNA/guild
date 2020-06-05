@@ -2,6 +2,7 @@ package io.github.nojokefna.guild.spigot.listener;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.cache.CacheUser;
+import io.github.nojokefna.guild.spigot.config.FileBuilder;
 import io.github.nojokefna.guild.spigot.controller.GuildController;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -21,9 +22,11 @@ import java.util.Objects;
 public class AsyncPlayerChatListener implements Listener {
 
     private final ConfigurationSection section;
+    private final FileBuilder fileBuilder;
 
     public AsyncPlayerChatListener() {
         this.section = Guild.getPlugin().getSettingsManager().getConfigurationSection();
+        this.fileBuilder = Guild.getPlugin().getSettingsManager();
     }
 
     @EventHandler( priority = EventPriority.HIGH, ignoreCancelled = true )
@@ -45,7 +48,7 @@ public class AsyncPlayerChatListener implements Listener {
         if ( this.section.getBoolean( "chat.use_chat" ) ) {
             String message = this.section.getString( "chat.chat_format_guild" )
                     .replace( "{PLAYER}", player.getName() )
-                    .replace( "{DISPLAYNAME}", player.getDisplayName() )
+                    .replace( "{DISPLAYNAME}", user.getNameTag()[0] + player.getName() )
                     .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
                             ? this.sendColoredMessage( event.getMessage() ) : event.getMessage() )
                     .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
@@ -68,6 +71,9 @@ public class AsyncPlayerChatListener implements Listener {
                         message = message.replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildTag( player ) );
                         event.setFormat( this.sendColoredMessage( message ) );
                         break;
+
+                    default:
+                        throw new IllegalStateException( "Unexpected value: " + this.section.getString( "chat.guild_format" ) );
                 }
             } else {
                 event.setFormat( message );
@@ -81,7 +87,7 @@ public class AsyncPlayerChatListener implements Listener {
 
                     String message = permissionNameValues.get( 0 )
                             .replace( "{PLAYER}", player.getName() )
-                            .replace( "{DISPLAYNAME}", player.getDisplayName() )
+                            .replace( "{DISPLAYNAME}", user.getNameTag()[0] + player.getName() )
                             .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
                                     ? this.sendColoredMessage( event.getMessage() ) : event.getMessage() )
                             .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
@@ -89,7 +95,7 @@ public class AsyncPlayerChatListener implements Listener {
 
                     String messageTwo = permissionNameValues.get( 1 )
                             .replace( "{PLAYER}", player.getName() )
-                            .replace( "{DISPLAYNAME}", player.getDisplayName() )
+                            .replace( "{DISPLAYNAME}", user.getNameTag()[0] + player.getName() )
                             .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
                                     ? this.sendColoredMessage( event.getMessage() ) : event.getMessage() )
                             .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
@@ -132,12 +138,16 @@ public class AsyncPlayerChatListener implements Listener {
             event.setCancelled( user.getCacheMethods().getCoolDown( player, user.getMessageCoolDown(), "chat" ) );
 
         if ( this.section.getBoolean( "chat.chat_settings.repeat" ) ) {
+            if ( player.hasPermission( this.fileBuilder.getKey( "chat_settings.bypass_repeat_permission" ) ) ) return;
+
             if ( user.getMessage().containsKey( player.getUniqueId() ) ) {
-                event.setCancelled( true );
                 user.getMessage().remove( player.getUniqueId() );
-            } else
+                event.setCancelled( true );
+                Guild.getPlugin().getGuildBuilder().sendMessage( player, this.fileBuilder.getKey( "chat.chat_settings.repeat_message" ) );
+            } else {
+                user.getMessage().put( player.getUniqueId(), event.getMessage() );
                 event.setCancelled( false );
-            user.getMessage().put( player.getUniqueId(), event.getMessage() );
+            }
         }
     }
 

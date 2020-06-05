@@ -51,8 +51,8 @@ tablist:
 
 
   use_header_footer: true
-  header: 'This is the header'
-  footer: 'This is the footer'
+  header: '&aThis server use the &cGuild-System'
+  footer: '&bCoded by &eNoJokeFNA'
 
   # Use 'UpperCase' for [GUILD], 'lowerCase' for [guild] or 'normal' for [Guild]
   guild_format: 'normal'
@@ -102,7 +102,7 @@ tablist:
 
 motd:
   use_motd: true
-  text: '&aThis is{NL}&a&lyour MOTD'
+  text: '&aThis server use the &cGuild-System{NL}&bCoded by &eNoJokeFNA'
 
   use_max_players: true
   max_players: 45
