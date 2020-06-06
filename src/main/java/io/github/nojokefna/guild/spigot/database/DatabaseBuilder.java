@@ -21,11 +21,13 @@ public class DatabaseBuilder {
 
     public void createTables() {
         if ( this.isMySqlConfigured() ) {
-            this.database = new Database( this.section.getString( "mysql.username" )
-                    , this.section.getString( "mysql.password" )
-                    , this.section.getString( "mysql.hostname" )
-                    , this.section.getString( "mysql.database" )
-                    , Guild.getPlugin()
+            this.database = new Database(
+                    this.section.getString( "mysql.username" ),
+                    this.section.getString( "mysql.password" ),
+                    this.section.getString( "mysql.hostname" ),
+                    this.section.getInt( "mysql.port" ),
+                    this.section.getString( "mysql.database" ),
+                    Guild.getPlugin()
             );
 
             this.database.update(

@@ -74,7 +74,7 @@ public class GuildController implements GuildInterface {
             return;
         }
 
-        if ( ! ( Guild.getPlugin().getEcon().getBalance( player ) >= costs ) ) {
+        if ( ! ( Guild.getPlugin().getEconomy().getBalance( player ) >= costs ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.create_guild.not_enough_money" ) );
             return;
         }
@@ -88,7 +88,7 @@ public class GuildController implements GuildInterface {
             return;
         }
 
-        Guild.getPlugin().getEcon().withdrawPlayer( player, costs );
+        Guild.getPlugin().getEconomy().withdrawPlayer( player, costs );
 
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.create_guild.successfully_created" ) );
         this.guildAPI.createGuild( guildName, guildTag, leader );
@@ -680,7 +680,7 @@ public class GuildController implements GuildInterface {
         }
 
         try {
-            if ( ! ( Guild.getPlugin().getEcon().getBalance( player ) >= amount ) ) {
+            if ( ! ( Guild.getPlugin().getEconomy().getBalance( player ) >= amount ) ) {
                 this.guildBuilder.sendMessage( player, "§cDu hast keine §b$" + amount + "§c." );
                 return;
             }
@@ -688,7 +688,7 @@ public class GuildController implements GuildInterface {
             this.guildUserAPI.addKey( "guild_payed_money", amount, player.getUniqueId() );
             this.guildAPI.addKey( this.sendGuildName( player ), amount );
 
-            Guild.getPlugin().getEcon().withdrawPlayer( player, amount );
+            Guild.getPlugin().getEconomy().withdrawPlayer( player, amount );
 
             this.guildBuilder.sendMessage( player, "§aDu hast §b$" + amount + " §aauf die Gilden Bank eingezahlt." );
         } catch ( NumberFormatException ex ) {
@@ -719,7 +719,7 @@ public class GuildController implements GuildInterface {
             this.guildUserAPI.addKey( "guild_take_money", amount, player.getUniqueId() );
             this.guildAPI.removeKey( this.sendGuildName( player ), amount );
 
-            Guild.getPlugin().getEcon().depositPlayer( player, amount );
+            Guild.getPlugin().getEconomy().depositPlayer( player, amount );
 
             this.guildBuilder.sendMessage( player, "§aDu hast §b$" + amount + " §avon der Gilden Bank genommen." );
         } catch ( NumberFormatException ex ) {

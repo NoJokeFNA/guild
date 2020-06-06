@@ -108,7 +108,7 @@ public class CacheMethods {
                     user.setTagId( RankCache.getRank( rank ).getTagId() );
                 }
             } else {
-                if ( Guild.getPlugin().getPerms().playerInGroup( player, rank ) ) {
+                if ( Guild.getPlugin().getPermission().playerInGroup( player, rank ) ) {
                     user.setPrefix( RankCache.getRank( rank ).getPrefix() );
                     user.setNameTag( RankCache.getRank( rank ).getNameTag() );
                     user.setSuffix( RankCache.getRank( rank ).getSuffix() );

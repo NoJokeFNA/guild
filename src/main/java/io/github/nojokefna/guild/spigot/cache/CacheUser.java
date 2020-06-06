@@ -18,13 +18,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CacheUser {
 
     private static final Map<UUID, CacheUser> USER_MAP = new HashMap<>();
+
     // init
     private final CacheMethods cacheMethods;
+    
     // settings
     private final Map<UUID, Long> commandCoolDown, messageCoolDown;
     private final Map<UUID, String> message;
+
     // startup
     private AtomicBoolean loaded;
+
     // tabList
     private String[] prefix, nameTag, suffix;
     private String tagId;

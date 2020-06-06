@@ -5,6 +5,7 @@ import io.github.nojokefna.guild.spigot.interfaces.MySQL;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -42,19 +43,19 @@ public class GuildInvitesAPI extends MySQL {
         } );
     }
 
-    public void deleteInvite( OfflinePlayer player ) {
+    public void deleteInvite( @NotNull OfflinePlayer player ) {
         this.deleteKey( "guild_invites", "player_name", player.getName() );
     }
 
-    public String getInvite( OfflinePlayer player, String key ) {
+    public String getInvite( @NotNull OfflinePlayer player, String key ) {
         return this.getKey( "guild_invites", "player_name", player.getName(), "guild_name" );
     }
 
-    public List<String> getInvites( Player player, String key ) {
+    public List<String> getInvites( @NotNull Player player, String key ) {
         return this.getList( "guild_invites", "player_name", player.getName(), key );
     }
 
-    public List<String> getInvites( UUID playerUuid, String key ) {
+    public List<String> getInvites( @NotNull UUID playerUuid, String key ) {
         return this.getList( "guild_invites", "player_uuid", playerUuid.toString(), key );
     }
 }

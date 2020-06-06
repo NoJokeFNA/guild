@@ -3,6 +3,7 @@ package io.github.nojokefna.guild.spigot.database.api;
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.interfaces.MySQL;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -80,23 +81,23 @@ public class GuildUserAPI extends MySQL {
         } );
     }
 
-    public void deleteKey( UUID uuid ) {
+    public void deleteKey( @NotNull UUID uuid ) {
         this.deleteKey( "guild_user", "player_uuid", uuid.toString() );
     }
 
-    public void updateKey( String setterKey, String setKey, UUID uuid ) {
+    public void updateKey( String setterKey, String setKey, @NotNull UUID uuid ) {
         this.updateKey( "guild_user", setterKey, setKey, "player_uuid", uuid.toString() );
     }
 
-    public void updateKey( String setterKey, int setKey, UUID uuid ) {
+    public void updateKey( String setterKey, int setKey, @NotNull UUID uuid ) {
         this.updateKey( "guild_user", setterKey, setKey, "player_uuid", uuid.toString() );
     }
 
-    public String getKey( UUID uuid, String key ) {
+    public String getKey( @NotNull UUID uuid, String key ) {
         return this.getKey( "guild_user", "player_uuid", uuid.toString(), key );
     }
 
-    public int getKeyByInteger( UUID uuid, String key ) {
+    public int getKeyByInteger( @NotNull UUID uuid, String key ) {
         return this.getKeyByInteger( "guild_user", "player_uuid", uuid.toString(), key );
     }
 
@@ -108,11 +109,11 @@ public class GuildUserAPI extends MySQL {
         return this.getList( "guild_user", whereKey, setWhereKey, getKey );
     }
 
-    public void addKey( String type, int amount, UUID playerUuid ) {
+    public void addKey( String type, int amount, @NotNull UUID playerUuid ) {
         this.addKey( "guild_user", type, amount, "player_uuid", playerUuid.toString() );
     }
 
-    public void removeKey( String type, int amount, UUID playerUuid ) {
+    public void removeKey( String type, int amount, @NotNull UUID playerUuid ) {
         this.removeKey( "guild_user", type, amount, "player_uuid", playerUuid.toString() );
     }
 }

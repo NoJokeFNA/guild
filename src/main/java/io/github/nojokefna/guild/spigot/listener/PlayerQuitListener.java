@@ -28,7 +28,8 @@ public class PlayerQuitListener implements Listener {
         Player player = event.getPlayer();
 
         if ( this.fileBuilder.getBoolean( "quit.enable" ) ) {
-            if ( this.fileBuilder.getBoolean( "quit.admin.bypass" ) && player.hasPermission( this.fileBuilder.getKey( "quit.admin.permission" ) ) ) {
+            if ( this.fileBuilder.getBoolean( "quit.admin.bypass" )
+                    && player.hasPermission( this.fileBuilder.getKey( "quit.admin.permission" ) ) ) {
                 event.setQuitMessage( null );
                 return;
             }

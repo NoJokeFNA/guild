@@ -17,13 +17,15 @@ public class Database {
     private final Guild plugin;
 
     private final String username, password, hostname, database;
+    private final int port;
 
     private Connection connection;
 
-    public Database( String username, String password, String hostname, String database, Guild plugin ) {
+    public Database( String username, String password, String hostname, int port, String database, Guild plugin ) {
         this.username = username;
         this.password = password;
         this.hostname = hostname;
+        this.port = port;
         this.database = database;
         this.plugin = plugin;
     }
@@ -34,7 +36,7 @@ public class Database {
 
             synchronized ( this ) {
                 Class.forName( "com.mysql.jdbc.Driver" );
-                this.setConnection( DriverManager.getConnection( "jdbc:mysql://" + hostname + ":" + "3306" + "/" + database + "?autoReconnect=true",
+                this.setConnection( DriverManager.getConnection( "jdbc:mysql://" + hostname + ":" + port + "/" + database + "?autoReconnect=true",
                         username, password ) );
                 Bukkit.getServer().getLogger().info( this.plugin.getData().getPrefix() + "§bEine Verbindung wurde zur Datenbank aufgebaut." );
             }

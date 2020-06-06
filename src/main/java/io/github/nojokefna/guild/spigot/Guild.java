@@ -21,6 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,8 +37,8 @@ public class Guild extends JavaPlugin {
     private static Guild plugin;
 
     private ExecutorService executorService;
-    private Economy econ;
-    private Permission perms;
+    private Economy economy;
+    private Permission permission;
     private Chat chat;
 
     private Data data;
@@ -161,9 +162,9 @@ public class Guild extends JavaPlugin {
         if ( serviceProvider == null )
             return false;
 
-        this.econ = serviceProvider.getProvider();
+        this.economy = serviceProvider.getProvider();
 
-        return this.econ != null;
+        return this.economy != null;
     }
 
     private void setupPerms( String plugin ) {
@@ -174,7 +175,7 @@ public class Guild extends JavaPlugin {
         if ( serviceProvider == null )
             return;
 
-        this.perms = serviceProvider.getProvider();
+        this.permission = serviceProvider.getProvider();
     }
 
     private void setupChat() {
@@ -183,7 +184,10 @@ public class Guild extends JavaPlugin {
     }
 
     private void save( String path ) {
-        this.saveResource( path, false );
-        this.saveConfig();
+        File file = new File( this.getDataFolder().getAbsolutePath(), path );
+        if ( ! file.exists() ) {
+            this.saveResource( path, false );
+            this.saveConfig();
+        }
     }
 }

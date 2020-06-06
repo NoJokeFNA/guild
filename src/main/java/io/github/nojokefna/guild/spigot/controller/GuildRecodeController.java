@@ -72,7 +72,7 @@ public class GuildRecodeController implements GuildRecodeInterface {
             return;
         }
 
-        if ( ! ( Guild.getPlugin().getEcon().getBalance( player ) >= costs ) ) {
+        if ( ! ( Guild.getPlugin().getEconomy().getBalance( player ) >= costs ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.create_guild.not_enough_money" ) );
             return;
         }
@@ -86,7 +86,7 @@ public class GuildRecodeController implements GuildRecodeInterface {
             return;
         }
 
-        Guild.getPlugin().getEcon().withdrawPlayer( player, costs );
+        Guild.getPlugin().getEconomy().withdrawPlayer( player, costs );
 
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.create_guild.successfully_created" ) );
         this.guildAPI.createGuild( guildName, guildTag, guildLeader );

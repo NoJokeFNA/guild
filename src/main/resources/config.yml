@@ -5,6 +5,7 @@ mysql:
   username: 'username'
   password: 'password'
   hostname: 'hostname'
+  port: 3306
   database: 'database'
 
 # Select your language!
