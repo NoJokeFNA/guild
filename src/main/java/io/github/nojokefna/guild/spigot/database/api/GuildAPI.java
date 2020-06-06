@@ -1,7 +1,7 @@
 package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
-import io.github.nojokefna.guild.spigot.interfaces.MySQL;
+import io.github.nojokefna.guild.spigot.interfaces.MySQLBase;
 import org.bukkit.Bukkit;
 
 import java.sql.PreparedStatement;
@@ -11,7 +11,7 @@ import java.sql.SQLException;
  * @author NoJokeFNA
  * @version 1.0.0
  */
-public class GuildAPI extends MySQL {
+public class GuildAPI extends MySQLBase {
 
     public boolean guildExists( String keyValue, String guildKey ) {
         return this.keyExists( "guild", keyValue, guildKey );

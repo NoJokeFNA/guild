@@ -1,9 +1,8 @@
 package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
-import io.github.nojokefna.guild.spigot.interfaces.MySQL;
+import io.github.nojokefna.guild.spigot.interfaces.MySQLBase;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,23 +14,23 @@ import java.util.UUID;
  * @author NoJokeFNA
  * @version 1.0.0
  */
-public class GuildUserAPI extends MySQL {
+public class GuildUserAPI extends MySQLBase {
 
-    public boolean keyExists( UUID uuid ) {
-        return this.keyExists( "guild_user", "player_uuid", uuid.toString() );
+    public boolean keyExists( UUID playerUuid ) {
+        return this.keyExists( "guild_user", "player_uuid", playerUuid.toString() );
     }
 
-    public boolean getGuilds( UUID uuid, String key ) {
+    public boolean getGuilds( UUID playerUuid, String key ) {
         boolean value = false;
         if ( key == null )
             return false;
 
         try {
-            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                    .getConnection()
+            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                    .getDatabase()
                     .prepareStatement( "SELECT * FROM `guild_user` WHERE player_uuid = ? AND guild_rank = ?" );
 
-            preparedStatement.setString( 1, uuid.toString() );
+            preparedStatement.setString( 1, playerUuid.toString() );
             preparedStatement.setString( 2, key );
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -46,9 +45,9 @@ public class GuildUserAPI extends MySQL {
         return value;
     }
 
-    public void createPlayer( UUID uuid, String playerName, String guildName, String guildTag, String guildRank ) {
+    public void createPlayer( UUID playerUuid, String playerName, String guildName, String guildTag, String guildRank ) {
         Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
-            if ( ! this.keyExists( uuid ) ) {
+            if ( ! this.keyExists( playerUuid ) ) {
                 try {
                     PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
                             .getConnection()
@@ -64,7 +63,7 @@ public class GuildUserAPI extends MySQL {
                                             "VALUES (?, ?, ?, ?, ?, ?, ?)"
                             );
 
-                    preparedStatement.setString( 1, uuid.toString() );
+                    preparedStatement.setString( 1, playerUuid.toString() );
                     preparedStatement.setString( 2, playerName );
                     preparedStatement.setString( 3, guildName );
                     preparedStatement.setString( 4, guildTag );
@@ -81,24 +80,24 @@ public class GuildUserAPI extends MySQL {
         } );
     }
 
-    public void deleteKey( @NotNull UUID uuid ) {
-        this.deleteKey( "guild_user", "player_uuid", uuid.toString() );
+    public void deleteKey( UUID playerUuid ) {
+        this.deleteKey( "guild_user", "player_uuid", playerUuid.toString() );
     }
 
-    public void updateKey( String setterKey, String setKey, @NotNull UUID uuid ) {
-        this.updateKey( "guild_user", setterKey, setKey, "player_uuid", uuid.toString() );
+    public void updateKey( String setterKey, String setKey, UUID playerUuid ) {
+        this.updateKey( "guild_user", setterKey, setKey, "player_uuid", playerUuid.toString() );
     }
 
-    public void updateKey( String setterKey, int setKey, @NotNull UUID uuid ) {
-        this.updateKey( "guild_user", setterKey, setKey, "player_uuid", uuid.toString() );
+    public void updateKey( String setterKey, int setKey, UUID playerUuid ) {
+        this.updateKey( "guild_user", setterKey, setKey, "player_uuid", playerUuid.toString() );
     }
 
-    public String getKey( @NotNull UUID uuid, String key ) {
-        return this.getKey( "guild_user", "player_uuid", uuid.toString(), key );
+    public String getKey( UUID playerUuid, String key ) {
+        return this.getKey( "guild_user", "player_uuid", playerUuid.toString(), key );
     }
 
-    public int getKeyByInteger( @NotNull UUID uuid, String key ) {
-        return this.getKeyByInteger( "guild_user", "player_uuid", uuid.toString(), key );
+    public int getKeyByInteger( UUID playerUuid, String key ) {
+        return this.getKeyByInteger( "guild_user", "player_uuid", playerUuid.toString(), key );
     }
 
     public List<String> getList( String whereKey, String setWhereKey, String secondWhereKey, String setSecondWhereKey, String getKey ) {
@@ -109,11 +108,11 @@ public class GuildUserAPI extends MySQL {
         return this.getList( "guild_user", whereKey, setWhereKey, getKey );
     }
 
-    public void addKey( String type, int amount, @NotNull UUID playerUuid ) {
+    public void addKey( String type, int amount, UUID playerUuid ) {
         this.addKey( "guild_user", type, amount, "player_uuid", playerUuid.toString() );
     }
 
-    public void removeKey( String type, int amount, @NotNull UUID playerUuid ) {
+    public void removeKey( String type, int amount, UUID playerUuid ) {
         this.removeKey( "guild_user", type, amount, "player_uuid", playerUuid.toString() );
     }
 }

@@ -633,17 +633,17 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
     @Override
     public boolean isGuildMaster( UUID playerUuid ) {
-        return false;
+        return this.guildUserAPI.getGuilds( playerUuid, "Master" );
     }
 
     @Override
     public boolean isGuildOfficer( UUID playerUuid ) {
-        return false;
+        return this.guildUserAPI.getGuilds( playerUuid, "Officer" );
     }
 
     @Override
     public boolean isGuildMember( UUID playerUuid ) {
-        return false;
+        return this.guildUserAPI.getGuilds( playerUuid, "Member" );
     }
 
     private void sendMessage( List<String> list, Player player, String key, String... message ) {

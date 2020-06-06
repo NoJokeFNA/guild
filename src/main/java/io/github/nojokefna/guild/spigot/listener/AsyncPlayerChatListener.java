@@ -123,7 +123,7 @@ public class AsyncPlayerChatListener implements Listener {
                         }
 
                     } else {
-                        event.setFormat( messageTwo );
+                        event.setFormat( this.sendColoredMessage( messageTwo ) );
                     }
                 }
             } );

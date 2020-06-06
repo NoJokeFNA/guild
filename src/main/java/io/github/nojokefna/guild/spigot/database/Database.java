@@ -1,7 +1,6 @@
 package io.github.nojokefna.guild.spigot.database;
 
 import io.github.nojokefna.guild.spigot.Guild;
-import org.bukkit.Bukkit;
 
 import java.sql.*;
 import java.util.concurrent.ExecutionException;
@@ -32,13 +31,12 @@ public class Database {
 
     public void connect() {
         try {
-            if ( this.getConnection() != null && ! this.getConnection().isClosed() ) return;
+            if ( this.connection != null && ! this.connection.isClosed() ) return;
 
             synchronized ( this ) {
                 Class.forName( "com.mysql.jdbc.Driver" );
                 this.setConnection( DriverManager.getConnection( "jdbc:mysql://" + hostname + ":" + port + "/" + database + "?autoReconnect=true",
                         username, password ) );
-                Bukkit.getServer().getLogger().info( this.plugin.getData().getPrefix() + "§bEine Verbindung wurde zur Datenbank aufgebaut." );
             }
         } catch ( SQLException | ClassNotFoundException ex ) {
             ex.printStackTrace();
@@ -75,7 +73,7 @@ public class Database {
         } );
     }
 
-    public PreparedStatement prepare( String query ) {
+    public PreparedStatement prepareStatement( String query ) {
         try {
             return this.connection.prepareStatement( query );
         } catch ( Exception ex ) {
@@ -150,10 +148,6 @@ public class Database {
 
     public boolean isConnected() {
         return this.connection != null;
-    }
-
-    public Connection getConnection() {
-        return this.connection;
     }
 
     public void setConnection( Connection connection ) {

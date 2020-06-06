@@ -21,8 +21,12 @@ public class PlayerJoinListener implements Listener {
 
     private final FileBuilder fileBuilder;
 
+    private final boolean value;
+
     public PlayerJoinListener() {
         this.fileBuilder = Guild.getPlugin().getServerSettingsManager();
+
+        this.value = this.fileBuilder.getBoolean( "tablist.labymod.use_labymod" );
     }
 
     @EventHandler( priority = EventPriority.HIGH, ignoreCancelled = true )
@@ -30,13 +34,17 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
         CacheUser user = CacheUser.getUser( player );
 
+        System.out.println( "PlayerJoinEvent: " + player.getUniqueId() );
+
         if ( this.fileBuilder.getBoolean( "tablist.use_header_footer" ) )
-            Guild.getPlugin().getData().sendTablist( player, this.fileBuilder.getKey( "tablist.header" ), this.fileBuilder.getKey( "tablist.footer" ) );
+            Guild.getPlugin().getData().sendTablist( player, this.fileBuilder.getKey( "tablist.header" ),
+                    this.fileBuilder.getKey( "tablist.footer" ) );
 
         user.getCacheMethods().initTeams( player );
         user.getCacheMethods().setPrefix( player );
 
-        Bukkit.getOnlinePlayers().forEach( players -> user.getCacheMethods().setSubtitle( player, player.getUniqueId(), players ) );
+        if ( this.value )
+            Bukkit.getOnlinePlayers().forEach( players -> user.getCacheMethods().setSubtitle( player, player.getUniqueId(), players ) );
 
         TabListBuilder.setNameTag();
 
@@ -44,7 +52,8 @@ public class PlayerJoinListener implements Listener {
             player.sendMessage( "Guild-System detected" );
 
         if ( this.fileBuilder.getBoolean( "join.enable" ) ) {
-            if ( this.fileBuilder.getBoolean( "join.admin.bypass" ) && player.hasPermission( this.fileBuilder.getKey( "join.admin.permission" ) ) ) {
+            if ( this.fileBuilder.getBoolean( "join.admin.bypass" )
+                    && player.hasPermission( this.fileBuilder.getKey( "join.admin.permission" ) ) ) {
                 event.setJoinMessage( null );
                 return;
             }

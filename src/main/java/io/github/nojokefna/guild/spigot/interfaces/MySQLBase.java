@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  * @author NoJokeFNA
  * @version 1.0.0
  */
-public abstract class MySQL {
+public abstract class MySQLBase {
 
     /**
      * Checks whether your {@code #setKey} is present or not.
@@ -30,8 +30,8 @@ public abstract class MySQL {
             return false;
 
         try {
-            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                    .getConnection()
+            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                    .getDatabase()
                     .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
 
             preparedStatement.setString( 1, setKey );
@@ -61,8 +61,8 @@ public abstract class MySQL {
         Guild.getPlugin().getExecutorService().execute( () -> {
             if ( this.keyExists( table, whereKey, setWhereKey ) ) {
                 try {
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                            .getConnection()
+                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                            .getDatabase()
                             .prepareStatement( "UPDATE `" + table + "` SET " + setterKey + " = ? WHERE " + whereKey + " = ?" );
 
                     preparedStatement.setString( 1, setSetKey );
@@ -89,8 +89,8 @@ public abstract class MySQL {
         Guild.getPlugin().getExecutorService().execute( () -> {
             if ( this.keyExists( table, whereKey, setWhereKey ) ) {
                 try {
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                            .getConnection()
+                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                            .getDatabase()
                             .prepareStatement( "UPDATE `" + table + "` SET " + setterKey + " = ? WHERE " + whereKey + " = ?" );
 
                     preparedStatement.setInt( 1, setSetKey );
@@ -120,8 +120,8 @@ public abstract class MySQL {
 
         if ( this.keyExists( table, whereKey, setKey ) ) {
             try {
-                PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                        .getConnection()
+                PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                        .getDatabase()
                         .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
 
                 preparedStatement.setString( 1, setKey );
@@ -152,8 +152,8 @@ public abstract class MySQL {
         int value = 0;
         if ( this.keyExists( table, whereKey, setKey ) ) {
             try {
-                PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                        .getConnection()
+                PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                        .getDatabase()
                         .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
 
                 preparedStatement.setString( 1, setKey );
@@ -184,8 +184,8 @@ public abstract class MySQL {
         int rank = 0;
 
         try {
-            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                    .getConnection()
+            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                    .getDatabase()
                     .prepareStatement( "SELECT " + selectKey + " FROM `" + table + "` ORDER BY " + orderKey + " DESC" );
 
             ResultSet resultSet;
@@ -214,8 +214,8 @@ public abstract class MySQL {
         List<String> getList = new ArrayList<>();
 
         try {
-            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                    .getConnection()
+            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                    .getDatabase()
                     .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
 
             preparedStatement.setString( 1, setWhereKey );
@@ -249,8 +249,8 @@ public abstract class MySQL {
         List<String> getList = new ArrayList<>();
 
         try {
-            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                    .getConnection()
+            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                    .getDatabase()
                     .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ? AND " + secondWhereKey + " = ?" );
 
             preparedStatement.setString( 1, setWhereKey );
@@ -281,8 +281,8 @@ public abstract class MySQL {
         Guild.getPlugin().getExecutorService().execute( () -> {
             if ( this.keyExists( table, whereKey, setKey ) ) {
                 try {
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                            .getConnection()
+                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                            .getDatabase()
                             .prepareStatement( "DELETE FROM `" + table + "` WHERE " + whereKey + " = ?" );
 
                     preparedStatement.setString( 1, setKey );
