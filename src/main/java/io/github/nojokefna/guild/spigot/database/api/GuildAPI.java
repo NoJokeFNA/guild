@@ -21,8 +21,8 @@ public class GuildAPI extends MySQLBase {
         Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
             if ( ! this.guildExists( "guild_name", guildName ) ) {
                 try {
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                            .getConnection()
+                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                            .getDatabase()
                             .prepareStatement( "INSERT INTO `guild` (guild_name, guild_tag, guild_leader, guild_money) VALUES (?, ?, ?, ?)" );
 
                     preparedStatement.setString( 1, guildName );

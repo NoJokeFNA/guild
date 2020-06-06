@@ -24,8 +24,8 @@ public class GuildInvitesAPI extends MySQLBase {
     public void createPlayer( UUID playerUuid, OfflinePlayer player, String invitedName, String guildName, String guildTag ) {
         Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
             try {
-                PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                        .getConnection()
+                PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                        .getDatabase()
                         .prepareStatement( "INSERT INTO `guild_invites` (player_uuid, player_name, invited_name, guild_name, guild_tag)" +
                                 " VALUES (?, ?, ?, ?, ?)" );
 

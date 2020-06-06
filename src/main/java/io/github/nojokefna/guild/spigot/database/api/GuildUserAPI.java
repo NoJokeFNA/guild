@@ -49,8 +49,8 @@ public class GuildUserAPI extends MySQLBase {
         Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
             if ( ! this.keyExists( playerUuid ) ) {
                 try {
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabase()
-                            .getConnection()
+                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                            .getDatabase()
                             .prepareStatement(
                                     "INSERT INTO `guild_user` (" +
                                             "player_uuid, " +
