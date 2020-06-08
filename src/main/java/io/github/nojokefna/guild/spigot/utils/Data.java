@@ -25,7 +25,7 @@ public class Data {
     }
 
     public String getPrefix() {
-        return Guild.getPlugin().getFileManager().getKey( "prefix" );
+        return Guild.getPlugin().getFileBuilder().getKey( "prefix" );
     }
 
     public String getGroup( Player player ) {

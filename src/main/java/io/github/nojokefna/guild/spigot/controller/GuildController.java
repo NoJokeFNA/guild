@@ -35,7 +35,7 @@ public class GuildController implements GuildInterface {
     public GuildController() {
         this.guildList = new ArrayList<>();
         this.guildMessageList = new ArrayList<>();
-        this.fileBuilder = Guild.getPlugin().getFileManager();
+        this.fileBuilder = Guild.getPlugin().getFileBuilder();
         this.guildAPI = Guild.getPlugin().getGuildAPI();
         this.guildUserAPI = Guild.getPlugin().getGuildUserAPI();
         this.guildInvitesAPI = Guild.getPlugin().getGuildInvitesAPI();
@@ -138,7 +138,6 @@ public class GuildController implements GuildInterface {
     @Override
     public void sendInvite( Player player, Player target ) {
         CacheUser user = CacheUser.getUser( player );
-        CacheUser targetUser = CacheUser.getUser( target );
 
         if ( ! user.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
@@ -149,6 +148,8 @@ public class GuildController implements GuildInterface {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_invites.target_is_offline" ) );
             return;
         }
+
+        CacheUser targetUser = CacheUser.getUser( target );
 
         if ( targetUser.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_invites.target_is_in_guild" ) );

@@ -33,7 +33,7 @@ public class GuildRecodeController implements GuildRecodeInterface {
         this.guildList = new ArrayList<>();
         this.guildMessageList = new ArrayList<>();
 
-        this.fileBuilder = Guild.getPlugin().getFileManager();
+        this.fileBuilder = Guild.getPlugin().getFileBuilder();
         this.guildAPI = Guild.getPlugin().getGuildAPI();
         this.guildUserAPI = Guild.getPlugin().getGuildUserAPI();
         this.guildInvitesAPI = Guild.getPlugin().getGuildInvitesAPI();

@@ -24,7 +24,7 @@ public class AdminGuildCommand implements CommandExecutor {
                 case 1:
                     switch ( args[0].toLowerCase() ) {
                         case "reload":
-                            Guild.getPlugin().getFileManager().loadConfig();
+                            Guild.getPlugin().getFileBuilder().loadConfig();
                             Guild.getPlugin().getSettingsManager().loadConfig();
 
                             guildBuilder.sendMessage( player, "§aSuccessfully reloaded the config." );

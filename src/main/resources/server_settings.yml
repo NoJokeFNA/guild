@@ -44,10 +44,10 @@ tablist:
     guild_format: 'normal'
 
     use_labymod: true
-    subTitle_normal: '{GROUPPLAYER} &e{PLAYER}'
-    subTitle_member: '{GROUPPLAYER} &e{PLAYER} &8- &4{GUILD} &aMember'
-    subTitle_officer: '{GROUPPLAYER} &e{PLAYER} &8- &4{GUILD} &2Officer'
-    subTitle_master: '{GROUPPLAYER} &e{PLAYER} &8- &4{GUILD} &6Master'
+    subTitle_normal: '{GROUPPLAYER} {PLAYER}'
+    subTitle_member: '{GROUPPLAYER} {PLAYER} &8- &c[{GUILD}] &aMember'
+    subTitle_officer: '{GROUPPLAYER} {PLAYER} &8- &c[{GUILD}] &2Officer'
+    subTitle_master: '{GROUPPLAYER} {PLAYER} &8- &c[{GUILD}] &6Master'
 
 
   use_header_footer: true
@@ -74,15 +74,15 @@ tablist:
 
   prefix:
     admin:
-      - '&4Admin &8| &4'
-      - '&4Administrator &8| &4'
+      - '&4&lAdmin &8| &7'
+      - '&4&lAdministrator &8| &7'
       - '&8[&6{GUILD}&8]'
       - 'Admin'
       - 'guild.tab.admin'
       - 01
     developer:
-      - '&bDev &8| &b'
-      - '&bDeveloper &8| &b'
+      - '&6&lDev &8| &7'
+      - '&6&lDeveloper &8| &7'
       - '&8[&6{GUILD}&8]'
       - 'Developer'
       - 'guild.tab.developer'

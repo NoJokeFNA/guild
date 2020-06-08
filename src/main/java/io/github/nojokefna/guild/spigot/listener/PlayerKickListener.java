@@ -20,7 +20,7 @@ public class PlayerKickListener implements Listener {
     private final FileBuilder fileBuilder;
 
     public PlayerKickListener() {
-        this.fileBuilder = Guild.getPlugin().getServerSettingsManager();
+        this.fileBuilder = Guild.getPlugin().getServerSettingsBuilder();
     }
 
     @EventHandler
@@ -33,7 +33,7 @@ public class PlayerKickListener implements Listener {
                 return;
             }
 
-            event.setLeaveMessage( Guild.getPlugin().getServerSettingsManager().getKey( "kick.message" )
+            event.setLeaveMessage( Guild.getPlugin().getServerSettingsBuilder().getKey( "kick.message" )
                     .replace( "{PLAYER}", player.getName() )
                     .replace( "{DISPLAYNAME}", player.getDisplayName() )
                     .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )

@@ -11,6 +11,7 @@ import io.github.nojokefna.guild.spigot.database.api.GuildAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildInvitesAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildUserAPI;
 import io.github.nojokefna.guild.spigot.listener.*;
+import io.github.nojokefna.guild.spigot.utils.ANSIColors;
 import io.github.nojokefna.guild.spigot.utils.Data;
 import lombok.Getter;
 import net.milkbowl.vault.chat.Chat;
@@ -24,7 +25,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import static java.util.concurrent.Executors.newFixedThreadPool;
 
 /**
  * @author NoJokeFNA
@@ -43,7 +45,7 @@ public class Guild extends JavaPlugin {
 
     private Data data;
     private GuildAPI guildAPI;
-    private FileBuilder fileManager, settingsManager, serverSettingsManager;
+    private FileBuilder fileBuilder, settingsManager, serverSettingsBuilder;
     private GuildUserAPI guildUserAPI;
     private GuildBuilder guildBuilder;
     private GuildController guildController;
@@ -60,14 +62,28 @@ public class Guild extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        long startupTime = System.currentTimeMillis();
+
         this.getLogger().finest( String.format( "%s§aTry to start §c%s §a...", this.getData().getPrefix(), this.getDescription().getName() ) );
-        this.executorService = Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
+        this.executorService = newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
+
+        System.out.println(
+                "\n" +
+                        "  ____       _ _     _ \n" +
+                        " / ___|_   _(_) | __| |\n" +
+                        "| |  _| | | | | |/ _` |\n" +
+                        "| |_| | |_| | | | (_| |\n" +
+                        " \\____|\\__,_|_|_|\\__,_|"
+        );
 
         try {
             this.getDatabaseBuilder().createTables();
+            System.out.println( ANSIColors.ANSI_RED + "MySQL connected in " + ( System.currentTimeMillis() - startupTime ) + "ms" + ANSIColors.ANSI_RESET );
 
             this.initializeVault();
             this.register();
+            System.out.println( ANSIColors.ANSI_RED + "Commands & Listener were loaded in " + ( System.currentTimeMillis() - startupTime ) + "ms"
+                    + ANSIColors.ANSI_RESET );
 
             this.getLogger().finest( String.format( "%s§a%s §ahas started.", this.getData().getPrefix(), this.getDescription().getName() ) );
         } catch ( Exception ex ) {
@@ -75,6 +91,8 @@ public class Guild extends JavaPlugin {
             this.getPluginLoader().disablePlugin( this );
             ex.printStackTrace();
         }
+
+        System.out.println( ANSIColors.ANSI_RED + "The plugin were loaded in " + ( System.currentTimeMillis() - startupTime ) + "ms" + ANSIColors.ANSI_RESET );
     }
 
     @Override
@@ -122,9 +140,9 @@ public class Guild extends JavaPlugin {
         this.save( "chat_settings.yml" );
         this.save( "server_settings.yml" );
 
-        this.fileManager = new FileBuilder( path );
+        this.fileBuilder = new FileBuilder( path );
         this.settingsManager = new FileBuilder( "chat_settings.yml" );
-        this.serverSettingsManager = new FileBuilder( "server_settings.yml" );
+        this.serverSettingsBuilder = new FileBuilder( "server_settings.yml" );
     }
 
     private void initializeVault() {

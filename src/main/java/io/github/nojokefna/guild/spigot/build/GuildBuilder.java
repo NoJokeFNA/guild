@@ -16,7 +16,7 @@ public class GuildBuilder {
     private final FileBuilder fileManager;
 
     public GuildBuilder() {
-        this.fileManager = Guild.getPlugin().getFileManager();
+        this.fileManager = Guild.getPlugin().getFileBuilder();
     }
 
     public void sendHelpMessage( Player player, int site ) {

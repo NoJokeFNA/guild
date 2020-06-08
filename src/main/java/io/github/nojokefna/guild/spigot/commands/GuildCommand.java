@@ -9,18 +9,22 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author NoJokeFNA
  * @version 1.0.0
  */
-public class GuildCommand implements CommandExecutor {
+public class GuildCommand implements CommandExecutor, TabCompleter {
 
     @Override
-    public boolean onCommand( CommandSender commandSender, Command command, String label, String[] args ) {
-        if ( commandSender instanceof Player ) {
-            Player player = ( Player ) commandSender;
+    public boolean onCommand( CommandSender sender, Command command, String label, String[] args ) {
+        if ( sender instanceof Player ) {
+            Player player = ( Player ) sender;
 
             GuildBuilder guildBuilder = Guild.getPlugin().getGuildBuilder();
             GuildController guildController = Guild.getPlugin().getGuildController();
@@ -152,7 +156,7 @@ public class GuildCommand implements CommandExecutor {
                             break;
 
                         case "bank":
-                            int amount = Integer.parseInt( args[2] );
+                            var amount = Integer.parseInt( args[2] );
                             switch ( args[1].toLowerCase() ) {
                                 case "deposit":
                                 case "einzahlen":
@@ -182,8 +186,31 @@ public class GuildCommand implements CommandExecutor {
             }
 
         } else {
-            commandSender.sendMessage( label );
+            sender.sendMessage( label );
         }
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete( CommandSender sender, Command command, String label, String[] args ) {
+        if ( command.getName().equalsIgnoreCase( "guild" ) ) {
+            List<String> commandList = new ArrayList<>();
+
+            switch ( args.length ) {
+                case 0:
+                    commandList.addAll( commandList );
+                    break;
+
+                case 1:
+                    break;
+
+                case 2:
+                    break;
+
+                default:
+                    throw new IllegalStateException( "Unexpected value: " + args.length );
+            }
+        }
+        return null;
     }
 }

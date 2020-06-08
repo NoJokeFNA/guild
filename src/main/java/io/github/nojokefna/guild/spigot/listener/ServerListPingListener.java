@@ -15,7 +15,7 @@ public class ServerListPingListener implements Listener {
     private final FileBuilder fileBuilder;
 
     public ServerListPingListener() {
-        this.fileBuilder = Guild.getPlugin().getServerSettingsManager();
+        this.fileBuilder = Guild.getPlugin().getServerSettingsBuilder();
     }
 
     @EventHandler

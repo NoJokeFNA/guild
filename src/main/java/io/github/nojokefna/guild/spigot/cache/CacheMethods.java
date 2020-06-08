@@ -24,8 +24,8 @@ public class CacheMethods {
 
     public CacheMethods() {
         this.section = Guild.getPlugin().getSettingsManager().getConfigurationSection();
-        this.serverSection = Guild.getPlugin().getServerSettingsManager().getConfigurationSection();
-        this.server = Guild.getPlugin().getServerSettingsManager();
+        this.serverSection = Guild.getPlugin().getServerSettingsBuilder().getConfigurationSection();
+        this.server = Guild.getPlugin().getServerSettingsBuilder();
     }
 
     public boolean getCoolDown( Player player, Map<UUID, Long> currentMap, String message ) {

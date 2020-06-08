@@ -24,7 +24,7 @@ public class PlayerJoinListener implements Listener {
     private final boolean value;
 
     public PlayerJoinListener() {
-        this.fileBuilder = Guild.getPlugin().getServerSettingsManager();
+        this.fileBuilder = Guild.getPlugin().getServerSettingsBuilder();
 
         this.value = this.fileBuilder.getBoolean( "tablist.labymod.use_labymod" );
     }

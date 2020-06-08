@@ -20,7 +20,7 @@ public class PlayerQuitListener implements Listener {
     private final FileBuilder fileBuilder;
 
     public PlayerQuitListener() {
-        this.fileBuilder = Guild.getPlugin().getServerSettingsManager();
+        this.fileBuilder = Guild.getPlugin().getServerSettingsBuilder();
     }
 
     @EventHandler( priority = EventPriority.HIGH, ignoreCancelled = true )
@@ -34,7 +34,7 @@ public class PlayerQuitListener implements Listener {
                 return;
             }
 
-            event.setQuitMessage( Guild.getPlugin().getServerSettingsManager().getKey( "quit.message" )
+            event.setQuitMessage( Guild.getPlugin().getServerSettingsBuilder().getKey( "quit.message" )
                     .replace( "{PLAYER}", player.getName() )
                     .replace( "{DISPLAYNAME}", player.getDisplayName() )
                     .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
