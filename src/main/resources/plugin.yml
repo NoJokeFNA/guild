@@ -17,11 +17,16 @@ commands:
     permission: guild.admin
 
 permissions:
-  guild.admin:
+  guild.admin.*:
     description: Gives access to all Guild commands
     default: op
     children:
       guild.use: true
+      guild.admin: true
+
+  guild.admin:
+    description: Send you the admin guild help message
+    default: op
 
   guild.use:
     description: Send you the guild help message

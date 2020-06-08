@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  * @author NoJokeFNA
  * @version 1.0.0
  */
-public abstract class MySQLBase {
+public abstract class AbstractMySQL {
 
     /**
      * Checks whether your {@code #setKey} is present or not.
