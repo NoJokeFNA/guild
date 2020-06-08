@@ -15,6 +15,7 @@ public class RankCache {
     private static final Map<String, RankCache> CACHE_MAP = new HashMap<>();
     private final String[] prefix, nameTag, suffix;
     private final String tagId;
+    
     public RankCache( String group, String[] prefix, String[] nameTag, String[] suffix, String tagId ) {
         this.prefix = prefix;
         this.nameTag = nameTag;
