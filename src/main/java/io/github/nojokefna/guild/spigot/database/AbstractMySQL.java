@@ -1,4 +1,4 @@
-package io.github.nojokefna.guild.spigot.interfaces;
+package io.github.nojokefna.guild.spigot.database;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import org.bukkit.Bukkit;
