@@ -77,7 +77,7 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Update the desired {@code #setterKey} as a Integer.
+     * Update the desired {@code #setterKey} as a {@link java.lang.Integer}.
      *
      * @param table       Set the table that you want to use
      * @param setterKey   Set the value you want to update
@@ -140,7 +140,7 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Get the setKey you want as an Integer.
+     * Get the {@code #setKey} you want as an {@link java.lang.Integer}.
      *
      * @param table    Set the table that you want to use
      * @param whereKey Enter the value you want to receive
@@ -202,13 +202,13 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Get a list from your values.
+     * Get a {@link java.util.List} from your values.
      *
      * @param table       Set the table you want to use
      * @param whereKey    Enter the value you want to receive
      * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      * @param getKey      Enter the value you wanna finally receive
-     * @return returns the current List
+     * @return returns the current {@link java.util.List}
      */
     public List<String> getList( String table, String whereKey, String setWhereKey, String getKey ) {
         List<String> getList = new ArrayList<>();
@@ -235,7 +235,7 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Get a list from your values.
+     * Get a {@link java.util.List} from your values.
      *
      * @param table             Set the table you want to use
      * @param whereKey          Enter the value you want to receive
@@ -243,7 +243,7 @@ public abstract class AbstractMySQL {
      * @param secondWhereKey    Enter the second value you want to receive
      * @param setSecondWhereKey Set the {@code #setSecondWhereKey} you want to set for the {@code #whereKey}
      * @param getKey            Enter the value you wanna finally receive
-     * @return returns the current List
+     * @return returns the current {@link java.util.List}
      */
     public List<String> getList( String table, String whereKey, String setWhereKey, String secondWhereKey, String setSecondWhereKey, String getKey ) {
         List<String> getList = new ArrayList<>();
@@ -296,7 +296,7 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Add a value from {@code getKey}
+     * Add a value from {@code #getKey}
      * 
      * @param table       Set the table that you want to use
      * @param getKey      Enter the value you want recerive
@@ -310,7 +310,7 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Remove a value from {@code getKey}
+     * Remove a value from {@code #getKey}
      *
      * @param table       Set the table that you want to use
      * @param getKey      Enter the value you want recerive
@@ -324,7 +324,7 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Get the {@code setKey} you want Asynch.
+     * Get the {@code #getKey} you want Asynch.
      *
      * @param table    Set the table that you want to use
      * @param whereKey Enter the value you want to receive
@@ -337,7 +337,7 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Get the {@code setKey} you want Asynch.
+     * Get the {@code #setKey} you want Asynch.
      *
      * @param table    Set the table that you want to use
      * @param whereKey Enter the value you want to receive
@@ -350,7 +350,7 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Get the {@code setKey} you want Asynch.
+     * Get the {@code #setKey} you want Asynch.
      *
      * @param table    Set the table that you want to use
      * @param whereKey Enter the value you want to receive
