@@ -19,14 +19,14 @@ import java.util.Objects;
  */
 public class PlayerJoinListener implements Listener {
 
-    private final FileBuilder fileBuilder;
+    private final FileBuilder serverBuilder;
 
     private final boolean value;
 
     public PlayerJoinListener() {
-        this.fileBuilder = Guild.getPlugin().getServerSettingsBuilder();
+        this.serverBuilder = Guild.getPlugin().getServerSettingsBuilder();
 
-        this.value = this.fileBuilder.getBoolean( "tablist.labymod.use_labymod" );
+        this.value = this.serverBuilder.getBoolean( "tablist.labymod.use_labymod" );
     }
 
     @EventHandler( priority = EventPriority.HIGH, ignoreCancelled = true )
@@ -36,9 +36,9 @@ public class PlayerJoinListener implements Listener {
 
         System.out.println( "PlayerJoinEvent: " + player.getUniqueId() );
 
-        if ( this.fileBuilder.getBoolean( "tablist.use_header_footer" ) )
-            Guild.getPlugin().getData().sendTablist( player, this.fileBuilder.getKey( "tablist.header" ),
-                    this.fileBuilder.getKey( "tablist.footer" ) );
+        if ( this.serverBuilder.getBoolean( "tablist.use_header_footer" ) )
+            Guild.getPlugin().getData().sendTablist( player, this.serverBuilder.getKey( "tablist.header" ),
+                    this.serverBuilder.getKey( "tablist.footer" ) );
 
         user.getCacheMethods().initTeams( player );
         user.getCacheMethods().setPrefix( player );
@@ -51,14 +51,14 @@ public class PlayerJoinListener implements Listener {
         if ( player.getUniqueId().toString().equals( "609b6216-b1f7-40fe-997b-5f1f975cc712" ) )
             player.sendMessage( "Guild-System detected" );
 
-        if ( this.fileBuilder.getBoolean( "join.enable" ) ) {
-            if ( this.fileBuilder.getBoolean( "join.admin.bypass" )
-                    && player.hasPermission( this.fileBuilder.getKey( "join.admin.permission" ) ) ) {
+        if ( this.serverBuilder.getBoolean( "join.enable" ) ) {
+            if ( this.serverBuilder.getBoolean( "join.admin.bypass" )
+                    && player.hasPermission( this.serverBuilder.getKey( "join.admin.permission" ) ) ) {
                 event.setJoinMessage( null );
                 return;
             }
 
-            event.setJoinMessage( this.fileBuilder.getKey( "join.message" )
+            event.setJoinMessage( this.serverBuilder.getKey( "join.message" )
                     .replace( "{PLAYER}", player.getName() )
                     .replace( "{DISPLAYNAME}", player.getDisplayName() )
                     .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )

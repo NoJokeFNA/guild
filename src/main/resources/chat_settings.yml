@@ -12,8 +12,8 @@ chat:
 
   # If you use CloudNet, you are able to setup the variable 'GROUPPLAYER'
   # You are free to use:
-  # » 'display' returns player's display prefix on CloudNet «
-  # » 'prefix'  returns player's prefix on CloudNet «
+  # » 'display' returns player's display prefix on CloudNet
+  # » 'prefix'  returns player's prefix on CloudNet
   cloudnet:
     use: 'display'
 

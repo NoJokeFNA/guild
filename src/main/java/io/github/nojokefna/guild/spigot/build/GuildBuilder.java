@@ -1,6 +1,7 @@
 package io.github.nojokefna.guild.spigot.build;
 
 import io.github.nojokefna.guild.spigot.Guild;
+import io.github.nojokefna.guild.spigot.cache.CacheUser;
 import io.github.nojokefna.guild.spigot.config.FileBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -37,17 +38,31 @@ public class GuildBuilder {
     }
 
     private void sendPage( Player player, String page ) {
-        IntStream.range( 1, 11 ).mapToObj( i
-                -> this.fileManager.getKey( "guild.help_message_guild.page" + page + ".line" + i ) ).forEachOrdered( player::sendMessage );
+        CacheUser user = CacheUser.getUser( player );
+
+        IntStream.range( 1, 11 ).mapToObj( i -> new String[] {
+                this.fileManager.getKey( "guild.help_message_guild.page" + page + ".line" + i )
+        } ).forEachOrdered( user::setHelpMessage );
+
+        player.sendMessage( user.getHelpMessage() );
     }
 
     public void sendHeader( Player player ) {
-        IntStream.range( 1, 4 ).mapToObj( i -> fileManager.getKey( "guild.help_message_guild.header.line" + i ) ).forEachOrdered( player::sendMessage );
+        CacheUser user = CacheUser.getUser( player );
+
+        if ( user.getHeaderMessage() == null )
+            IntStream.range( 1, 4 ).mapToObj( i -> fileManager.getKey( "guild.help_message_guild.header.line" + i ) ).forEachOrdered( user::setHeaderMessage );
+
+        player.sendMessage( user.getHeaderMessage() );
     }
 
     public String sendHeaderString( Player player ) {
-        IntStream.range( 1, 4 ).mapToObj( i -> fileManager.getKey( "guild.help_message_guild.header.line" + i ) ).forEachOrdered( player::sendMessage );
-        return "";
+        CacheUser user = CacheUser.getUser( player );
+
+        if ( user.getHeaderMessage() == null )
+            IntStream.range( 1, 4 ).mapToObj( i -> fileManager.getKey( "guild.help_message_guild.header.line" + i ) ).forEachOrdered( user::setHeaderMessage );
+
+        return user.getHeaderMessage();
     }
 
     public void sendMessage( Player player, String message ) {

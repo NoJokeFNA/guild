@@ -27,8 +27,6 @@ public class AsyncPlayerPreLoginListener implements Listener {
         UUID playerUuid = event.getUniqueId();
         CacheUser user = CacheUser.getUserByUuid( playerUuid );
 
-        System.out.println( "AsyncPlayerPreLoginEvent: " + playerUuid );
-
         user.setLoaded( new AtomicBoolean( false ) );
 
         while ( ! user.getLoaded().get() ) {

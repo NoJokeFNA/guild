@@ -167,6 +167,10 @@ public class Guild extends JavaPlugin {
                 this.setupChat();
                 break;
 
+            case "CloudNet":
+                this.getLogger().finest( String.format( "Successfully enabled %s and %s", "CPerms-Chat", "CloudNet" ) );
+                break;
+
             default:
                 throw new IllegalStateException( "Unexpected value: " + this.getSettingsManager().getKey( "chat.permission_plugin" ) );
         }

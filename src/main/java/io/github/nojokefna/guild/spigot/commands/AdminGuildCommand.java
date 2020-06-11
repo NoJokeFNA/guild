@@ -52,6 +52,7 @@ public class AdminGuildCommand implements CommandExecutor {
         guildBuilder.sendMessage( player, "§2Plugin version §8» §b" + Guild.getPlugin().getDescription().getVersion() );
         guildBuilder.sendMessage( player, "§2Plugin author §8» §b" + Guild.getPlugin().getDescription().getAuthors() );
         guildBuilder.sendMessage( player, "§2Discord §8» §bNoJokeFNA | Julian#4166" );
+        guildBuilder.sendMessage( player, "§2Discord Server §8» §bhttps://discord.gg/UHkUuFD" );
 
         player.sendMessage( "" );
 

@@ -25,6 +25,8 @@ public class CacheUser {
     // settings
     private final Map<UUID, Long> commandCoolDown, messageCoolDown;
     private final Map<UUID, String> message;
+    private String[] helpMessage;
+    private String headerMessage;
 
     // startup
     private AtomicBoolean loaded;
