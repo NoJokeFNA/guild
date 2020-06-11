@@ -19,10 +19,10 @@ public abstract class AbstractMySQL {
     /**
      * Checks whether your {@code #setKey} is present or not.
      *
-     * @param table    - Set the table that you want to use
-     * @param whereKey - Enter the value you want to receive
-     * @param setKey   - Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @return - returns true or false
+     * @param table    Set the table that you want to use
+     * @param whereKey Enter the value you want to receive
+     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
+     * @return returns true or false
      */
     public boolean keyExists( String table, String whereKey, String setKey ) {
         boolean value = false;
@@ -51,11 +51,11 @@ public abstract class AbstractMySQL {
     /**
      * Update the desired {@code #setterKey} as a String.
      *
-     * @param table       - Set the table that you want to use
-     * @param setterKey   - Set the value you want to update
-     * @param setSetKey   - Set the {@code #setSetKey} you want to set for the {@code #setterKey}
-     * @param whereKey    - Enter the value you want to receive
-     * @param setWhereKey - Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * @param table       Set the table that you want to use
+     * @param setterKey   Set the value you want to update
+     * @param setSetKey   Set the {@code #setSetKey} you want to set for the {@code #setterKey}
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      */
     public void updateKey( String table, String setterKey, String setSetKey, String whereKey, String setWhereKey ) {
         Guild.getPlugin().getExecutorService().execute( () -> {
@@ -79,11 +79,11 @@ public abstract class AbstractMySQL {
     /**
      * Update the desired {@code #setterKey} as a Integer.
      *
-     * @param table       - Set the table that you want to use
-     * @param setterKey   - Set the value you want to update
-     * @param setSetKey   - Set the {@code #setSetKey} you want to set for the {@code #setterKey}
-     * @param whereKey    - Enter the value you want to receive
-     * @param setWhereKey - Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * @param table       Set the table that you want to use
+     * @param setterKey   Set the value you want to update
+     * @param setSetKey   Set the {@code #setSetKey} you want to set for the {@code #setterKey}
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      */
     public void updateKey( String table, String setterKey, int setSetKey, String whereKey, String setWhereKey ) {
         Guild.getPlugin().getExecutorService().execute( () -> {
@@ -107,11 +107,11 @@ public abstract class AbstractMySQL {
     /**
      * Get the setKey you want as an String.
      *
-     * @param table    - Set the table that you want to use
-     * @param whereKey - Enter the value you want to receive
-     * @param setKey   - Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @param getKey   - Set the {@code #getKey} you want to get from {@code #setKey}
-     * @return - return {@code #getKey}
+     * @param table    Set the table that you want to use
+     * @param whereKey Enter the value you want to receive
+     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
+     * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
+     * @return return {@code #getKey}
      */
     public String getKey( String table, String whereKey, String setKey, String getKey ) {
         String value = "";
@@ -142,11 +142,11 @@ public abstract class AbstractMySQL {
     /**
      * Get the setKey you want as an Integer.
      *
-     * @param table    - Set the table that you want to use
-     * @param whereKey - Enter the value you want to receive
-     * @param setKey   - Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @param getKey   - Set the {@code #getKey} you want to get from {@code #setKey}
-     * @return - return {@code #getKey}
+     * @param table    Set the table that you want to use
+     * @param whereKey Enter the value you want to receive
+     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
+     * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
+     * @return return {@code #getKey}
      */
     public int getKeyByInteger( String table, String whereKey, String setKey, String getKey ) {
         int value = 0;
@@ -174,10 +174,10 @@ public abstract class AbstractMySQL {
     /**
      * Get the ranking of your current value.
      *
-     * @param selectKey - Enter the key you want to select
-     * @param table     - Set the table you want to use
-     * @param orderKey  - Set the {@code #orderKey} you want to get
-     * @return - return the rank of your position from {@code #orderkey}
+     * @param selectKey Enter the key you want to select
+     * @param table     Set the table you want to use
+     * @param orderKey  Set the {@code #orderKey} you want to get
+     * @return return the rank of your position from {@code #orderkey}
      */
     public int getRanking( String selectKey, String table, String orderKey ) {
         boolean done = false;
@@ -204,11 +204,11 @@ public abstract class AbstractMySQL {
     /**
      * Get a list from your values.
      *
-     * @param table       - Set the table you want to use
-     * @param whereKey    - Enter the value you want to receive
-     * @param setWhereKey - Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
-     * @param getKey      - Enter the value you wanna finally receive
-     * @return - returns the current List
+     * @param table       Set the table you want to use
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * @param getKey      Enter the value you wanna finally receive
+     * @return returns the current List
      */
     public List<String> getList( String table, String whereKey, String setWhereKey, String getKey ) {
         List<String> getList = new ArrayList<>();
@@ -237,13 +237,13 @@ public abstract class AbstractMySQL {
     /**
      * Get a list from your values.
      *
-     * @param table             - Set the table you want to use
-     * @param whereKey          - Enter the value you want to receive
-     * @param setWhereKey       - Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
-     * @param secondWhereKey    - Enter the second value you want to receive
-     * @param setSecondWhereKey - Set the {@code #setSecondWhereKey} you want to set for the {@code #whereKey}
-     * @param getKey            - Enter the value you wanna finally receive
-     * @return - returns the current List
+     * @param table             Set the table you want to use
+     * @param whereKey          Enter the value you want to receive
+     * @param setWhereKey       Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * @param secondWhereKey    Enter the second value you want to receive
+     * @param setSecondWhereKey Set the {@code #setSecondWhereKey} you want to set for the {@code #whereKey}
+     * @param getKey            Enter the value you wanna finally receive
+     * @return returns the current List
      */
     public List<String> getList( String table, String whereKey, String setWhereKey, String secondWhereKey, String setSecondWhereKey, String getKey ) {
         List<String> getList = new ArrayList<>();
@@ -273,9 +273,9 @@ public abstract class AbstractMySQL {
     /**
      * Delete the desired entry.
      *
-     * @param table    - Set the table that you want to use
-     * @param whereKey - Enter the value you want to receive
-     * @param setKey   - Set the {@code #setKey} you want to set for the {@code #whereKey}
+     * @param table    Set the table that you want to use
+     * @param whereKey Enter the value you want to receive
+     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
      */
     public void deleteKey( String table, String whereKey, String setKey ) {
         Guild.getPlugin().getExecutorService().execute( () -> {
@@ -296,11 +296,13 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * @param table       - Set the table that you want to use
-     * @param getKey      - Enter the value you want recerive
-     * @param setKey      - Enter the setKey you want to remove
-     * @param whereKey    - Enter the value you want to receive from
-     * @param setWhereKey - Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * Add a value from {@code getKey}
+     * 
+     * @param table       Set the table that you want to use
+     * @param getKey      Enter the value you want recerive
+     * @param setKey      Enter the setKey you want to remove
+     * @param whereKey    Enter the value you want to receive from
+     * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      */
     public void addKey( String table, String getKey, int setKey, String whereKey, String setWhereKey ) {
         int value = this.getKeyByInteger( table, whereKey, setWhereKey, getKey ) + setKey;
@@ -308,11 +310,13 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * @param table       - Set the table that you want to use
-     * @param getKey      - Enter the value you want recerive
-     * @param setKey      - Enter the setKey you want to remove
-     * @param whereKey    - Enter the value you want to receive from
-     * @param setWhereKey - Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * Remove a value from {@code getKey}
+     *
+     * @param table       Set the table that you want to use
+     * @param getKey      Enter the value you want recerive
+     * @param setKey      Enter the setKey you want to remove
+     * @param whereKey    Enter the value you want to receive from
+     * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      */
     public void removeKey( String table, String getKey, int setKey, String whereKey, String setWhereKey ) {
         int value = this.getKeyByInteger( table, whereKey, setWhereKey, getKey ) - setKey;
@@ -320,39 +324,39 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Get the setKey you want Asynch.
+     * Get the {@code setKey} you want Asynch.
      *
-     * @param table    - Set the table that you want to use
-     * @param whereKey - Enter the value you want to receive
-     * @param setKey   - Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @param getKey   - Set the {@code #getKey} you want to get from {@code #setKey}
-     * @param callback - Create the {@code callback}
+     * @param table    Set the table that you want to use
+     * @param whereKey Enter the value you want to receive
+     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
+     * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
+     * @param callback Create the {@code callback}
      */
     public void getDataStringAsync( String table, String whereKey, String setKey, String getKey, Consumer<String> callback ) {
         Guild.getPlugin().getExecutorService().execute( () -> callback.accept( this.getKey( table, whereKey, setKey, getKey ) ) );
     }
 
     /**
-     * Get the setKey you want Asynch.
+     * Get the {@code setKey} you want Asynch.
      *
-     * @param table    - Set the table that you want to use
-     * @param whereKey - Enter the value you want to receive
-     * @param setKey   - Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @param getKey   - Set the {@code #getKey} you want to get from {@code #setKey}
-     * @param callback - Create the {@code callback}
+     * @param table    Set the table that you want to use
+     * @param whereKey Enter the value you want to receive
+     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
+     * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
+     * @param callback Create the {@code callback}
      */
     public void getDataIntegerAsync( String table, String whereKey, String setKey, String getKey, Consumer<Integer> callback ) {
         Guild.getPlugin().getExecutorService().execute( () -> callback.accept( this.getKeyByInteger( table, whereKey, setKey, getKey ) ) );
     }
 
     /**
-     * Get the setKey you want Asynch.
+     * Get the {@code setKey} you want Asynch.
      *
-     * @param table    - Set the table that you want to use
-     * @param whereKey - Enter the value you want to receive
-     * @param setKey   - Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @param getKey   - Set the {@code #getKey} you want to get from {@code #setKey}
-     * @param callback - Create the {@code callback}
+     * @param table    Set the table that you want to use
+     * @param whereKey Enter the value you want to receive
+     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
+     * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
+     * @param callback Create the {@code callback}
      */
     public void getDataListAsync( String table, String whereKey, String setKey, String getKey, Consumer<List<String>> callback ) {
         Guild.getPlugin().getExecutorService().execute( () -> callback.accept( this.getList( table, whereKey, setKey, getKey ) ) );
