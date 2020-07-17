@@ -50,10 +50,10 @@ public class AsyncPlayerChatListener implements Listener {
                     .replace( "{PLAYER}", player.getName() )
                     .replace( "{DISPLAYNAME}", user.getNameTag()[0] + player.getName() )
                     .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
-                            ? this.sendColoredMessage( event.getMessage() ) : event.getMessage() )
+                            ? this.sendColoredMessage( event.getMessage() )
+                            : event.getMessage() )
                     .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
                     .replace( "%", "%%" );
-
 
             if ( user.isInGuild() ) {
                 switch ( this.section.getString( "chat.guild_format" ) ) {
@@ -84,12 +84,12 @@ public class AsyncPlayerChatListener implements Listener {
                     .map( permissionName -> this.section.getStringList( "chat.permissions." + permissionName ) ).forEach( permissionNameValues -> {
 
                 if ( player.hasPermission( permissionNameValues.get( 2 ) ) ) {
-
                     String message = permissionNameValues.get( 0 )
                             .replace( "{PLAYER}", player.getName() )
                             .replace( "{DISPLAYNAME}", user.getNameTag()[0] + player.getName() )
                             .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
-                                    ? this.sendColoredMessage( event.getMessage() ) : event.getMessage() )
+                                    ? this.sendColoredMessage( event.getMessage() )
+                                    : event.getMessage() )
                             .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
                             .replace( "%", "%%" );
 
@@ -97,7 +97,8 @@ public class AsyncPlayerChatListener implements Listener {
                             .replace( "{PLAYER}", player.getName() )
                             .replace( "{DISPLAYNAME}", user.getNameTag()[0] + player.getName() )
                             .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
-                                    ? this.sendColoredMessage( event.getMessage() ) : event.getMessage() )
+                                    ? this.sendColoredMessage( event.getMessage() )
+                                    : event.getMessage() )
                             .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
                             .replace( "%", "%%" );
 
@@ -105,17 +106,17 @@ public class AsyncPlayerChatListener implements Listener {
                         switch ( this.section.getString( "chat.guild_format" ) ) {
                             case "UpperCase":
                                 message = message.replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildTag( player ).toUpperCase() );
-                                event.setFormat( this.sendColoredMessage( message ) );
+                                event.setFormat( message );
                                 break;
 
                             case "lowerCase":
                                 message = message.replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildTag( player ).toLowerCase() );
-                                event.setFormat( this.sendColoredMessage( message ) );
+                                event.setFormat( message );
                                 break;
 
                             case "normal":
                                 message = message.replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildTag( player ) );
-                                event.setFormat( this.sendColoredMessage( message ) );
+                                event.setFormat( message );
                                 break;
 
                             default:

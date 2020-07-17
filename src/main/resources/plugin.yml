@@ -16,6 +16,8 @@ commands:
     description: Send you the admin guild help message
     permission: guild.admin
 
+  test:
+
 permissions:
   guild.admin.*:
     description: Gives access to all Guild commands

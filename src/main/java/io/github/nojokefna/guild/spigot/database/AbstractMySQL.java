@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
@@ -19,56 +18,57 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractMySQL {
 
+    private int modifiers;
+
     /**
      * Checks whether your {@code #setKey} is present or not.
+     * <p>It then returns true if the value is present, or false if it is not present.</p>
      *
-     * @param table    Set the {@code #table} that you want to use
-     * @param whereKey Enter the value you want to receive
-     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
+     * @param table       Set the {@code #table} that you want to use
+     * @param whereKey    Specify the value you want to query
+     * @param setWhereKey Set the {@code #setKey} you want to set for the {@code #whereKey}
      * @return returns true or false
      */
-    public boolean keyExists( String table, String whereKey, String setKey ) {
-        AtomicBoolean value = new AtomicBoolean( false );
-        if ( setKey == null )
-            return false;
+    public boolean keyExists( String table, String whereKey, String setWhereKey ) {
+        boolean value = false;
+        if ( setWhereKey == null )
+            value = false;
 
-        Guild.getPlugin().getExecutorService().execute( () -> {
-            try {
-                PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                        .getDatabase()
-                        .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
+        try {
+            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                    .getDatabase()
+                    .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
 
-                preparedStatement.setString( 1, setKey );
+            preparedStatement.setString( 1, setWhereKey );
 
-                ResultSet resultSet = preparedStatement.executeQuery();
-                if ( resultSet.next() )
-                    value.set( true );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if ( resultSet.next() )
+                value = true;
 
-                resultSet.close();
-                preparedStatement.close();
-            } catch ( SQLException ex ) {
-                ex.printStackTrace();
-            }
-        } );
-        return value.get();
+            resultSet.close();
+            preparedStatement.close();
+        } catch ( SQLException ex ) {
+            ex.printStackTrace();
+        }
+        return value;
     }
 
     /**
-     * Update the desired {@code #setterKey} as a String.
+     * Update the desired {@code #setKey} as a String.
      *
      * @param table       Set the table that you want to use
-     * @param setterKey   Set the value you want to update
+     * @param setKey      Specify the value you want to update
      * @param setSetKey   Set the {@code #setSetKey} you want to set for the {@code #setterKey}
      * @param whereKey    Enter the value you want to receive
      * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      */
-    public void updateKey( String table, String setterKey, String setSetKey, String whereKey, String setWhereKey ) {
+    public void updateKey( String table, String setKey, String setSetKey, String whereKey, String setWhereKey ) {
         Guild.getPlugin().getExecutorService().execute( () -> {
             if ( this.keyExists( table, whereKey, setWhereKey ) ) {
                 try {
                     PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
                             .getDatabase()
-                            .prepareStatement( "UPDATE `" + table + "` SET " + setterKey + " = ? WHERE " + whereKey + " = ?" );
+                            .prepareStatement( "UPDATE `" + table + "` SET " + setKey + " = ? WHERE " + whereKey + " = ?" );
 
                     preparedStatement.setString( 1, setSetKey );
                     preparedStatement.setString( 2, setWhereKey );
@@ -185,7 +185,7 @@ public abstract class AbstractMySQL {
      * @return return the rank of your position from {@code #orderkey}
      */
     public int getRanking( String selectKey, String table, String orderKey ) {
-        Map<Integer, String> rang = new HashMap<>();
+        Map<Integer, String> rank = new HashMap<>();
         int result = 0;
 
         try {
@@ -196,14 +196,14 @@ public abstract class AbstractMySQL {
             ResultSet resultSet = preparedStatement.executeQuery();
             while ( resultSet.next() ) {
                 result++;
-                rang.put( result, resultSet.getString( selectKey ) );
+                rank.put( result, resultSet.getString( selectKey ) );
             }
 
             resultSet.close();
         } catch ( Exception ex ) {
             ex.printStackTrace();
         }
-        return result;
+        return Integer.parseInt( rank.get( result ) );
     }
 
     /**
@@ -216,7 +216,7 @@ public abstract class AbstractMySQL {
      * @return return the rank of your position from {@code #orderkey}
      */
     public int getRanking( String selectKey, String table, String orderKey, int limit ) {
-        Map<Integer, String> rang = new HashMap<>();
+        Map<Integer, String> rank = new HashMap<>();
         int result = 0;
 
         try {
@@ -227,14 +227,14 @@ public abstract class AbstractMySQL {
             ResultSet resultSet = preparedStatement.executeQuery();
             while ( resultSet.next() ) {
                 result++;
-                rang.put( result, resultSet.getString( selectKey ) );
+                rank.put( result, resultSet.getString( selectKey ) );
             }
 
             resultSet.close();
         } catch ( Exception ex ) {
             ex.printStackTrace();
         }
-        return result;
+        return Integer.parseInt( rank.get( result ) );
     }
 
     /**
@@ -360,7 +360,7 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Get the {@code #getKey} you want Asynch.
+     * Get the {@code #getKey} you want async.
      *
      * @param table    Set the {@code #table} that you want to use
      * @param whereKey Enter the value you want to receive
@@ -373,7 +373,7 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Get the {@code #setKey} you want Asynch.
+     * Get the {@code #setKey} you want asnyc.
      *
      * @param table    Set the {@code #table} that you want to use
      * @param whereKey Enter the value you want to receive
@@ -386,7 +386,7 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Get the {@code #setKey} you want Asynch.
+     * Get the {@code #setKey} you want async.
      *
      * @param table    Set the {@code #table} that you want to use
      * @param whereKey Enter the value you want to receive

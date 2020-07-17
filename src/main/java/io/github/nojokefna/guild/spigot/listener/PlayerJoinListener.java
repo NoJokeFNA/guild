@@ -36,17 +36,31 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
         CacheUser user = CacheUser.getUser( player );
 
-        System.out.println( "PlayerJoinEvent: " + player.getUniqueId() );
-
         if ( this.serverBuilder.getBoolean( "tablist.use_header_footer" ) )
             Guild.getPlugin().getData().sendTablist( player, this.serverBuilder.getKey( "tablist.header" ),
                     this.serverBuilder.getKey( "tablist.footer" ) );
 
-        new ScoreboardBuilder( "scoreboard", DisplaySlot.SIDEBAR, "&bHallo", player )
-                .addTeam( "test", "&6Test", "§3", 3 )
-                .addTeam( "hallo", "&1Hallo", "§2", 2 )
-                .addTeam( "wg", "&2Wie geht", "§1", 1 )
-                .addTeam( "er", "&6Es dir", "§0", 0 )
+        new ScoreboardBuilder( "scoreboard", DisplaySlot.SIDEBAR, "&6Guild-System", player )
+                .addScore( "§r§8§m⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊", 9 )
+
+                .addScore( "§6Online player", 8 )
+                .addTeam( "online", "§8» &c" + Bukkit.getOnlinePlayers().size() + " §7/ §c" + Bukkit.getMaxPlayers(), "§1", 7 )
+
+                .addScore( "§r   §8§m⚊⚊⚊⚊⚊§r", 6 )
+
+                .addScore( "§6Your guild", 5 )
+                .addTeam( "guild", user.isInGuild()
+                        ? "§8» &c" + Guild.getPlugin().getGuildController().sendGuildName( player )
+                        : "§8» §cnone", "§2", 4 )
+
+                .addScore( "§r   §8§m⚊⚊⚊⚊⚊", 3 )
+
+                .addScore( "§6Your rank", 2 )
+                .addTeam( "rank", user.isInGuild()
+                        ? "§8» &c" + Guild.getPlugin().getGuildUserAPI().getKey( player.getUniqueId(), "guild_rank" )
+                        : "§8» §cnone", "§3", 1 )
+
+                .addScore( "§8§m⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊", 0 )
                 .sendScoreboard();
 
         user.getCacheMethods().initTeams( player );

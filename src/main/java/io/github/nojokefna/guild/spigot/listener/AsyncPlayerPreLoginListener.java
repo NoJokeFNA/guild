@@ -2,7 +2,7 @@ package io.github.nojokefna.guild.spigot.listener;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.cache.CacheUser;
-import io.github.nojokefna.guild.spigot.controller.GuildRecodeController;
+import io.github.nojokefna.guild.spigot.controller.GuildController;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -17,10 +17,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class AsyncPlayerPreLoginListener implements Listener {
 
-    private final GuildRecodeController guildController;
+    private final GuildController guildController;
 
     public AsyncPlayerPreLoginListener() {
-        this.guildController = Guild.getPlugin().getGuildRecodeController();
+        this.guildController = new GuildController();
     }
 
     @EventHandler( priority = EventPriority.HIGHEST )
@@ -38,6 +38,11 @@ public class AsyncPlayerPreLoginListener implements Listener {
             user.setMember( this.guildController.isGuildMember( playerUuid ) );
 
             user.setLoaded( new AtomicBoolean( true ) );
+
+            System.out.println( "Guild: " + user.isInGuild() );
+            System.out.println( "Master: " + user.isMaster() );
+            System.out.println( "Officer: " + user.isOfficer() );
+            System.out.println( "Member: " + user.isMember() );
         }
     }
 }

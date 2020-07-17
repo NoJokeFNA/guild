@@ -3,6 +3,7 @@ package io.github.nojokefna.guild.spigot;
 import io.github.nojokefna.guild.spigot.build.GuildBuilder;
 import io.github.nojokefna.guild.spigot.commands.AdminGuildCommand;
 import io.github.nojokefna.guild.spigot.commands.GuildCommand;
+import io.github.nojokefna.guild.spigot.commands.TestCommand;
 import io.github.nojokefna.guild.spigot.config.FileBuilder;
 import io.github.nojokefna.guild.spigot.controller.GuildController;
 import io.github.nojokefna.guild.spigot.controller.GuildRecodeController;
@@ -104,6 +105,7 @@ public class Guild extends JavaPlugin {
         //commands
         this.getCommand( "guild" ).setExecutor( new GuildCommand() );
         this.getCommand( "adminguild" ).setExecutor( new AdminGuildCommand() );
+        this.getCommand( "test" ).setExecutor( new TestCommand() );
 
         //listener
         Listener[] listeners = new Listener[] {

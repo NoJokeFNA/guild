@@ -17,7 +17,7 @@ public class RankCache {
     private final String tagId;
 
     /**
-     * Initialize all information's
+     * Initialize all information
      *
      * @param group   Specify the {@code #group}, you want to create
      * @param prefix  Enter the {@code #prefix} for the speficied {@code #group}

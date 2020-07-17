@@ -47,7 +47,7 @@ public class GuildUserAPI extends AbstractMySQL {
 
     public void createPlayer( UUID playerUuid, String playerName, String guildName, String guildTag, String guildRank ) {
         Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
-            if ( ! this.keyExists( playerUuid ) ) {
+            if ( this.keyExists( playerUuid ) ) {
                 try {
                     PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
                             .getDatabase()
@@ -95,7 +95,6 @@ public class GuildUserAPI extends AbstractMySQL {
     public String getKey( UUID playerUuid, String key ) {
         return this.getKey( "guild_user", "player_uuid", playerUuid.toString(), key );
     }
-
     public int getKeyByInteger( UUID playerUuid, String key ) {
         return this.getKeyByInteger( "guild_user", "player_uuid", playerUuid.toString(), key );
     }

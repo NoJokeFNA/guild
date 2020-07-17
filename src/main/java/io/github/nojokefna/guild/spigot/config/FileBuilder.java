@@ -24,6 +24,7 @@ public class FileBuilder {
     private final FileConfiguration fileConfiguration;
 
     public FileBuilder( @Nonnull String value ) {
+        Validate.notNull( value, "The value cannot be null" );
         this.file = new File( Guild.getPlugin().getDataFolder(), value );
         this.fileConfiguration = YamlConfiguration.loadConfiguration( this.file );
     }
@@ -35,9 +36,7 @@ public class FileBuilder {
         var language = Guild.getPlugin().getConfig().getString( "language" );
         var path = language.toLowerCase() + "_" + language.toUpperCase() + ".yml";
 
-        if ( configValue == null ) {
-            return "§cError: §4Key " + key + " §edoes not exists.";
-        }
+        Validate.notNull( configValue, "§cError: §4Key " + key + " §edoes not exists." );
 
         if ( this.file.getName().equals( path ) ) {
             DecimalFormat format = new DecimalFormat( "###,###,###" );
@@ -58,22 +57,12 @@ public class FileBuilder {
     }
 
     public int getInt( @Nonnull String key ) {
-        Validate.notNull( key, "The key cannot be null" );
-
-        if ( key == null ) {
-            return Integer.parseInt( "§cError: §4Key " + key + " §edoes not exists." );
-        }
-
+        Validate.notNull( key, "§cError: §4Key " + key + " §edoes not exists."  );
         return this.fileConfiguration.getInt( key );
     }
 
     public boolean getBoolean( @Nonnull String key ) {
-        Validate.notNull( key, "The key cannot be null" );
-
-        if ( key == null ) {
-            return Boolean.parseBoolean( "§cError: §4Key " + key + " §edoes not exists." );
-        }
-
+        Validate.notNull( key, "§cError: §4Key " + key + " §edoes not exists." );
         return this.fileConfiguration.getBoolean( key );
     }
 

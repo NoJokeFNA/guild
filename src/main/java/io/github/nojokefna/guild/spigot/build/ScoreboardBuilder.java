@@ -26,7 +26,7 @@ public class ScoreboardBuilder {
      * @param objectiveName Set the {@code #objective} name you want
      * @param displaySlot   Set the {@code #displaySlot} you want to use
      * @param displayName   Set the {@code #displayName} of the {@code #scoreboard}
-     * @param player        Initialize the {@code #player}
+     * @param player        Initialize the {@code #player} object
      */
     public ScoreboardBuilder( String objectiveName, DisplaySlot displaySlot, String displayName, Player player ) {
         this.player = player;
@@ -35,6 +35,18 @@ public class ScoreboardBuilder {
 
         this.objective.setDisplaySlot( displaySlot );
         this.objective.setDisplayName( coloredMessage( displayName ) );
+    }
+
+    /**
+     * Add a team to the {@code #scoreboard}
+     *
+     * @param prefix   Set the {@code #prefix} of the {@code #score}
+     * @param score    Set the {@code #score} of the {@code #prefix}
+     * @return returns the method
+     */
+    public ScoreboardBuilder addScore( String prefix, int score ) {
+        this.objective.getScore( prefix ).setScore( score );
+        return this;
     }
 
     /**
@@ -70,11 +82,6 @@ public class ScoreboardBuilder {
         this.team.setSuffix( coloredMessage( suffix ) );
         this.team.addEntry( entry );
         this.objective.getScore( entry ).setScore( score );
-        return this;
-    }
-
-    public ScoreboardBuilder setDisplayName( String displayName ) {
-        this.team.setDisplayName( displayName );
         return this;
     }
 
