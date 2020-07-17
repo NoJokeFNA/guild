@@ -4,6 +4,7 @@ import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.cache.CacheUser;
 import io.github.nojokefna.guild.spigot.controller.GuildRecodeController;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
@@ -22,7 +23,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
         this.guildController = Guild.getPlugin().getGuildRecodeController();
     }
 
-    @EventHandler
+    @EventHandler( priority = EventPriority.HIGHEST )
     public void onAsyncPlayerPreLogin( AsyncPlayerPreLoginEvent event ) {
         UUID playerUuid = event.getUniqueId();
         CacheUser user = CacheUser.getUserByUuid( playerUuid );

@@ -1,6 +1,7 @@
 package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
+import io.github.nojokefna.guild.spigot.database.AbstractMySQL;
 import org.bukkit.Bukkit;
 
 import java.sql.PreparedStatement;

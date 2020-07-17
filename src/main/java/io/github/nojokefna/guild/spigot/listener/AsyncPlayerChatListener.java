@@ -29,7 +29,7 @@ public class AsyncPlayerChatListener implements Listener {
         this.fileBuilder = Guild.getPlugin().getSettingsManager();
     }
 
-    @EventHandler( priority = EventPriority.HIGH, ignoreCancelled = true )
+    @EventHandler( priority = EventPriority.LOWEST, ignoreCancelled = true )
     public void onChat( AsyncPlayerChatEvent event ) {
         Player player = event.getPlayer();
         CacheUser user = CacheUser.getUser( player );

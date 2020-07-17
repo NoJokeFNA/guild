@@ -35,8 +35,7 @@ public class Database {
 
             synchronized ( this ) {
                 Class.forName( "com.mysql.jdbc.Driver" );
-                this.setConnection( DriverManager.getConnection( "jdbc:mysql://" + hostname + ":" + port + "/" + database + "?autoReconnect=true",
-                        username, password ) );
+                this.setConnection( DriverManager.getConnection( "jdbc:mysql://" + hostname + ":" + port + "/" + database + "?autoReconnect=true", username, password ) );
             }
         } catch ( SQLException | ClassNotFoundException ex ) {
             ex.printStackTrace();
@@ -57,6 +56,28 @@ public class Database {
 
     public void update( String preparedStatement ) {
         this.plugin.getExecutorService().execute( () -> this.queryUpdate( preparedStatement ) );
+    }
+	
+    public ResultSet query( String query ) {
+        this.checkConnection();
+
+        try {
+            return query( this.connection.prepareStatement( query ) );
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public ResultSet query( PreparedStatement preparedStatement ) {
+        this.checkConnection();
+
+        try {
+            preparedStatement.close();
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     public void query( PreparedStatement preparedStatement, Consumer<ResultSet> consumer ) {
@@ -95,45 +116,20 @@ public class Database {
     public ResultSet queryUpdate( PreparedStatement preparedStatement ) {
         this.checkConnection();
 
-        Future<ResultSet> resultSetFuture = this.plugin.getExecutorService().submit( () -> this.query( preparedStatement ) );
-        try {
-            return resultSetFuture.get();
-        } catch ( InterruptedException | ExecutionException ex ) {
-            ex.printStackTrace();
-        }
+        Future<ResultSet> resultSetFuture = this.plugin.getExecutorService().submit( () -> this.queryUpdate( preparedStatement ) );
 
         try {
             preparedStatement.executeUpdate();
-        } catch ( Exception ex ) {
+        } catch ( SQLException ex ) {
             ex.printStackTrace();
         } finally {
             try {
-                preparedStatement.close();
-            } catch ( Exception ex ) {
+                resultSetFuture.get();
+
+                System.out.println( "debug => resultSetFeature -> " + resultSetFuture.get() );
+            } catch ( InterruptedException | ExecutionException ex ) {
                 ex.printStackTrace();
             }
-        }
-        return null;
-    }
-
-    public ResultSet query( String query ) {
-        this.checkConnection();
-
-        try {
-            return query( this.connection.prepareStatement( query ) );
-        } catch ( Exception ex ) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    public ResultSet query( PreparedStatement preparedStatement ) {
-        this.checkConnection();
-
-        try {
-            preparedStatement.close();
-        } catch ( Exception ex ) {
-            ex.printStackTrace();
         }
         return null;
     }

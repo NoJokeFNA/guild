@@ -608,12 +608,12 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
     @Override
     public String getGuildName( OfflinePlayer player ) {
-        return null;
+        return this.guildUserAPI.getKey( player.getUniqueId(), "guild_name" );
     }
 
     @Override
     public String getGuildTag( Player player ) {
-        return null;
+        return this.guildUserAPI.getKey( player.getUniqueId(), "guild_tag" );
     }
 
     @Override
@@ -633,17 +633,17 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
     @Override
     public boolean isGuildMaster( UUID playerUuid ) {
-        return this.guildUserAPI.getGuilds( playerUuid, "Master" );
+        return this.guildUserAPI.guildExists( playerUuid, "Master" );
     }
 
     @Override
     public boolean isGuildOfficer( UUID playerUuid ) {
-        return this.guildUserAPI.getGuilds( playerUuid, "Officer" );
+        return this.guildUserAPI.guildExists( playerUuid, "Officer" );
     }
 
     @Override
     public boolean isGuildMember( UUID playerUuid ) {
-        return this.guildUserAPI.getGuilds( playerUuid, "Member" );
+        return this.guildUserAPI.guildExists( playerUuid, "Member" );
     }
 
     private void sendMessage( List<String> list, Player player, String key, String... message ) {

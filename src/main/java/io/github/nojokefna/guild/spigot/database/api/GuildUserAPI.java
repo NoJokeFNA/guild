@@ -1,6 +1,7 @@
 package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
+import io.github.nojokefna.guild.spigot.database.AbstractMySQL;
 import org.bukkit.Bukkit;
 
 import java.sql.PreparedStatement;
@@ -19,7 +20,7 @@ public class GuildUserAPI extends AbstractMySQL {
         return this.keyExists( "guild_user", "player_uuid", playerUuid.toString() );
     }
 
-    public boolean getGuilds( UUID playerUuid, String key ) {
+    public boolean guildExists( UUID playerUuid, String key ) {
         boolean value = false;
         if ( key == null )
             return false;

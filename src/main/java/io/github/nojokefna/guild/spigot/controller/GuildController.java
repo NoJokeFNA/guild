@@ -730,17 +730,17 @@ public class GuildController implements GuildInterface {
 
     @Override
     public boolean isGuildMaster( UUID uuid ) {
-        return this.guildUserAPI.getGuilds( uuid, "Master" );
+        return this.guildUserAPI.guildExists( uuid, "Master" );
     }
 
     @Override
     public boolean isGuildOfficer( UUID uuid ) {
-        return this.guildUserAPI.getGuilds( uuid, "Officer" );
+        return this.guildUserAPI.guildExists( uuid, "Officer" );
     }
 
     @Override
     public boolean isGuildMember( UUID uuid ) {
-        return this.guildUserAPI.getGuilds( uuid, "Member" );
+        return this.guildUserAPI.guildExists( uuid, "Member" );
     }
 
     private boolean isInteger( String value ) {

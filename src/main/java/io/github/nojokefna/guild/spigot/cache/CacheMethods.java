@@ -74,8 +74,8 @@ public class CacheMethods {
 
                 new RankCache(
                         permissionNameValues.get( 3 ),
-                        new String[] { this.sendColoredMessage( permissionNameValues.get( 0 ) ) },
-                        new String[] { this.sendColoredMessage( permissionNameValues.get( 1 ) ) },
+                        new String[] { this.sendColoredMessage( permissionNameValues.get( 0 ).replace( "{PLAYER}", player.getName() ) ) },
+                        new String[] { this.sendColoredMessage( permissionNameValues.get( 1 ).replace( "{PLAYER}", player.getName() ) ) },
                         new String[] { " " + this.sendColoredMessage( guildSuffix ) },
                         permissionNameValues.get( 5 )
                 );

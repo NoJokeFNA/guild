@@ -53,7 +53,6 @@ public class CacheUser {
     public static CacheUser getUserByUuid( UUID uuid ) {
         if ( ! USER_MAP.containsKey( uuid ) )
             USER_MAP.put( uuid, new CacheUser() );
-
         return USER_MAP.get( uuid );
     }
 

@@ -10,4 +10,5 @@ mysql:
 
 # Select your language!
 # You can create your own language file: language_LANGUAGE.yml
+# Default: en
 language: 'en'

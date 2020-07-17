@@ -37,7 +37,6 @@ public class PlayerKickListener implements Listener {
                     .replace( "{PLAYER}", player.getName() )
                     .replace( "{DISPLAYNAME}", player.getDisplayName() )
                     .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
-
             );
         }
 

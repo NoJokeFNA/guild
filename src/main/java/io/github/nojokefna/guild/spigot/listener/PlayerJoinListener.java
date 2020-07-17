@@ -1,6 +1,7 @@
 package io.github.nojokefna.guild.spigot.listener;
 
 import io.github.nojokefna.guild.spigot.Guild;
+import io.github.nojokefna.guild.spigot.build.ScoreboardBuilder;
 import io.github.nojokefna.guild.spigot.build.TabListBuilder;
 import io.github.nojokefna.guild.spigot.cache.CacheUser;
 import io.github.nojokefna.guild.spigot.config.FileBuilder;
@@ -10,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.scoreboard.DisplaySlot;
 
 import java.util.Objects;
 
@@ -39,6 +41,13 @@ public class PlayerJoinListener implements Listener {
         if ( this.serverBuilder.getBoolean( "tablist.use_header_footer" ) )
             Guild.getPlugin().getData().sendTablist( player, this.serverBuilder.getKey( "tablist.header" ),
                     this.serverBuilder.getKey( "tablist.footer" ) );
+
+        new ScoreboardBuilder( "scoreboard", DisplaySlot.SIDEBAR, "&bHallo", player )
+                .addTeam( "test", "&6Test", "§3", 3 )
+                .addTeam( "hallo", "&1Hallo", "§2", 2 )
+                .addTeam( "wg", "&2Wie geht", "§1", 1 )
+                .addTeam( "er", "&6Es dir", "§0", 0 )
+                .sendScoreboard();
 
         user.getCacheMethods().initTeams( player );
         user.getCacheMethods().setPrefix( player );

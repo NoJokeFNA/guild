@@ -7,7 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
@@ -19,33 +22,35 @@ public abstract class AbstractMySQL {
     /**
      * Checks whether your {@code #setKey} is present or not.
      *
-     * @param table    Set the table that you want to use
+     * @param table    Set the {@code #table} that you want to use
      * @param whereKey Enter the value you want to receive
      * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
      * @return returns true or false
      */
     public boolean keyExists( String table, String whereKey, String setKey ) {
-        boolean value = false;
+        AtomicBoolean value = new AtomicBoolean( false );
         if ( setKey == null )
             return false;
 
-        try {
-            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                    .getDatabase()
-                    .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
+        Guild.getPlugin().getExecutorService().execute( () -> {
+            try {
+                PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                        .getDatabase()
+                        .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
 
-            preparedStatement.setString( 1, setKey );
+                preparedStatement.setString( 1, setKey );
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if ( resultSet.next() )
-                value = true;
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if ( resultSet.next() )
+                    value.set( true );
 
-            resultSet.close();
-            preparedStatement.close();
-        } catch ( SQLException ex ) {
-            ex.printStackTrace();
-        }
-        return value;
+                resultSet.close();
+                preparedStatement.close();
+            } catch ( SQLException ex ) {
+                ex.printStackTrace();
+            }
+        } );
+        return value.get();
     }
 
     /**
@@ -105,9 +110,9 @@ public abstract class AbstractMySQL {
     }
 
     /**
-     * Get the setKey you want as an String.
+     * Get the {@code #setKey} you want as an String.
      *
-     * @param table    Set the table that you want to use
+     * @param table    Set the {@code #table} that you want to use
      * @param whereKey Enter the value you want to receive
      * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
      * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
@@ -142,7 +147,7 @@ public abstract class AbstractMySQL {
     /**
      * Get the {@code #setKey} you want as an {@link java.lang.Integer}.
      *
-     * @param table    Set the table that you want to use
+     * @param table    Set the {@code #table} that you want to use
      * @param whereKey Enter the value you want to receive
      * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
      * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
@@ -175,36 +180,67 @@ public abstract class AbstractMySQL {
      * Get the ranking of your current value.
      *
      * @param selectKey Enter the key you want to select
-     * @param table     Set the table you want to use
+     * @param table     Set the {@code #table} you want to use
      * @param orderKey  Set the {@code #orderKey} you want to get
      * @return return the rank of your position from {@code #orderkey}
      */
     public int getRanking( String selectKey, String table, String orderKey ) {
-        boolean done = false;
-        int rank = 0;
+        Map<Integer, String> rang = new HashMap<>();
+        int result = 0;
 
         try {
             PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
                     .getDatabase()
                     .prepareStatement( "SELECT " + selectKey + " FROM `" + table + "` ORDER BY " + orderKey + " DESC" );
 
-            ResultSet resultSet;
-            for ( resultSet = preparedStatement.executeQuery(); resultSet.next() && ! done; done = true ) {
-                ++ rank;
-                resultSet.getString( selectKey );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ) {
+                result++;
+                rang.put( result, resultSet.getString( selectKey ) );
             }
 
             resultSet.close();
         } catch ( Exception ex ) {
             ex.printStackTrace();
         }
-        return rank;
+        return result;
+    }
+
+    /**
+     * Get the ranking of your current value.
+     *
+     * @param selectKey Enter the key you want to select
+     * @param table     Set the {@code #table} you want to use
+     * @param orderKey  Set the {@code #orderKey} you want to get
+     * @param limit     Set the {@code #limit} you want to get
+     * @return return the rank of your position from {@code #orderkey}
+     */
+    public int getRanking( String selectKey, String table, String orderKey, int limit ) {
+        Map<Integer, String> rang = new HashMap<>();
+        int result = 0;
+
+        try {
+            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
+                    .getDatabase()
+                    .prepareStatement( "SELECT " + selectKey + " FROM `" + table + "` ORDER BY " + orderKey + " DESC LIMIT " + limit );
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ) {
+                result++;
+                rang.put( result, resultSet.getString( selectKey ) );
+            }
+
+            resultSet.close();
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+        }
+        return result;
     }
 
     /**
      * Get a {@link java.util.List} from your values.
      *
-     * @param table       Set the table you want to use
+     * @param table       Set the {@code #table} you want to use
      * @param whereKey    Enter the value you want to receive
      * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      * @param getKey      Enter the value you wanna finally receive
@@ -237,7 +273,7 @@ public abstract class AbstractMySQL {
     /**
      * Get a {@link java.util.List} from your values.
      *
-     * @param table             Set the table you want to use
+     * @param table             Set the {@code #table} you want to use
      * @param whereKey          Enter the value you want to receive
      * @param setWhereKey       Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      * @param secondWhereKey    Enter the second value you want to receive
@@ -273,7 +309,7 @@ public abstract class AbstractMySQL {
     /**
      * Delete the desired entry.
      *
-     * @param table    Set the table that you want to use
+     * @param table    Set the {@code #table} that you want to use
      * @param whereKey Enter the value you want to receive
      * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
      */
@@ -297,10 +333,10 @@ public abstract class AbstractMySQL {
 
     /**
      * Add a value from {@code #getKey}
-     * 
-     * @param table       Set the table that you want to use
+     *
+     * @param table       Set the {@code #table} that you want to use
      * @param getKey      Enter the value you want recerive
-     * @param setKey      Enter the setKey you want to remove
+     * @param setKey      Enter the {@code #setKey} you want to remove
      * @param whereKey    Enter the value you want to receive from
      * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      */
@@ -312,9 +348,9 @@ public abstract class AbstractMySQL {
     /**
      * Remove a value from {@code #getKey}
      *
-     * @param table       Set the table that you want to use
+     * @param table       Set the {@code #table} that you want to use
      * @param getKey      Enter the value you want recerive
-     * @param setKey      Enter the setKey you want to remove
+     * @param setKey      Enter the {@code #setKey} you want to remove
      * @param whereKey    Enter the value you want to receive from
      * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
      */
@@ -326,7 +362,7 @@ public abstract class AbstractMySQL {
     /**
      * Get the {@code #getKey} you want Asynch.
      *
-     * @param table    Set the table that you want to use
+     * @param table    Set the {@code #table} that you want to use
      * @param whereKey Enter the value you want to receive
      * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
      * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
@@ -339,7 +375,7 @@ public abstract class AbstractMySQL {
     /**
      * Get the {@code #setKey} you want Asynch.
      *
-     * @param table    Set the table that you want to use
+     * @param table    Set the {@code #table} that you want to use
      * @param whereKey Enter the value you want to receive
      * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
      * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
@@ -352,7 +388,7 @@ public abstract class AbstractMySQL {
     /**
      * Get the {@code #setKey} you want Asynch.
      *
-     * @param table    Set the table that you want to use
+     * @param table    Set the {@code #table} that you want to use
      * @param whereKey Enter the value you want to receive
      * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
      * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}

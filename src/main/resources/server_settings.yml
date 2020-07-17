@@ -7,7 +7,7 @@
 # {DISPLAYNAME} returns the player's displayname
 # {GROUPPLAYER} » Required LuckPerms, PermissionsEx or CloudNet « Only callback the group's prefix!
 
-# If you activate 'bypass', the join/quit message was not send
+# If you activate 'bypass', the join/quit/kick message was not send
 
 join:
   enable: true
@@ -87,13 +87,20 @@ tablist:
       - 'Developer'
       - 'guild.tab.developer'
       - 02
+    premium:
+      - '&3&lPremium &8| &7'
+      - '&3&lPremium &8| &7'
+      - '&8[&6{GUILD}&8]'
+      - 'Premium'
+      - 'guild.tab.premium'
+      - 03
     default:
       - '&7Player &8| &7'
       - '&7Player &8| &7'
       - '&8[&6{GUILD}&8]'
       - 'default'
       - 'guild.tab.default'
-      - 03
+      - 04
 #--------------------------------------------
 
 #--------------------------------------------
