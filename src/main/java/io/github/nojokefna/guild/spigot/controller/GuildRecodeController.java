@@ -7,6 +7,7 @@ import io.github.nojokefna.guild.spigot.config.FileBuilder;
 import io.github.nojokefna.guild.spigot.database.api.GuildAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildInvitesAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildUserAPI;
+import io.github.nojokefna.guild.spigot.events.*;
 import io.github.nojokefna.guild.spigot.interfaces.GuildRecodeInterface;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -95,6 +96,8 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
         user.setInGuild( true );
 
+        Bukkit.getPluginManager().callEvent( new GuildCreateEvent( player, guildName, guildTag, guildLeader ) );
+
         Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
 
@@ -114,7 +117,6 @@ public class GuildRecodeController implements GuildRecodeInterface {
             return;
         }
 
-        user.setInGuild( false );
 
         if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
@@ -129,6 +131,10 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.delete_guild.successfully_deleted" ) );
         this.guildAPI.deleteGuild( this.getGuildName( player ) );
+
+        user.setInGuild( false );
+
+        Bukkit.getPluginManager().callEvent( new GuildDeleteEvent( player ) );
 
         Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
@@ -159,6 +165,10 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.leave_guild.leaved" ) );
         this.guildUserAPI.deleteKey( player.getUniqueId() );
+
+        user.setInGuild( false );
+
+        Bukkit.getPluginManager().callEvent( new GuildLeaveEvent( player ) );
 
         Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
@@ -207,6 +217,8 @@ public class GuildRecodeController implements GuildRecodeInterface {
                 .replace( "{PLAYER}", player.getName() )
                 .replace( "{GUILD}", this.getInvitedGuildName( target ) ) ), 5L
         );
+
+        Bukkit.getPluginManager().callEvent( new GuildSendInviteEvent( player, target ) );
     }
 
     @Override
@@ -230,6 +242,8 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_invites.revoked_invite" ) );
         this.guildInvitesAPI.deleteInvite( target );
+
+        Bukkit.getPluginManager().callEvent( new GuildRevokeInviteEvent( player, target ) );
     }
 
     @Override
@@ -254,6 +268,8 @@ public class GuildRecodeController implements GuildRecodeInterface {
         this.guildInvitesAPI.deleteInvite( player );
 
         user.setInGuild( true );
+
+        Bukkit.getPluginManager().callEvent( new GuildAcceptInvite( player ) );
     }
 
     @Override
@@ -266,6 +282,8 @@ public class GuildRecodeController implements GuildRecodeInterface {
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_invites.invite_denyed" )
                 .replace( "{GUILD}", this.getInvitedGuildName( player ) ) );
         this.guildInvitesAPI.deleteInvite( player );
+
+        Bukkit.getPluginManager().callEvent( new GuildDenyInviteEvent( player ) );
     }
 
     @Override
@@ -349,6 +367,9 @@ public class GuildRecodeController implements GuildRecodeInterface {
         this.guildUserAPI.updateKey( "guild_rank", "Master", target.getUniqueId() );
 
         this.guildList.remove( player.getName() );
+
+        Bukkit.getPluginManager().callEvent( new GuildSetMasterEvent( player, target ) );
+
         Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
 
@@ -387,6 +408,9 @@ public class GuildRecodeController implements GuildRecodeInterface {
         this.guildUserAPI.updateKey( "guild_rank", "Officer", target.getUniqueId() );
 
         this.guildList.remove( player.getName() );
+
+        Bukkit.getPluginManager().callEvent( new GuildPromotePlayerEvent( player, target ) );
+
         Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
 
@@ -423,6 +447,9 @@ public class GuildRecodeController implements GuildRecodeInterface {
         this.guildUserAPI.updateKey( "guild_rank", "Member", target.getUniqueId() );
 
         this.guildList.remove( player.getName() );
+
+        Bukkit.getPluginManager().callEvent( new GuildDemotePlayerEvent( player, target ) );
+
         Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * 10L );
     }
 
@@ -466,6 +493,8 @@ public class GuildRecodeController implements GuildRecodeInterface {
         this.guildUserAPI.deleteKey( target.getUniqueId() );
 
         this.guildList.remove( player.getName() );
+
+        Bukkit.getPluginManager().callEvent( new GuildKickPlayerEvent( player, target ) );
 
         Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
@@ -649,14 +678,15 @@ public class GuildRecodeController implements GuildRecodeInterface {
     }
 
     private void sendMessage( List<String> list, Player player, String key, String... message ) {
-        for ( String string : list ) {
-            if ( this.guildMessageList.contains( string ) ) {
+        for ( String stringList : list ) {
+            if ( this.guildMessageList.contains( stringList ) ) {
                 for ( Player players : Bukkit.getOnlinePlayers() ) {
+                    
                     StringBuilder builder = new StringBuilder();
                     for ( String output : message )
                         builder.append( output );
 
-                    if ( string.contains( player.getName() ) )
+                    if ( stringList.contains( player.getName() ) )
                         this.guildBuilder.sendMessage( players, this.fileBuilder.getKey( key )
                                 .replace( "{PLAYER}", player.getName() )
                                 .replace( "{MESSAGE}", builder ) );

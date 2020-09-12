@@ -1,7 +1,6 @@
 package io.github.nojokefna.guild.spigot.database;
 
 import io.github.nojokefna.guild.spigot.Guild;
-import io.github.nojokefna.guild.spigot.utils.ANSIColors;
 import lombok.Getter;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -59,9 +58,7 @@ public class DatabaseBuilder {
                 && this.section.getString( "mysql.database" ).equalsIgnoreCase( "database" ) ) {
 
             Guild.getPlugin().getLogger().warning( Guild.getPlugin().getData().getPrefix()
-                                                           + ANSIColors.ANSI_RED
-                                                           + "§cThe database is not configured! Please contact an administrator!"
-                                                           + ANSIColors.ANSI_RESET );
+                                                           + "§cThe database is not configured! Please contact an administrator!" );
             return false;
         }
 

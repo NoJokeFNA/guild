@@ -63,6 +63,10 @@ public interface GuildInterface {
 
     String sendGuildName( OfflinePlayer player );
 
+    String sendGuildName( UUID playerUuid );
+
+    String sendGuildRank( UUID playerUuid );
+
     String sendGuildTag( Player player );
 
     void sendGuildBank( Player player );

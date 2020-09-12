@@ -37,9 +37,7 @@ public class PlayerJoinListener implements Listener {
         CacheUser user = CacheUser.getUser( player );
 
         if ( this.serverBuilder.getBoolean( "tablist.use_header_footer" ) )
-            Guild.getPlugin().getData().sendTablist( player, this.serverBuilder.getKey( "tablist.header" ),
-                                                     this.serverBuilder.getKey( "tablist.footer" )
-            );
+            Guild.getPlugin().getData().sendTablist( player, this.serverBuilder.getKey( "tablist.header" ), this.serverBuilder.getKey( "tablist.footer" ) );
 
         new ScoreboardBuilder( "scoreboard", DisplaySlot.SIDEBAR, "&6Guild-System", player )
                 .addScore( "§r§8§m⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊", 9 )
@@ -50,16 +48,12 @@ public class PlayerJoinListener implements Listener {
                 .addScore( "§r   §8§m⚊⚊⚊⚊⚊§r", 6 )
 
                 .addScore( "§6Your guild", 5 )
-                .addTeam( "guild", user.isInGuild()
-                        ? "§8» &c" + Guild.getPlugin().getGuildController().sendGuildName( player )
-                        : "§8» §cnone", "§2", 4 )
+                .addTeam( "guild", "§8» &c" + user.getGuildName(), "§2", 4 )
 
                 .addScore( "§r   §8§m⚊⚊⚊⚊⚊", 3 )
 
                 .addScore( "§6Your rank", 2 )
-                .addTeam( "rank", user.isInGuild()
-                        ? "§8» &c" + Guild.getPlugin().getGuildUserAPI().getKey( player.getUniqueId(), "guild_rank" )
-                        : "§8» §cnone", "§3", 1 )
+                .addTeam( "rank", "§8» &c" + user.getGuildRank(), "§3", 1 )
 
                 .addScore( "§8§m⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊", 0 )
                 .sendScoreboard();

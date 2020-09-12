@@ -38,6 +38,7 @@ public class CacheUser {
     // guild
     private boolean inGuild;
     private boolean isMember, isOfficer, isMaster;
+    private String guildRank, guildName;
 
     public CacheUser() {
         this.cacheMethods = new CacheMethods();

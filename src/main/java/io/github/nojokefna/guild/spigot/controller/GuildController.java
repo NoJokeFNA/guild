@@ -657,6 +657,16 @@ public class GuildController implements GuildInterface {
     }
 
     @Override
+    public String sendGuildName( UUID playerUuid ) {
+        return this.guildUserAPI.getKey( playerUuid, "guild_name" );
+    }
+
+    @Override
+    public String sendGuildRank( UUID playerUuid ) {
+        return this.guildUserAPI.getKey( playerUuid, "guild_rank" );
+    }
+
+    @Override
     public String sendGuildTag( Player player ) {
         return this.guildUserAPI.getKey( player.getUniqueId(), "guild_tag" );
     }
