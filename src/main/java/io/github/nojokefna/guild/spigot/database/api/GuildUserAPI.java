@@ -95,6 +95,7 @@ public class GuildUserAPI extends AbstractMySQL {
     public String getKey( UUID playerUuid, String key ) {
         return this.getKey( "guild_user", "player_uuid", playerUuid.toString(), key );
     }
+
     public int getKeyByInteger( UUID playerUuid, String key ) {
         return this.getKeyByInteger( "guild_user", "player_uuid", playerUuid.toString(), key );
     }

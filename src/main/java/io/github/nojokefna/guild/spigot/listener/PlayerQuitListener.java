@@ -25,7 +25,7 @@ public class PlayerQuitListener implements Listener {
 
     @EventHandler( priority = EventPriority.HIGH, ignoreCancelled = true )
     public void onPlayerQuit( PlayerQuitEvent event ) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
 
         if ( this.fileBuilder.getBoolean( "quit.enable" ) ) {
             if ( this.fileBuilder.getBoolean( "quit.admin.bypass" )
@@ -35,9 +35,9 @@ public class PlayerQuitListener implements Listener {
             }
 
             event.setQuitMessage( Guild.getPlugin().getServerSettingsBuilder().getKey( "quit.message" )
-                    .replace( "{PLAYER}", player.getName() )
-                    .replace( "{DISPLAYNAME}", player.getDisplayName() )
-                    .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
+                                          .replace( "{PLAYER}", player.getName() )
+                                          .replace( "{DISPLAYNAME}", player.getDisplayName() )
+                                          .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
             );
         }
 

@@ -21,7 +21,7 @@ public class CacheUser {
 
     // init
     private final CacheMethods cacheMethods;
-    
+
     // settings
     private final Map<UUID, Long> commandCoolDown, messageCoolDown;
     private final Map<UUID, String> message;
@@ -32,7 +32,7 @@ public class CacheUser {
     private AtomicBoolean loaded;
 
     // tabList
-    private String[] prefix, nameTag, suffix;
+    private String prefix, nameTag, suffix;
     private String tagId;
 
     // guild
@@ -51,7 +51,7 @@ public class CacheUser {
     }
 
     public static CacheUser getUserByUuid( UUID uuid ) {
-        if ( ! USER_MAP.containsKey( uuid ) )
+        if ( !USER_MAP.containsKey( uuid ) )
             USER_MAP.put( uuid, new CacheUser() );
         return USER_MAP.get( uuid );
     }

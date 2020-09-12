@@ -29,9 +29,17 @@ public class Database {
         this.plugin = plugin;
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void setConnection( Connection connection ) {
+        this.connection = connection;
+    }
+
     public void connect() {
         try {
-            if ( this.connection != null && ! this.connection.isClosed() ) return;
+            if ( this.connection != null && !this.connection.isClosed() ) return;
 
             synchronized ( this ) {
                 Class.forName( "com.mysql.jdbc.Driver" );
@@ -57,7 +65,7 @@ public class Database {
     public void update( String preparedStatement ) {
         this.plugin.getExecutorService().execute( () -> this.queryUpdate( preparedStatement ) );
     }
-	
+
     public ResultSet query( String query ) {
         this.checkConnection();
 
@@ -119,24 +127,21 @@ public class Database {
         Future<ResultSet> resultSetFuture = this.plugin.getExecutorService().submit( () -> this.queryUpdate( preparedStatement ) );
 
         try {
-            preparedStatement.executeUpdate();
-        } catch ( SQLException ex ) {
-            ex.printStackTrace();
-        } finally {
-            try {
-                resultSetFuture.get();
+            resultSetFuture.get();
+            System.out.println( "debug => resultSetFeature -> " + resultSetFuture.get() );
 
-                System.out.println( "debug => resultSetFeature -> " + resultSetFuture.get() );
-            } catch ( InterruptedException | ExecutionException ex ) {
-                ex.printStackTrace();
-            }
+            if ( resultSetFuture.isDone() )
+                preparedStatement.close();
+        } catch ( InterruptedException | ExecutionException | SQLException ex ) {
+            ex.printStackTrace();
         }
         return null;
     }
 
     public void checkConnection() {
         try {
-            if ( this.connection == null || ! this.connection.isValid( 10 ) || this.connection.isClosed() ) this.connect();
+            if ( this.connection == null || !this.connection.isValid( 10 ) || this.connection.isClosed() )
+                this.connect();
         } catch ( Exception ex ) {
             ex.printStackTrace();
         }
@@ -144,9 +149,5 @@ public class Database {
 
     public boolean isConnected() {
         return this.connection != null;
-    }
-
-    public void setConnection( Connection connection ) {
-        this.connection = connection;
     }
 }

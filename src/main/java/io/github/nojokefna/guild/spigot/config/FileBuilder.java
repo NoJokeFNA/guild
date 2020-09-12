@@ -27,21 +27,23 @@ public class FileBuilder {
         Validate.notNull( value, "The value cannot be null" );
         this.file = new File( Guild.getPlugin().getDataFolder(), value );
         this.fileConfiguration = YamlConfiguration.loadConfiguration( this.file );
+
+        Guild.getPlugin().saveResource( value, false );
     }
 
     public String getKey( @Nonnull String key ) {
         Validate.notNull( key, "The key cannot be null" );
 
-        var configValue = this.fileConfiguration.getString( key );
-        var language = Guild.getPlugin().getConfig().getString( "language" );
-        var path = language.toLowerCase() + "_" + language.toUpperCase() + ".yml";
+        String configValue = this.fileConfiguration.getString( key );
+        String language = Guild.getPlugin().getConfig().getString( "language" );
+        String path = language.toLowerCase() + "_" + language.toUpperCase() + ".yml";
 
         Validate.notNull( configValue, "§cError: §4Key " + key + " §edoes not exists." );
 
         if ( this.file.getName().equals( path ) ) {
             DecimalFormat format = new DecimalFormat( "###,###,###" );
-            var costs = format.format( this.fileConfiguration.getInt( "guild.create_guild.costs" ) );
-            var prefix = this.fileConfiguration.getString( "prefix" );
+            String costs = format.format( this.fileConfiguration.getInt( "guild.create_guild.costs" ) );
+            String prefix = this.fileConfiguration.getString( "prefix" );
 
             configValue = configValue.replace( "{PREFIX}", prefix );
             configValue = configValue.replace( "{COSTS}", costs );
@@ -57,7 +59,7 @@ public class FileBuilder {
     }
 
     public int getInt( @Nonnull String key ) {
-        Validate.notNull( key, "§cError: §4Key " + key + " §edoes not exists."  );
+        Validate.notNull( key, "§cError: §4Key " + key + " §edoes not exists." );
         return this.fileConfiguration.getInt( key );
     }
 

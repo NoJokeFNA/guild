@@ -59,9 +59,9 @@ public class DatabaseBuilder {
                 && this.section.getString( "mysql.database" ).equalsIgnoreCase( "database" ) ) {
 
             Guild.getPlugin().getLogger().warning( Guild.getPlugin().getData().getPrefix()
-                    + ANSIColors.ANSI_RED
-                    + "§cThe database is not configured! Please contact an administrator!"
-                    + ANSIColors.ANSI_RESET );
+                                                           + ANSIColors.ANSI_RED
+                                                           + "§cThe database is not configured! Please contact an administrator!"
+                                                           + ANSIColors.ANSI_RESET );
             return false;
         }
 

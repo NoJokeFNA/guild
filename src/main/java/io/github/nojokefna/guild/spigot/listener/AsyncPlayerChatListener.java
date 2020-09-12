@@ -48,7 +48,7 @@ public class AsyncPlayerChatListener implements Listener {
         if ( this.section.getBoolean( "chat.use_chat" ) ) {
             String message = this.section.getString( "chat.chat_format_guild" )
                     .replace( "{PLAYER}", player.getName() )
-                    .replace( "{DISPLAYNAME}", user.getNameTag()[0] + player.getName() )
+                    .replace( "{DISPLAYNAME}", user.getNameTag() + player.getName() )
                     .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
                             ? this.sendColoredMessage( event.getMessage() )
                             : event.getMessage() )
@@ -86,7 +86,7 @@ public class AsyncPlayerChatListener implements Listener {
                 if ( player.hasPermission( permissionNameValues.get( 2 ) ) ) {
                     String message = permissionNameValues.get( 0 )
                             .replace( "{PLAYER}", player.getName() )
-                            .replace( "{DISPLAYNAME}", user.getNameTag()[0] + player.getName() )
+                            .replace( "{DISPLAYNAME}", user.getNameTag() + player.getName() )
                             .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
                                     ? this.sendColoredMessage( event.getMessage() )
                                     : event.getMessage() )
@@ -95,7 +95,7 @@ public class AsyncPlayerChatListener implements Listener {
 
                     String messageTwo = permissionNameValues.get( 1 )
                             .replace( "{PLAYER}", player.getName() )
-                            .replace( "{DISPLAYNAME}", user.getNameTag()[0] + player.getName() )
+                            .replace( "{DISPLAYNAME}", user.getNameTag() + player.getName() )
                             .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
                                     ? this.sendColoredMessage( event.getMessage() )
                                     : event.getMessage() )

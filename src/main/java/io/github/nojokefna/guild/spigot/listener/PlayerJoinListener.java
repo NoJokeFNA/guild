@@ -38,7 +38,8 @@ public class PlayerJoinListener implements Listener {
 
         if ( this.serverBuilder.getBoolean( "tablist.use_header_footer" ) )
             Guild.getPlugin().getData().sendTablist( player, this.serverBuilder.getKey( "tablist.header" ),
-                    this.serverBuilder.getKey( "tablist.footer" ) );
+                                                     this.serverBuilder.getKey( "tablist.footer" )
+            );
 
         new ScoreboardBuilder( "scoreboard", DisplaySlot.SIDEBAR, "&6Guild-System", player )
                 .addScore( "§r§8§m⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊", 9 )
@@ -82,9 +83,9 @@ public class PlayerJoinListener implements Listener {
             }
 
             event.setJoinMessage( this.serverBuilder.getKey( "join.message" )
-                    .replace( "{PLAYER}", player.getName() )
-                    .replace( "{DISPLAYNAME}", player.getDisplayName() )
-                    .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
+                                          .replace( "{PLAYER}", player.getName() )
+                                          .replace( "{DISPLAYNAME}", player.getDisplayName() )
+                                          .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
             );
         }
     }

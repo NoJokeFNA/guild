@@ -23,14 +23,14 @@ public class AsyncPlayerPreLoginListener implements Listener {
         this.guildController = new GuildController();
     }
 
-    @EventHandler( priority = EventPriority.HIGHEST )
+    @EventHandler( priority = EventPriority.LOWEST )
     public void onAsyncPlayerPreLogin( AsyncPlayerPreLoginEvent event ) {
-        UUID playerUuid = event.getUniqueId();
-        CacheUser user = CacheUser.getUserByUuid( playerUuid );
+        final UUID playerUuid = event.getUniqueId();
+        final CacheUser user = CacheUser.getUserByUuid( playerUuid );
 
         user.setLoaded( new AtomicBoolean( false ) );
 
-        while ( ! user.getLoaded().get() ) {
+        while ( !user.getLoaded().get() ) {
             user.setInGuild( Guild.getPlugin().getGuildUserAPI().keyExists( playerUuid ) );
 
             user.setMaster( this.guildController.isGuildMaster( playerUuid ) );
@@ -39,6 +39,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
 
             user.setLoaded( new AtomicBoolean( true ) );
 
+            System.out.println( " " );
             System.out.println( "Guild: " + user.isInGuild() );
             System.out.println( "Master: " + user.isMaster() );
             System.out.println( "Officer: " + user.isOfficer() );

@@ -33,16 +33,18 @@ public class CacheMethods {
     }
 
     public boolean getCoolDown( Player player, Map<UUID, Long> currentMap, String message ) {
-        UUID playerUuid = player.getUniqueId();
+        final UUID playerUuid = player.getUniqueId();
 
         if ( player.hasPermission( this.section.getString( "chat.chat_settings.bypass_" + message + "_permission" ) ) )
             return false;
 
         if ( currentMap.containsKey( playerUuid ) ) {
-            float time = ( System.currentTimeMillis() - currentMap.get( playerUuid ) ) / 1000;
+            final float time = ( System.currentTimeMillis() - currentMap.get( playerUuid ) ) / 1000;
+
             if ( time < this.section.getInt( "chat.chat_settings.time_" + message ) ) {
                 Guild.getPlugin().getGuildBuilder().sendMessage( player, this.section.getString( "chat.chat_settings.message_" + message ) );
                 return true;
+
             } else
                 currentMap.put( playerUuid, System.currentTimeMillis() );
         } else
@@ -51,7 +53,7 @@ public class CacheMethods {
     }
 
     public void initTeams( Player player ) {
-        CacheUser user = CacheUser.getUser( player );
+        final CacheUser user = CacheUser.getUser( player );
 
         this.serverSection.getConfigurationSection( "tablist.prefix" ).getKeys( false ).stream()
                 .map( permissionName -> this.serverSection.getStringList( "tablist.prefix." + permissionName ) ).forEach( permissionNameValues -> {
@@ -78,17 +80,17 @@ public class CacheMethods {
 
                 new RankCache(
                         permissionNameValues.get( 3 ),
-                        new String[] { this.sendColoredMessage( permissionNameValues.get( 0 ).replace( "{PLAYER}", player.getName() ) ) },
-                        new String[] { this.sendColoredMessage( permissionNameValues.get( 1 ).replace( "{PLAYER}", player.getName() ) ) },
-                        new String[] { " " + this.sendColoredMessage( guildSuffix ) },
+                        this.sendColoredMessage( permissionNameValues.get( 0 ).replace( "{PLAYER}", player.getName() ) ),
+                        this.sendColoredMessage( permissionNameValues.get( 1 ).replace( "{PLAYER}", player.getName() ) ),
+                        this.sendColoredMessage( guildSuffix ),
                         permissionNameValues.get( 5 )
                 );
             } else {
                 new RankCache(
                         permissionNameValues.get( 3 ),
-                        new String[] { this.sendColoredMessage( permissionNameValues.get( 0 ) ) },
-                        new String[] { this.sendColoredMessage( permissionNameValues.get( 1 ) ) },
-                        new String[] { " " },
+                        this.sendColoredMessage( permissionNameValues.get( 0 ) ),
+                        this.sendColoredMessage( permissionNameValues.get( 1 ) ),
+                        " ",
                         permissionNameValues.get( 5 )
                 );
             }
@@ -96,13 +98,13 @@ public class CacheMethods {
     }
 
     public synchronized void setPrefix( Player player ) {
-        CacheUser user = CacheUser.getUser( player );
+        final CacheUser user = CacheUser.getUser( player );
 
         this.serverSection.getConfigurationSection( "tablist.prefix" ).getKeys( false ).stream()
                 .map( permissionName -> this.serverSection.getStringList( "tablist.prefix." + permissionName ) ).forEach( permissionNameValues -> {
 
-            String rank = permissionNameValues.get( 3 );
-            String permission = permissionNameValues.get( 4 );
+            final String rank = permissionNameValues.get( 3 );
+            final String permission = permissionNameValues.get( 4 );
 
             if ( this.serverSection.getBoolean( "tablist.use_permissions" ) ) {
                 if ( player.hasPermission( permission ) ) {
@@ -123,24 +125,24 @@ public class CacheMethods {
     }
 
     public void setSubtitle( Player receiver, UUID subtitlePlayer, Player target ) {
-        CacheUser user = CacheUser.getUser( receiver );
+        final CacheUser user = CacheUser.getUser( receiver );
 
-        JsonArray array = new JsonArray();
-        JsonObject subtitle = new JsonObject();
+        final JsonArray jsonArray = new JsonArray();
+        final JsonObject jsonObject = new JsonObject();
 
-        subtitle.addProperty( "uuid", subtitlePlayer.toString() );
-        subtitle.addProperty( "size", 0.8d );
+        jsonObject.addProperty( "uuid", subtitlePlayer.toString() );
+        jsonObject.addProperty( "size", 0.8d );
 
         if ( this.serverSection.getBoolean( "tablist.labymod.use_labymod" ) ) {
-            if ( ! user.isInGuild() )
-                subtitle.addProperty( "value", this.server.getKey( "tablist.labymod.subTitle_normal" )
+            if ( !user.isInGuild() )
+                jsonObject.addProperty( "value", this.server.getKey( "tablist.labymod.subTitle_normal" )
                         .replace( "{PLAYER}", receiver.getName() )
                         .replace( "{DISPLAYNAME}", receiver.getDisplayName() )
                         .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( receiver ) ) )
                 );
             else {
                 if ( user.isMember() )
-                    subtitle.addProperty( "value", this.server.getKey( "tablist.labymod.subTitle_member" )
+                    jsonObject.addProperty( "value", this.server.getKey( "tablist.labymod.subTitle_member" )
                             .replace( "{PLAYER}", receiver.getName() )
                             .replace( "{DISPLAYNAME}", receiver.getDisplayName() )
                             .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( receiver ) ) )
@@ -148,7 +150,7 @@ public class CacheMethods {
                     );
 
                 else if ( user.isOfficer() )
-                    subtitle.addProperty( "value", this.server.getKey( "tablist.labymod.subTitle_officer" )
+                    jsonObject.addProperty( "value", this.server.getKey( "tablist.labymod.subTitle_officer" )
                             .replace( "{PLAYER}", receiver.getName() )
                             .replace( "{DISPLAYNAME}", receiver.getDisplayName() )
                             .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( receiver ) ) )
@@ -156,7 +158,7 @@ public class CacheMethods {
                     );
 
                 else if ( user.isMaster() )
-                    subtitle.addProperty( "value", this.server.getKey( "tablist.labymod.subTitle_master" )
+                    jsonObject.addProperty( "value", this.server.getKey( "tablist.labymod.subTitle_master" )
                             .replace( "{PLAYER}", receiver.getName() )
                             .replace( "{DISPLAYNAME}", receiver.getDisplayName() )
                             .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( receiver ) ) )
@@ -165,9 +167,9 @@ public class CacheMethods {
             }
         }
 
-        array.add( subtitle );
+        jsonArray.add( jsonObject );
 
-        LabyModPlugin.getInstance().sendServerMessage( target, "account_subtitle", array );
+        LabyModPlugin.getInstance().sendServerMessage( target, "account_subtitle", jsonArray );
     }
 
     private String sendColoredMessage( String message ) {

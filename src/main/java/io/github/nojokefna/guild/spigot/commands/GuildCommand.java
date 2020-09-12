@@ -30,7 +30,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             GuildController guildController = Guild.getPlugin().getGuildController();
             GuildRecodeController guildRecodeController = Guild.getPlugin().getGuildRecodeController();
 
-            if ( ! Guild.getPlugin().getDatabaseBuilder().isMySqlConfigured() ) {
+            if ( !Guild.getPlugin().getDatabaseBuilder().isMySqlConfigured() ) {
                 guildBuilder.sendMessage( player, "§cThe database is not configured! Please contact an administrator!" );
                 return true;
             }
@@ -156,7 +156,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                             break;
 
                         case "bank":
-                            var amount = Integer.parseInt( args[2] );
+                            int amount = Integer.parseInt( args[2] );
                             switch ( args[1].toLowerCase() ) {
                                 case "deposit":
                                 case "einzahlen":

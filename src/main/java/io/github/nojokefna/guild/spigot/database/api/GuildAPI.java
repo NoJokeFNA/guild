@@ -19,7 +19,7 @@ public class GuildAPI extends AbstractMySQL {
 
     public void createGuild( String guildName, String guildTag, String guildLeader ) {
         Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
-            if ( ! this.guildExists( "guild_name", guildName ) ) {
+            if ( !this.guildExists( "guild_name", guildName ) ) {
                 try {
                     PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
                             .getDatabase()

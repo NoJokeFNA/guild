@@ -44,7 +44,8 @@ public class GuildBuilder {
                 this.fileManager.getKey( "guild.help_message_guild.page" + page + ".line" + i )
         } ).forEachOrdered( user::setHelpMessage );
 
-        player.sendMessage( user.getHelpMessage() );
+        for ( int i = 1; i < 11; i++ )
+            player.sendMessage( user.getHelpMessage()[i] );
     }
 
     public void sendHeader( Player player ) {

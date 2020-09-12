@@ -39,21 +39,21 @@ public class Data {
                 switch ( this.fileBuilder.getKey( "chat.cloudnet.use" ) ) {
                     case "display":
                         return this.sendColoredMessage( CloudAPI.getInstance().getOnlinePlayer( player.getUniqueId() ).getPermissionEntity()
-                                .getHighestPermissionGroup( CloudAPI.getInstance().getPermissionPool() ).getDisplay()
-                                + player.getName() );
+                                                                .getHighestPermissionGroup( CloudAPI.getInstance().getPermissionPool() ).getDisplay()
+                                                                + player.getName() );
                     case "prefix":
                         return this.sendColoredMessage( CloudAPI.getInstance().getOnlinePlayer( player.getUniqueId() ).getPermissionEntity()
-                                .getHighestPermissionGroup( CloudAPI.getInstance().getPermissionPool() ).getPrefix()
-                                + player.getName() );
+                                                                .getHighestPermissionGroup( CloudAPI.getInstance().getPermissionPool() ).getPrefix()
+                                                                + player.getName() );
 
                     default:
                         throw new UnsupportedOperationException( "§4Unsupported value in §cchat_settings.yml » chat.cloudnet.use » "
-                                + this.fileBuilder.getKey( "chat.cloudnet.use" ) );
+                                                                         + this.fileBuilder.getKey( "chat.cloudnet.use" ) );
                 }
 
             default:
                 throw new IllegalStateException( "§4§lPlease use §cLuckPerms§4§l, §cPermissionsEx §4§lor §cCloudNet§4§l! » "
-                        + this.fileBuilder.getKey( "chat.permission_plugin" ) );
+                                                         + this.fileBuilder.getKey( "chat.permission_plugin" ) );
         }
     }
 
@@ -61,13 +61,13 @@ public class Data {
         if ( header == null ) header = "";
         if ( footer == null ) footer = "";
 
-        IChatBaseComponent tabHeader = IChatBaseComponent.ChatSerializer.a( "{\"text\":\"" + header + "\"}" );
-        IChatBaseComponent tabFooter = IChatBaseComponent.ChatSerializer.a( "{\"text\":\"" + footer + "\"}" );
+        final IChatBaseComponent tabHeader = IChatBaseComponent.ChatSerializer.a( "{\"text\":\"" + header + "\"}" );
+        final IChatBaseComponent tabFooter = IChatBaseComponent.ChatSerializer.a( "{\"text\":\"" + footer + "\"}" );
 
         PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter( tabHeader );
 
         try {
-            Field field = packet.getClass().getDeclaredField( "b" );
+            final Field field = packet.getClass().getDeclaredField( "b" );
             field.setAccessible( true );
             field.set( packet, tabFooter );
         } catch ( Exception ex ) {

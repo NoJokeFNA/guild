@@ -16,9 +16,8 @@ public class ScoreboardBuilder {
 
     private final Scoreboard scoreboard;
     private final Objective objective;
-    private Team team;
-
     private final Player player;
+    private Team team;
 
     /**
      * Initialize the class
@@ -35,54 +34,6 @@ public class ScoreboardBuilder {
 
         this.objective.setDisplaySlot( displaySlot );
         this.objective.setDisplayName( coloredMessage( displayName ) );
-    }
-
-    /**
-     * Add a team to the {@code #scoreboard}
-     *
-     * @param prefix   Set the {@code #prefix} of the {@code #score}
-     * @param score    Set the {@code #score} of the {@code #prefix}
-     * @return returns the method
-     */
-    public ScoreboardBuilder addScore( String prefix, int score ) {
-        this.objective.getScore( prefix ).setScore( score );
-        return this;
-    }
-
-    /**
-     * Add a team to the {@code #scoreboard}
-     *
-     * @param teamName Set the {@code #teamName} you want
-     * @param prefix   Set the {@code #prefix} of the {@code #team}
-     * @param entry    Set the {@code #entry} of the {@code #scoreboard}. Please use only §1, §2 (...)
-     * @param score    Set the {@code #score} in the following order
-     * @return returns the method
-     */
-    public ScoreboardBuilder addTeam( String teamName, String prefix, String entry, int score ) {
-        this.team = this.scoreboard.registerNewTeam( teamName );
-        this.team.setPrefix( coloredMessage( prefix ) );
-        this.team.addEntry( entry );
-        this.objective.getScore( entry ).setScore( score );
-        return this;
-    }
-
-    /**
-     * Add a team to the {@code #scoreboard}
-     *
-     * @param teamName Set the {@code #teamName} you want
-     * @param prefix   Set the {@code #prefix} of the {@code #team}
-     * @param suffix   Set the {@code #suffix} of the {@code #team}
-     * @param entry    Set the {@code #entry} of the {@code #scoreboard}. Please use only §1, §2, §3 (...)
-     * @param score    Set the {@code #score} in the following order
-     * @return returns the method
-     */
-    public ScoreboardBuilder addTeam( String teamName, String prefix, String suffix, String entry, int score ) {
-        this.team = this.scoreboard.registerNewTeam( teamName );
-        this.team.setPrefix( coloredMessage( prefix ) );
-        this.team.setSuffix( coloredMessage( suffix ) );
-        this.team.addEntry( entry );
-        this.objective.getScore( entry ).setScore( score );
-        return this;
     }
 
     /**
@@ -120,6 +71,61 @@ public class ScoreboardBuilder {
         player.getScoreboard().getTeam( team ).setSuffix( staticColoredMessage( suffix ) );
     }
 
+    private static String staticColoredMessage( String message ) {
+        return ChatColor.translateAlternateColorCodes( '&', message );
+    }
+
+    /**
+     * Add a team to the {@code #scoreboard}
+     *
+     * @param prefix Set the {@code #prefix} of the {@code #score}
+     * @param score  Set the {@code #score} of the {@code #prefix}
+     *
+     * @return returns the method
+     */
+    public ScoreboardBuilder addScore( String prefix, int score ) {
+        this.objective.getScore( prefix ).setScore( score );
+        return this;
+    }
+
+    /**
+     * Add a team to the {@code #scoreboard}
+     *
+     * @param teamName Set the {@code #teamName} you want
+     * @param prefix   Set the {@code #prefix} of the {@code #team}
+     * @param entry    Set the {@code #entry} of the {@code #scoreboard}. Please use only §1, §2 (...)
+     * @param score    Set the {@code #score} in the following order
+     *
+     * @return returns the method
+     */
+    public ScoreboardBuilder addTeam( String teamName, String prefix, String entry, int score ) {
+        this.team = this.scoreboard.registerNewTeam( teamName );
+        this.team.setPrefix( coloredMessage( prefix ) );
+        this.team.addEntry( entry );
+        this.objective.getScore( entry ).setScore( score );
+        return this;
+    }
+
+    /**
+     * Add a team to the {@code #scoreboard}
+     *
+     * @param teamName Set the {@code #teamName} you want
+     * @param prefix   Set the {@code #prefix} of the {@code #team}
+     * @param suffix   Set the {@code #suffix} of the {@code #team}
+     * @param entry    Set the {@code #entry} of the {@code #scoreboard}. Please use only §1, §2, §3 (...)
+     * @param score    Set the {@code #score} in the following order
+     *
+     * @return returns the method
+     */
+    public ScoreboardBuilder addTeam( String teamName, String prefix, String suffix, String entry, int score ) {
+        this.team = this.scoreboard.registerNewTeam( teamName );
+        this.team.setPrefix( coloredMessage( prefix ) );
+        this.team.setSuffix( coloredMessage( suffix ) );
+        this.team.addEntry( entry );
+        this.objective.getScore( entry ).setScore( score );
+        return this;
+    }
+
     /**
      * Finally send the scoreboard
      */
@@ -128,10 +134,6 @@ public class ScoreboardBuilder {
     }
 
     private String coloredMessage( String message ) {
-        return ChatColor.translateAlternateColorCodes( '&', message );
-    }
-
-    private static String staticColoredMessage( String message ) {
         return ChatColor.translateAlternateColorCodes( '&', message );
     }
 }

@@ -1,5 +1,5 @@
 name: Guild-Spigot
-version: 1.0.0
+version: 3.5.1
 author: NoJokeFNA
 
 main: io.github.nojokefna.guild.spigot.Guild
@@ -7,16 +7,17 @@ softdepend:
   - Vault
 
 commands:
+  test:
+    permission: Test
+
   guild:
     description: Send you the guild help message
-    aliases: [gilde]
+    aliases: [ gilde ]
     permission: guild.use
 
   adminguild:
     description: Send you the admin guild help message
     permission: guild.admin
-
-  test:
 
 permissions:
   guild.admin.*:

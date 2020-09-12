@@ -12,7 +12,6 @@ import io.github.nojokefna.guild.spigot.database.api.GuildAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildInvitesAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildUserAPI;
 import io.github.nojokefna.guild.spigot.listener.*;
-import io.github.nojokefna.guild.spigot.utils.ANSIColors;
 import io.github.nojokefna.guild.spigot.utils.Data;
 import lombok.Getter;
 import net.milkbowl.vault.chat.Chat;
@@ -23,7 +22,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 
@@ -79,12 +77,11 @@ public class Guild extends JavaPlugin {
 
         try {
             this.getDatabaseBuilder().createTables();
-            System.out.println( ANSIColors.ANSI_RED + "MySQL connected in " + ( System.currentTimeMillis() - startupTime ) + "ms" + ANSIColors.ANSI_RESET );
+            System.out.println( "MySQL connected in " + ( System.currentTimeMillis() - startupTime ) + "ms" );
 
             this.initializeVault();
             this.register();
-            System.out.println( ANSIColors.ANSI_RED + "Commands & Listener were loaded in " + ( System.currentTimeMillis() - startupTime ) + "ms"
-                    + ANSIColors.ANSI_RESET );
+            System.out.println( "Commands & Listener were loaded in " + ( System.currentTimeMillis() - startupTime ) + "ms" );
 
             this.getLogger().finest( String.format( "%s§a%s §ahas started.", this.getData().getPrefix(), this.getDescription().getName() ) );
         } catch ( Exception ex ) {
@@ -93,7 +90,7 @@ public class Guild extends JavaPlugin {
             ex.printStackTrace();
         }
 
-        System.out.println( ANSIColors.ANSI_RED + "The plugin were loaded in " + ( System.currentTimeMillis() - startupTime ) + "ms" + ANSIColors.ANSI_RESET );
+        System.out.println( "The plugin were loaded in " + ( System.currentTimeMillis() - startupTime ) + "ms" );
     }
 
     @Override
@@ -129,7 +126,7 @@ public class Guild extends JavaPlugin {
     }
 
     private void loadConfig() {
-        if ( ! this.getDataFolder().exists() )
+        if ( !this.getDataFolder().exists() )
             this.getDataFolder().mkdirs();
 
         this.getConfig().options().copyDefaults( true );
@@ -138,17 +135,13 @@ public class Guild extends JavaPlugin {
         String language = this.getConfig().getString( "language" );
         String path = "languages/" + language.toLowerCase() + "_" + language.toUpperCase() + ".yml";
 
-        this.save( path );
-        this.save( "chat_settings.yml" );
-        this.save( "server_settings.yml" );
-
         this.fileBuilder = new FileBuilder( path );
         this.settingsManager = new FileBuilder( "chat_settings.yml" );
         this.serverSettingsBuilder = new FileBuilder( "server_settings.yml" );
     }
 
     private void initializeVault() {
-        if ( ! this.setupEconomy() ) {
+        if ( !this.setupEconomy() ) {
             this.getLogger().severe( String.format( "[%s] - Disabled due to no Vault dependency found!", this.getDescription().getName() ) );
             this.getServer().getPluginManager().disablePlugin( this );
             return;
@@ -205,13 +198,5 @@ public class Guild extends JavaPlugin {
     private void setupChat() {
         RegisteredServiceProvider<Chat> serviceProvider = this.getServer().getServicesManager().getRegistration( Chat.class );
         this.chat = serviceProvider.getProvider();
-    }
-
-    private void save( String path ) {
-        File file = new File( this.getDataFolder().getAbsolutePath(), path );
-        if ( ! file.exists() ) {
-            this.saveResource( path, false );
-            this.saveConfig();
-        }
     }
 }
