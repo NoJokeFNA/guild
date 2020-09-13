@@ -16,16 +16,16 @@ public class AdminGuildCommand implements CommandExecutor {
     @Override
     public boolean onCommand( CommandSender commandSender, Command command, String label, String[] args ) {
         if ( commandSender instanceof Player ) {
-            Player player = ( Player ) commandSender;
+            final Player player = ( Player ) commandSender;
 
-            GuildBuilder guildBuilder = Guild.getPlugin().getGuildBuilder();
+            final GuildBuilder guildBuilder = Guild.getPlugin().getGuildBuilder();
 
             switch ( args.length ) {
                 case 1:
                     switch ( args[0].toLowerCase() ) {
                         case "reload":
                             Guild.getPlugin().getFileBuilder().loadConfig();
-                            Guild.getPlugin().getSettingsManager().loadConfig();
+                            Guild.getPlugin().getChatSettingsBuilder().loadConfig();
 
                             guildBuilder.sendMessage( player, "§aSuccessfully reloaded the config." );
                             break;

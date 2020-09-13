@@ -19,13 +19,13 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
-
-import static java.util.concurrent.Executors.newFixedThreadPool;
+import java.util.concurrent.Executors;
 
 /**
  * @author NoJokeFNA
@@ -44,7 +44,7 @@ public class Guild extends JavaPlugin {
 
     private Data data;
     private GuildAPI guildAPI;
-    private FileBuilder fileBuilder, settingsManager, serverSettingsBuilder;
+    private FileBuilder fileBuilder, chatSettingsBuilder, serverSettingsBuilder;
     private GuildUserAPI guildUserAPI;
     private GuildBuilder guildBuilder;
     private GuildController guildController;
@@ -55,16 +55,17 @@ public class Guild extends JavaPlugin {
     @Override
     public void onLoad() {
         plugin = this;
+
         this.loadConfig();
         this.initialize();
     }
 
     @Override
     public void onEnable() {
-        long startupTime = System.currentTimeMillis();
+        final long startupTime = System.currentTimeMillis();
 
         this.getLogger().finest( String.format( "%s§aTry to start §c%s §a...", this.getData().getPrefix(), this.getDescription().getName() ) );
-        this.executorService = newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
+        this.executorService = Executors.newFixedThreadPool( 2 );
 
         System.out.println(
                 "\n" +
@@ -136,11 +137,13 @@ public class Guild extends JavaPlugin {
         String path = "languages/" + language.toLowerCase() + "_" + language.toUpperCase() + ".yml";
 
         this.fileBuilder = new FileBuilder( path );
-        this.settingsManager = new FileBuilder( "chat_settings.yml" );
+        this.chatSettingsBuilder = new FileBuilder( "chat_settings.yml" );
         this.serverSettingsBuilder = new FileBuilder( "server_settings.yml" );
     }
 
     private void initializeVault() {
+        final PluginManager pluginManager = Bukkit.getPluginManager();
+
         if ( !this.setupEconomy() ) {
             this.getLogger().severe( String.format( "[%s] - Disabled due to no Vault dependency found!", this.getDescription().getName() ) );
             this.getServer().getPluginManager().disablePlugin( this );
@@ -149,14 +152,24 @@ public class Guild extends JavaPlugin {
 
         this.getLogger().finest( String.format( "Successfully started %s", "Vault" ) );
 
-        switch ( this.getSettingsManager().getKey( "chat.permission_plugin" ) ) {
+        switch ( this.getChatSettingsBuilder().getKey( "chat.permission_plugin" ) ) {
             case "PermissionsEx":
+                if ( pluginManager.getPlugin( "PermissionsEx" ) == null ) {
+                    this.getLogger().severe( String.format( "%s can't be activated, because the plugin %s could be found", "PermissionsEx", "PermissionsEx" ) );
+                    return;
+                }
+
                 this.getLogger().finest( String.format( "Successfully enabled %s and %s", "Vault-Chat", "PermissionsEx" ) );
                 this.setupPerms( "PermissionsEx" );
                 this.setupChat();
                 break;
 
             case "LuckPerms":
+                if ( pluginManager.getPlugin( "LuckPerms" ) == null ) {
+                    this.getLogger().severe( String.format( "%s can't be activated, because the plugin %s could be found", "LuckPerms", "LuckPerms" ) );
+                    return;
+                }
+
                 this.getLogger().finest( String.format( "Successfully enabled %s and %s", "Vault-Chat", "LuckPerms" ) );
                 this.setupPerms( "LuckPerms" );
                 this.setupChat();
@@ -167,7 +180,7 @@ public class Guild extends JavaPlugin {
                 break;
 
             default:
-                throw new IllegalStateException( "Unexpected value: " + this.getSettingsManager().getKey( "chat.permission_plugin" ) );
+                throw new IllegalStateException( "Unexpected value: " + this.getChatSettingsBuilder().getKey( "chat.permission_plugin" ) );
         }
     }
 
@@ -180,7 +193,6 @@ public class Guild extends JavaPlugin {
             return false;
 
         this.economy = serviceProvider.getProvider();
-
         return this.economy != null;
     }
 

@@ -41,6 +41,7 @@ public class GuildRecodeController implements GuildRecodeInterface {
         this.guildBuilder = Guild.getPlugin().getGuildBuilder();
     }
 
+
     @Override
     public void createGuild( Player player, String guildName, String guildTag, String guildLeader ) {
         final CacheUser user = CacheUser.getUser( player );
@@ -322,17 +323,17 @@ public class GuildRecodeController implements GuildRecodeInterface {
     }
 
     @Override
-    public String getInvitedGuildName( OfflinePlayer player ) {
-        return this.guildUserAPI.getKey( player.getUniqueId(), "guild_name" );
+    public String getInvitedGuildName( OfflinePlayer targetOfflinePlayer ) {
+        return this.guildUserAPI.getKey( targetOfflinePlayer.getUniqueId(), "guild_name" );
     }
 
     @Override
-    public String getInvitedGuildTag( OfflinePlayer player ) {
-        return this.guildUserAPI.getKey( player.getUniqueId(), "guild_tag" );
+    public String getInvitedGuildTag( OfflinePlayer targetOfflinePlayer ) {
+        return this.guildUserAPI.getKey( targetOfflinePlayer.getUniqueId(), "guild_tag" );
     }
 
     @Override
-    public void setGuildMaster( Player player, OfflinePlayer offlineTargetPlayer ) {
+    public void setGuildMaster( Player player, OfflinePlayer targetOfflinePlayer ) {
         final CacheUser user = CacheUser.getUser( player );
 
         final long time = Long.parseLong( this.fileBuilder.getKey( "guild.set_guild_master.security_countdown" ) );
@@ -347,7 +348,7 @@ public class GuildRecodeController implements GuildRecodeInterface {
             return;
         }
 
-        if ( this.guildUserAPI.keyExists( offlineTargetPlayer.getUniqueId() ) ) {
+        if ( this.guildUserAPI.keyExists( targetOfflinePlayer.getUniqueId() ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.target_is_in_no_guild" ) );
             return;
         }
@@ -355,26 +356,26 @@ public class GuildRecodeController implements GuildRecodeInterface {
         if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.security_message_1" )
-                    .replace( "{TARGET}", offlineTargetPlayer.getName() ) );
+                    .replace( "{TARGET}", targetOfflinePlayer.getName() ) );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.security_message_2" ) );
             return;
         }
 
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.set_master" ) );
 
-        this.guildAPI.updateGuild( "guild_leader", offlineTargetPlayer.getName(), this.getGuildName( player ) );
+        this.guildAPI.updateGuild( "guild_leader", targetOfflinePlayer.getName(), this.getGuildName( player ) );
         this.guildUserAPI.updateKey( "guild_rank", "Officer", player.getUniqueId() );
-        this.guildUserAPI.updateKey( "guild_rank", "Master", offlineTargetPlayer.getUniqueId() );
+        this.guildUserAPI.updateKey( "guild_rank", "Master", targetOfflinePlayer.getUniqueId() );
 
         this.guildList.remove( player.getName() );
 
-        Bukkit.getPluginManager().callEvent( new GuildSetMasterEvent( player, offlineTargetPlayer ) );
+        Bukkit.getPluginManager().callEvent( new GuildSetMasterEvent( player, targetOfflinePlayer ) );
 
         Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
 
     @Override
-    public void promotePlayer( Player player, OfflinePlayer offlineTargetPlayer ) {
+    public void promotePlayer( Player player, OfflinePlayer targetOfflinePlayer ) {
         final CacheUser user = CacheUser.getUser( player );
 
         final long time = Long.parseLong( this.fileBuilder.getKey( "guild.promote_player.security_countdown" ) );
@@ -397,25 +398,25 @@ public class GuildRecodeController implements GuildRecodeInterface {
         if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.promote_player.security_message_1" )
-                    .replace( "{TARGET}", offlineTargetPlayer.getName() ) );
+                    .replace( "{TARGET}", targetOfflinePlayer.getName() ) );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.promote_player.security_message_2" ) );
             return;
         }
 
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.promote_player.promote_player" )
-                .replace( "{TARGET}", offlineTargetPlayer.getName() ) );
+                .replace( "{TARGET}", targetOfflinePlayer.getName() ) );
 
-        this.guildUserAPI.updateKey( "guild_rank", "Officer", offlineTargetPlayer.getUniqueId() );
+        this.guildUserAPI.updateKey( "guild_rank", "Officer", targetOfflinePlayer.getUniqueId() );
 
         this.guildList.remove( player.getName() );
 
-        Bukkit.getPluginManager().callEvent( new GuildPromotePlayerEvent( player, offlineTargetPlayer ) );
+        Bukkit.getPluginManager().callEvent( new GuildPromotePlayerEvent( player, targetOfflinePlayer ) );
 
         Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
 
     @Override
-    public void demotePlayer( Player player, OfflinePlayer offlineTargetPlayer ) {
+    public void demotePlayer( Player player, OfflinePlayer targetOfflinePlayer ) {
         final CacheUser user = CacheUser.getUser( player );
 
         if ( !user.isInGuild() ) {
@@ -436,25 +437,25 @@ public class GuildRecodeController implements GuildRecodeInterface {
         if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.demote_player.security_message_1" )
-                    .replace( "{TARGET}", offlineTargetPlayer.getName() ) );
+                    .replace( "{TARGET}", targetOfflinePlayer.getName() ) );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.demote_player.security_message_2" ) );
             return;
         }
 
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.demote_player.demote_player" )
-                .replace( "{TARGET}", offlineTargetPlayer.getName() ) );
+                .replace( "{TARGET}", targetOfflinePlayer.getName() ) );
 
-        this.guildUserAPI.updateKey( "guild_rank", "Member", offlineTargetPlayer.getUniqueId() );
+        this.guildUserAPI.updateKey( "guild_rank", "Member", targetOfflinePlayer.getUniqueId() );
 
         this.guildList.remove( player.getName() );
 
-        Bukkit.getPluginManager().callEvent( new GuildDemotePlayerEvent( player, offlineTargetPlayer ) );
+        Bukkit.getPluginManager().callEvent( new GuildDemotePlayerEvent( player, targetOfflinePlayer ) );
 
         Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * 10L );
     }
 
     @Override
-    public void kickPlayer( Player player, OfflinePlayer offlineTargetPlayer ) {
+    public void kickPlayer( Player player, OfflinePlayer targetOfflinePlayer ) {
         final CacheUser user = CacheUser.getUser( player );
 
         final long time = Long.parseLong( this.fileBuilder.getKey( "guild.delete_guild.security_countdown" ) );
@@ -464,12 +465,12 @@ public class GuildRecodeController implements GuildRecodeInterface {
             return;
         }
 
-        if ( this.guildUserAPI.keyExists( offlineTargetPlayer.getUniqueId() ) ) {
+        if ( this.guildUserAPI.keyExists( targetOfflinePlayer.getUniqueId() ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.target_in_no_guild" ) );
             return;
         }
 
-        if ( this.getGuildMaster( player ).equals( offlineTargetPlayer.getName() ) ) {
+        if ( this.getGuildMaster( player ).equals( targetOfflinePlayer.getName() ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.kick_himself" ) );
             return;
         }
@@ -482,19 +483,19 @@ public class GuildRecodeController implements GuildRecodeInterface {
         if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.security_message_1" )
-                    .replace( "{TARGET}", offlineTargetPlayer.getName() ) );
+                    .replace( "{TARGET}", targetOfflinePlayer.getName() ) );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.security_message_2" ) );
             return;
         }
 
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.target_kick" )
-                .replace( "{TARGET}", offlineTargetPlayer.getName() ) );
+                .replace( "{TARGET}", targetOfflinePlayer.getName() ) );
 
-        this.guildUserAPI.deleteKey( offlineTargetPlayer.getUniqueId() );
+        this.guildUserAPI.deleteKey( targetOfflinePlayer.getUniqueId() );
 
         this.guildList.remove( player.getName() );
 
-        Bukkit.getPluginManager().callEvent( new GuildKickPlayerEvent( player, offlineTargetPlayer ) );
+        Bukkit.getPluginManager().callEvent( new GuildKickPlayerEvent( player, targetOfflinePlayer ) );
 
         Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), () -> this.guildList.remove( player.getName() ), 20L * time );
     }
@@ -654,12 +655,12 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
     @Override
     public void addGuildBank( Player player, int amount ) {
-
+        Bukkit.getPluginManager().callEvent( new GuildUpdateBank( player, amount ) );
     }
 
     @Override
     public void removeGuildBank( Player player, int amount ) {
-
+        Bukkit.getPluginManager().callEvent( new GuildUpdateBank( player, amount ) );
     }
 
     @Override

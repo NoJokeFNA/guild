@@ -5,6 +5,7 @@ chat:
   # Disable "use_chat" if you use "use_chat_feature"!
   # Default: false
   use_chat: false
+  use_chat_general: true
 
   # You can only use LuckPerms, PermissionsEx, CloudNet (Only CloudNetV2)
   # Default: LuckPerms

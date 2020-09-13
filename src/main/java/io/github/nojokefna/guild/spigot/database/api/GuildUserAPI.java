@@ -2,7 +2,6 @@ package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.database.AbstractMySQL;
-import org.bukkit.Bukkit;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,7 +45,7 @@ public class GuildUserAPI extends AbstractMySQL {
     }
 
     public void createPlayer( UUID playerUuid, String playerName, String guildName, String guildTag, String guildRank ) {
-        Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
+        Guild.getPlugin().getExecutorService().submit( () -> {
             if ( this.keyExists( playerUuid ) ) {
                 try {
                     PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()

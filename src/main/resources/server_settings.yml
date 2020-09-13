@@ -72,6 +72,9 @@ tablist:
   # Parameters:
   # {GUILD} return players guild
 
+  use_tablist: true
+  use_scoreboard: true
+
   prefix:
     admin:
       - '&4&lAdmin &8| &7'

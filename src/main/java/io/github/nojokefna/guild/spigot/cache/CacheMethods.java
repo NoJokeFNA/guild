@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.config.FileBuilder;
-import io.github.nojokefna.guild.spigot.controller.GuildRecodeController;
 import net.labymod.serverapi.bukkit.LabyModPlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -23,13 +22,10 @@ public class CacheMethods {
     private final FileBuilder server;
     private final ConfigurationSection section, serverSection;
 
-    private final GuildRecodeController guildController;
-
     public CacheMethods() {
-        this.section = Guild.getPlugin().getSettingsManager().getConfigurationSection();
+        this.section = Guild.getPlugin().getChatSettingsBuilder().getConfigurationSection();
         this.serverSection = Guild.getPlugin().getServerSettingsBuilder().getConfigurationSection();
         this.server = Guild.getPlugin().getServerSettingsBuilder();
-        this.guildController = Guild.getPlugin().getGuildRecodeController();
     }
 
     public boolean getCoolDown( Player player, Map<UUID, Long> currentMap, String message ) {

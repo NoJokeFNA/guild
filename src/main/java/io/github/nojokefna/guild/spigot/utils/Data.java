@@ -21,7 +21,7 @@ public class Data {
     private final FileBuilder fileBuilder;
 
     public Data() {
-        this.fileBuilder = Guild.getPlugin().getSettingsManager();
+        this.fileBuilder = Guild.getPlugin().getChatSettingsBuilder();
     }
 
     public String getPrefix() {

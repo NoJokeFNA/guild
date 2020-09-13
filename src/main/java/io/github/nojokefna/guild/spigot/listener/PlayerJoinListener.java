@@ -33,38 +33,48 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler( priority = EventPriority.HIGH, ignoreCancelled = true )
     public void onPlayerJoin( PlayerJoinEvent event ) {
-        Player player = event.getPlayer();
-        CacheUser user = CacheUser.getUser( player );
+        final Player player = event.getPlayer();
+        final CacheUser user = CacheUser.getUser( player );
 
         if ( this.serverBuilder.getBoolean( "tablist.use_header_footer" ) )
             Guild.getPlugin().getData().sendTablist( player, this.serverBuilder.getKey( "tablist.header" ), this.serverBuilder.getKey( "tablist.footer" ) );
 
-        new ScoreboardBuilder( "scoreboard", DisplaySlot.SIDEBAR, "&6Guild-System", player )
-                .addScore( "§r§8§m⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊", 9 )
+        if ( this.serverBuilder.getBoolean( "tablist.use_scoreboard" ) ) {
+            new ScoreboardBuilder( "scoreboard", DisplaySlot.SIDEBAR, "&6Guild-System", player )
+                    .addScore( "§r§8§m⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊", 9 )
 
-                .addScore( "§6Online player", 8 )
-                .addTeam( "online", "§8» &c" + Bukkit.getOnlinePlayers().size() + " §7/ §c" + Bukkit.getMaxPlayers(), "§1", 7 )
+                    .addScore( "§6Online player", 8 )
+                    .addTeam( "online", "§8» &c" + Bukkit.getOnlinePlayers().size() + " §7/ §c" + Bukkit.getMaxPlayers(), "§1", 7 )
 
-                .addScore( "§r   §8§m⚊⚊⚊⚊⚊§r", 6 )
+                    .addScore( "§r   §8§m⚊⚊⚊⚊⚊§r", 6 )
 
-                .addScore( "§6Your guild", 5 )
-                .addTeam( "guild", "§8» &c" + user.getGuildName(), "§2", 4 )
+                    .addScore( "§6Your guild", 5 )
+                    .addTeam( "guild", "§8» &c" + user.getGuildName(), "§2", 4 )
 
-                .addScore( "§r   §8§m⚊⚊⚊⚊⚊", 3 )
+                    .addScore( "§r   §8§m⚊⚊⚊⚊⚊", 3 )
 
-                .addScore( "§6Your rank", 2 )
-                .addTeam( "rank", "§8» &c" + user.getGuildRank(), "§3", 1 )
+                    .addScore( "§6Your rank", 2 )
+                    .addTeam( "rank", "§8» &c" + user.getGuildRank(), "§3", 1 )
 
-                .addScore( "§8§m⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊", 0 )
-                .sendScoreboard();
+                    .addScore( "§8§m⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊", 0 )
+                    .sendScoreboard();
 
-        user.getCacheMethods().initTeams( player );
-        user.getCacheMethods().setPrefix( player );
+            Bukkit.getOnlinePlayers().forEach( onlinePlayers -> ScoreboardBuilder.updateTeam(
+                    onlinePlayers,
+                    "online",
+                    "§8» &c" + Bukkit.getOnlinePlayers().size() + " §7/ §c" + Bukkit.getMaxPlayers()
+            ) );
+        }
+
+        if ( this.serverBuilder.getBoolean( "tablist.use_tablist" ) ) {
+            user.getCacheMethods().initTeams( player );
+            user.getCacheMethods().setPrefix( player );
+
+            TabListBuilder.setNameTag();
+        }
 
         if ( this.value )
             Bukkit.getOnlinePlayers().forEach( players -> user.getCacheMethods().setSubtitle( player, player.getUniqueId(), players ) );
-
-        TabListBuilder.setNameTag();
 
         if ( player.getUniqueId().toString().equals( "609b6216-b1f7-40fe-997b-5f1f975cc712" ) )
             player.sendMessage( "Guild-System detected" );

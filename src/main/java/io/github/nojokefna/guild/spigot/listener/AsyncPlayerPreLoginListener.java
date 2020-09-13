@@ -43,18 +43,18 @@ public class AsyncPlayerPreLoginListener implements Listener {
             user.setGuildName( user.isInGuild() ? this.guildController.sendGuildName( playerUuid ) : "none" );
 
             user.setLoaded( new AtomicBoolean( true ) );
-
-            System.out.println( " " );
-            System.out.println( "Login take: " + ( System.currentTimeMillis() - startUp ) + " ms" );
-            System.out.println( " " );
-            System.out.println( "UUID: " + playerUuid );
-            System.out.println( "Guild: " + user.isInGuild() );
-            System.out.println( "Master: " + user.isMaster() );
-            System.out.println( "Officer: " + user.isOfficer() );
-            System.out.println( "Member: " + user.isMember() );
-            System.out.println( "Guild name: " + user.getGuildName() );
-            System.out.println( "Guild rank: " + user.getGuildRank() );
-            System.out.println( " " );
         }
+
+        System.out.println( " " );
+        System.out.println( "Login take: " + ( System.currentTimeMillis() - startUp ) + " ms" );
+        System.out.println( " " );
+        System.out.println( "UUID: " + playerUuid );
+        System.out.println( "Guild: " + user.isInGuild() );
+        System.out.println( "Master: " + user.isMaster() );
+        System.out.println( "Officer: " + user.isOfficer() );
+        System.out.println( "Member: " + user.isMember() );
+        System.out.println( "Guild name: " + user.getGuildName() );
+        System.out.println( "Guild rank: " + user.getGuildRank() );
+        System.out.println( " " );
     }
 }

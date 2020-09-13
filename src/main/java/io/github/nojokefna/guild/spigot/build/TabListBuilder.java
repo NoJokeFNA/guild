@@ -13,7 +13,7 @@ public class TabListBuilder {
 
     public static void setNameTag() {
         for ( Player players : Bukkit.getOnlinePlayers() ) {
-            CacheUser user = CacheUser.getUser( players );
+            final CacheUser user = CacheUser.getUser( players );
 
             if ( user.getPrefix() != null && user.getTagId() != null ) {
                 for ( Player all : Bukkit.getOnlinePlayers() ) {
@@ -22,7 +22,7 @@ public class TabListBuilder {
                     if ( playerName.length() >= 10 )
                         playerName = players.getName().substring( 0, 10 );
 
-                    Team team = all.getScoreboard().getTeam( user.getTagId() + playerName ) != null
+                    final Team team = all.getScoreboard().getTeam( user.getTagId() + playerName ) != null
                             ? all.getScoreboard().getTeam( user.getTagId() + playerName )
                             : all.getScoreboard().registerNewTeam( user.getTagId() + playerName );
 
@@ -36,7 +36,7 @@ public class TabListBuilder {
                         team.setSuffix( user.getSuffix() );
                     }
 
-                    String prefix = user.getNameTag() + playerName;
+                    final String prefix = user.getNameTag() + playerName;
 
                     players.setPlayerListName( prefix );
                     players.setDisplayName( prefix );

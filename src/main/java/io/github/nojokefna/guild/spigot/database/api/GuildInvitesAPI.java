@@ -2,7 +2,6 @@ package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.database.AbstractMySQL;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -22,7 +21,7 @@ public class GuildInvitesAPI extends AbstractMySQL {
     }
 
     public void createPlayer( UUID playerUuid, OfflinePlayer player, String invitedName, String guildName, String guildTag ) {
-        Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
+        Guild.getPlugin().getExecutorService().submit( () -> {
             try {
                 PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
                         .getDatabase()
