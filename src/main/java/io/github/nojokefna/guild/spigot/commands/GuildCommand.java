@@ -11,8 +11,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,11 +27,11 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand( CommandSender sender, Command command, String label, String[] args ) {
         if ( sender instanceof Player ) {
-            Player player = ( Player ) sender;
+            final Player player = ( Player ) sender;
 
-            GuildBuilder guildBuilder = Guild.getPlugin().getGuildBuilder();
-            GuildController guildController = Guild.getPlugin().getGuildController();
-            GuildRecodeController guildRecodeController = Guild.getPlugin().getGuildRecodeController();
+            final GuildBuilder guildBuilder = Guild.getPlugin().getGuildBuilder();
+            final GuildController guildController = Guild.getPlugin().getGuildController();
+            final GuildRecodeController guildRecodeController = Guild.getPlugin().getGuildRecodeController();
 
             if ( !Guild.getPlugin().getDatabaseBuilder().isMySqlConfigured() ) {
                 guildBuilder.sendMessage( player, "§cThe database is not configured! Please contact an administrator!" );
@@ -78,7 +81,8 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
 
                 case 2:
                     Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
-                        OfflinePlayer target = Bukkit.getOfflinePlayer( args[1] );
+                        final OfflinePlayer targetOfflinePlayer = Bukkit.getOfflinePlayer( args[1] );
+
                         switch ( args[0].toLowerCase() ) {
                             case "help":
                                 int value = Integer.parseInt( args[1] );
@@ -95,7 +99,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                                 break;
 
                             case "revoke":
-                                guildController.revokeInvite( player, target );
+                                guildController.revokeInvite( player, targetOfflinePlayer );
                                 break;
 
                             case "accept":
@@ -107,19 +111,19 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                                 break;
 
                             case "setmaster":
-                                guildController.setGuildMaster( player, target );
+                                guildController.setGuildMaster( player, targetOfflinePlayer );
                                 break;
 
                             case "kick":
-                                guildController.kickPlayer( player, target );
+                                guildController.kickPlayer( player, targetOfflinePlayer );
                                 break;
 
                             case "promote":
-                                guildController.promotePlayer( player, target );
+                                guildController.promotePlayer( player, targetOfflinePlayer );
                                 break;
 
                             case "demote":
-                                guildController.demotePlayer( player, target );
+                                guildController.demotePlayer( player, targetOfflinePlayer );
                                 break;
 
                             case "bank":
@@ -193,24 +197,46 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete( CommandSender sender, Command command, String label, String[] args ) {
-        if ( command.getName().equalsIgnoreCase( "guild" ) ) {
-            List<String> commandList = new ArrayList<>();
+        final List<String> commandList = new ArrayList<>(), completions = new ArrayList<>();
 
-            switch ( args.length ) {
-                case 0:
-                    commandList.addAll( commandList );
-                    break;
+        switch ( args.length ) {
+            case 1:
+                commandList.addAll( Arrays.asList(
+                        "help",
+                        "leave",
+                        "delete",
+                        "info",
+                        "members",
+                        "info",
+                        "setMaster",
+                        "kick",
+                        "chat",
+                        "invites",
+                        "bank",
+                        "master",
+                        "accept",
+                        "deny",
+                        "officers",
+                        "promote",
+                        "demote",
+                        "quests"
+                ) );
 
-                case 1:
-                    break;
+                StringUtil.copyPartialMatches( args[0], commandList, completions );
+                break;
 
-                case 2:
-                    break;
+            case 2:
+                if ( args[0].equalsIgnoreCase( "quests" ) )
+                    commandList.add( "info" );
 
-                default:
-                    throw new IllegalStateException( "Unexpected value: " + args.length );
-            }
+                StringUtil.copyPartialMatches( args[1], commandList, completions );
+                break;
+
+            default:
+                return null;
         }
-        return null;
+
+        Collections.sort( completions );
+        return completions;
     }
 }
