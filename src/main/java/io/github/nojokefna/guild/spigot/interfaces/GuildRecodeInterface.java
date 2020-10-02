@@ -65,6 +65,8 @@ public interface GuildRecodeInterface {
 
     void sendOfficers( Player player, String guild );
 
+    void sendGuildInfo( Player player );
+
     void sendGuildInfo( Player player, String guild );
 
     String getMembers( Player player );

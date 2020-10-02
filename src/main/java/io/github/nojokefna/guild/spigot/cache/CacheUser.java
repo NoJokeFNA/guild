@@ -1,6 +1,7 @@
 package io.github.nojokefna.guild.spigot.cache;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 
@@ -39,6 +40,7 @@ public class CacheUser {
     private boolean inGuild;
     private boolean isMember, isOfficer, isMaster;
     private String guildRank, guildName;
+    private int coins;
 
     public CacheUser() {
         this.cacheMethods = new CacheMethods();
@@ -47,17 +49,17 @@ public class CacheUser {
         this.message = new HashMap<>();
     }
 
-    public static CacheUser getUser( Player player ) {
+    public static CacheUser getUser( @NonNull Player player ) {
         return getUserByUuid( player.getUniqueId() );
     }
 
-    public static CacheUser getUserByUuid( UUID uuid ) {
+    public static CacheUser getUserByUuid( @NonNull UUID uuid ) {
         if ( !USER_MAP.containsKey( uuid ) )
             USER_MAP.put( uuid, new CacheUser() );
         return USER_MAP.get( uuid );
     }
 
-    public static void deleteUser( Player player ) {
+    public static void deleteUser( @NonNull Player player ) {
         USER_MAP.remove( player.getUniqueId() );
     }
 }

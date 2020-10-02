@@ -42,15 +42,11 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 case 1:
                     switch ( args[0].toLowerCase() ) {
                         case "info":
-                            guildController.sendGuildList( player );
+                            guildRecodeController.sendGuildInfo( player );
                             break;
 
                         case "invites":
                             guildRecodeController.getInvites( player );
-                            break;
-
-                        case "members":
-                            guildController.sendMembers( player );
                             break;
 
                         case "master":
@@ -58,7 +54,11 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                             break;
 
                         case "officers":
-                            guildController.sendOfficers( player );
+                            guildRecodeController.sendOfficers( player );
+                            break;
+
+                        case "members":
+                            guildRecodeController.sendMembers( player );
                             break;
 
                         case "leave":

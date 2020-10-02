@@ -32,6 +32,13 @@ kick:
 #--------------------------------------------
 
 #--------------------------------------------
+economy:
+  # Declare the boolean, if you want to use economey [essentials] support
+  # If you want to use your own economy system, you can use them via the GuildUpdateBank event
+  use_economy_support: true
+#--------------------------------------------
+
+#--------------------------------------------
 tablist:
   labymod:
     # Parameters:

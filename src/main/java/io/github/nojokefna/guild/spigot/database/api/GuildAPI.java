@@ -21,7 +21,7 @@ public class GuildAPI extends AbstractMySQL {
             if ( !this.guildExists( "guild_name", guildName ) ) {
                 try {
                     PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                            .getDatabase()
+                            .getDatabaseProvider()
                             .prepareStatement( "INSERT INTO `guild` (guild_name, guild_tag, guild_leader, guild_money) VALUES (?, ?, ?, ?)" );
 
                     preparedStatement.setString( 1, guildName );
@@ -29,7 +29,7 @@ public class GuildAPI extends AbstractMySQL {
                     preparedStatement.setString( 3, guildLeader );
                     preparedStatement.setInt( 4, 0 );
 
-                    Guild.getPlugin().getDatabaseBuilder().getDatabase().queryUpdate( preparedStatement );
+                    Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider().queryUpdate( preparedStatement );
                 } catch ( SQLException ex ) {
                     ex.printStackTrace();
                 }

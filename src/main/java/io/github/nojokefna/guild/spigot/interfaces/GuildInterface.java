@@ -80,4 +80,12 @@ public interface GuildInterface {
     boolean isGuildOfficer( UUID uuid );
 
     boolean isGuildMember( UUID uuid );
+
+    void updateCoins( UUID playerUuid, int coinsValue );
+
+    void addCoins( UUID playerUuid, int coinsValue );
+
+    void removeCoins( UUID playerUuid, int coinsValue );
+
+    int getCoins( UUID playerUuid );
 }

@@ -1,6 +1,7 @@
 package io.github.nojokefna.guild.spigot.database;
 
 import io.github.nojokefna.guild.spigot.Guild;
+import lombok.Setter;
 
 import java.sql.*;
 import java.util.concurrent.ExecutionException;
@@ -11,30 +12,23 @@ import java.util.function.Consumer;
  * @author NoJokeFNA
  * @version 1.0.0
  */
-public class Database {
+public class DatabaseProvider {
 
     private final Guild plugin;
 
     private final String username, password, hostname, database;
     private final int port;
 
+    @Setter
     private Connection connection;
 
-    public Database( String username, String password, String hostname, int port, String database, Guild plugin ) {
+    public DatabaseProvider( String username, String password, String hostname, int port, String database, Guild plugin ) {
         this.username = username;
         this.password = password;
         this.hostname = hostname;
         this.port = port;
         this.database = database;
         this.plugin = plugin;
-    }
-
-    public Connection getConnection() {
-        return connection;
-    }
-
-    public void setConnection( Connection connection ) {
-        this.connection = connection;
     }
 
     public void connect() {

@@ -9,6 +9,7 @@ import io.github.nojokefna.guild.spigot.controller.GuildController;
 import io.github.nojokefna.guild.spigot.controller.GuildRecodeController;
 import io.github.nojokefna.guild.spigot.database.DatabaseBuilder;
 import io.github.nojokefna.guild.spigot.database.api.GuildAPI;
+import io.github.nojokefna.guild.spigot.database.api.GuildCoinsAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildInvitesAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildUserAPI;
 import io.github.nojokefna.guild.spigot.listener.*;
@@ -46,6 +47,7 @@ public class Guild extends JavaPlugin {
     private GuildAPI guildAPI;
     private FileBuilder fileBuilder, chatSettingsBuilder, serverSettingsBuilder;
     private GuildUserAPI guildUserAPI;
+    private GuildCoinsAPI guildCoinsAPI;
     private GuildBuilder guildBuilder;
     private GuildController guildController;
     private GuildRecodeController guildRecodeController;
@@ -66,6 +68,8 @@ public class Guild extends JavaPlugin {
 
         this.getLogger().finest( String.format( "%s§aTry to start §c%s §a...", this.getData().getPrefix(), this.getDescription().getName() ) );
         this.executorService = Executors.newFixedThreadPool( 2 );
+
+        Data.registerRecipe();
 
         System.out.println(
                 "\n" +
@@ -120,6 +124,7 @@ public class Guild extends JavaPlugin {
         this.guildAPI = new GuildAPI();
         this.guildInvitesAPI = new GuildInvitesAPI();
         this.guildUserAPI = new GuildUserAPI();
+        this.guildCoinsAPI = new GuildCoinsAPI();
         this.guildBuilder = new GuildBuilder();
         this.guildController = new GuildController();
         this.guildRecodeController = new GuildRecodeController();
@@ -144,7 +149,7 @@ public class Guild extends JavaPlugin {
     private void initializeVault() {
         final PluginManager pluginManager = Bukkit.getPluginManager();
 
-        if ( !this.setupEconomy() ) {
+        if ( this.serverSettingsBuilder.getBoolean( "economy.use_economy_support" ) && !this.setupEconomy() ) {
             this.getLogger().severe( String.format( "[%s] - Disabled due to no Vault dependency found!", this.getDescription().getName() ) );
             this.getServer().getPluginManager().disablePlugin( this );
             return;

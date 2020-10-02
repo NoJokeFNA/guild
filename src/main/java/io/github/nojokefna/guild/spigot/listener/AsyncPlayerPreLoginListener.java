@@ -43,6 +43,8 @@ public class AsyncPlayerPreLoginListener implements Listener {
             user.setGuildRank( user.isInGuild() ? this.guildController.sendGuildRank( playerUuid ) : "none" );
             user.setGuildName( user.isInGuild() ? this.guildController.sendGuildName( playerUuid ) : "none" );
 
+            user.setCoins( this.guildController.getCoins( playerUuid ) );
+
             user.setLoaded( new AtomicBoolean( true ) );
         }
 
@@ -51,6 +53,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
         System.out.println( " " );
         System.out.println( "UUID: " + playerUuid );
         System.out.println( "Name: " + playerName );
+        System.out.println( "Coins: " + user.getCoins() );
         System.out.println( "Guild: " + user.isInGuild() );
         System.out.println( "Master: " + user.isMaster() );
         System.out.println( "Officer: " + user.isOfficer() );

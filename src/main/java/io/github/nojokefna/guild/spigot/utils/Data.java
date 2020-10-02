@@ -7,8 +7,14 @@ import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.chat.Chat;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.lang.reflect.Field;
 
@@ -24,6 +30,25 @@ public class Data {
         this.fileBuilder = Guild.getPlugin().getChatSettingsBuilder();
     }
 
+    public static void registerRecipe() {
+        final ItemStack itemStack = new ItemStack( Material.DIAMOND_SWORD );
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+
+        itemMeta.setDisplayName( "Emerald Sword" );
+
+        itemStack.setItemMeta( itemMeta );
+        itemStack.addEnchantment( Enchantment.DAMAGE_ALL, 5 );
+
+        final ShapedRecipe shapedRecipe = new ShapedRecipe( itemStack );
+
+        shapedRecipe.shape( "E", "E", "S" );
+
+        shapedRecipe.setIngredient( 'E', Material.EMERALD );
+        shapedRecipe.setIngredient( 'S', Material.STICK );
+
+        Bukkit.addRecipe( shapedRecipe );
+    }
+
     public String getPrefix() {
         return Guild.getPlugin().getFileBuilder().getKey( "prefix" );
     }
@@ -32,7 +57,7 @@ public class Data {
         switch ( this.fileBuilder.getKey( "chat.permission_plugin" ) ) {
             case "LuckPerms":
             case "PermissionsEx":
-                Chat chat = Guild.getPlugin().getChat();
+                final Chat chat = Guild.getPlugin().getChat();
                 return this.sendColoredMessage( chat.getGroupPrefix( player.getWorld(), chat.getPrimaryGroup( player ) ) );
 
             case "CloudNet":
@@ -64,7 +89,7 @@ public class Data {
         final IChatBaseComponent tabHeader = IChatBaseComponent.ChatSerializer.a( "{\"text\":\"" + header + "\"}" );
         final IChatBaseComponent tabFooter = IChatBaseComponent.ChatSerializer.a( "{\"text\":\"" + footer + "\"}" );
 
-        PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter( tabHeader );
+        final PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter( tabHeader );
 
         try {
             final Field field = packet.getClass().getDeclaredField( "b" );

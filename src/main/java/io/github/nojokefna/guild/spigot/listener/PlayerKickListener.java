@@ -25,7 +25,7 @@ public class PlayerKickListener implements Listener {
 
     @EventHandler
     public void onPlayerKick( PlayerKickEvent event ) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
 
         if ( this.fileBuilder.getBoolean( "kick.enable" ) ) {
             if ( this.fileBuilder.getBoolean( "kick.admin.bypass" ) && player.hasPermission( this.fileBuilder.getKey( "kick.admin.permission" ) ) ) {

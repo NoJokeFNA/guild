@@ -15,8 +15,8 @@ public class PlayerCommandPreprocessListener implements Listener {
 
     @EventHandler
     public void onPlayerCommandPreprocess( PlayerCommandPreprocessEvent event ) {
-        Player player = event.getPlayer();
-        CacheUser user = CacheUser.getUser( player );
+        final Player player = event.getPlayer();
+        final CacheUser user = CacheUser.getUser( player );
 
         if ( Guild.getPlugin().getChatSettingsBuilder().getBoolean( "chat.chat_settings.commands" ) )
             event.setCancelled( user.getCacheMethods().getCoolDown( player, user.getCommandCoolDown(), "commands" ) );

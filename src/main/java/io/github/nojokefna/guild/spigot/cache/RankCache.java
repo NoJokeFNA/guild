@@ -1,6 +1,7 @@
 package io.github.nojokefna.guild.spigot.cache;
 
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
 public class RankCache {
 
     private static final Map<String, RankCache> CACHE_MAP = new HashMap<>();
+
     private final String prefix, nameTag, suffix, tagId;
 
     /**
@@ -29,6 +31,7 @@ public class RankCache {
         this.nameTag = nameTag;
         this.suffix = suffix;
         this.tagId = tagId;
+
         CACHE_MAP.put( group, this );
     }
 
@@ -37,9 +40,9 @@ public class RankCache {
      *
      * @param key Enter the {@code #key} you want to get by a {@code #group}
      *
-     * @return returns the {@code #key} if it exists
+     * @return returns the {@code #key} if it exists, otherwise it will return null
      */
-    public static RankCache getRank( String key ) {
+    public static RankCache getRank( @NonNull String key ) {
         if ( CACHE_MAP.containsKey( key ) )
             return CACHE_MAP.get( key );
         return null;

@@ -28,6 +28,15 @@ public class CacheMethods {
         this.server = Guild.getPlugin().getServerSettingsBuilder();
     }
 
+    /**
+     * Create a simple cooldown for the <code>player</code>
+     *
+     * @param player     Set the <code>player</code>, you want to set the <code>cooldown</code>
+     * @param currentMap Set the <code>currentMap</code> you want to use for it
+     * @param message    Enter the <code>message</code> you want to send
+     *
+     * @return returns <code>true</code> or <code>false</code>
+     */
     public boolean getCoolDown( Player player, Map<UUID, Long> currentMap, String message ) {
         final UUID playerUuid = player.getUniqueId();
 

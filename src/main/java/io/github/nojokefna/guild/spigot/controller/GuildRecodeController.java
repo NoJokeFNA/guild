@@ -551,30 +551,32 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
     @Override
     public void sendMembers( Player player ) {
-        final List<String> memberList = this.guildUserAPI.getList(
-                "guild_name", this.getGuildMaster( player ),
+        this.guildUserAPI.getListAsync(
+                "guild_user", "guild_name", this.getGuildName( player ),
                 "guild_rank", "Member", "player_name"
-        );
+        ).thenAccept( result -> {
+            player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line1" ) );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.parameters.member.line2" ) );
 
-        player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line1" ) );
-
-        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.parameters.member.line2" ) );
-
-        for ( String output : memberList )
-            player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line3" ) );
+            for ( String output : result )
+                player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line3" )
+                                            .replace( "{MEMBERS}", output ) );
+        } );
     }
 
     @Override
     public void sendMembers( Player player, String guildTag ) {
-        final List<String> memberList = this.guildUserAPI.getList( "guild_tag", guildTag,
-                                                                   "guild_rank", "Member", "player_name"
-        );
+        this.guildUserAPI.getListAsync(
+                "guild_user", "guild_tag", guildTag,
+                "guild_rank", "Member", "player_name"
+        ).thenAccept( result -> {
+            player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line1" ) );
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.parameters.member.line2" ) );
 
-        player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line1" ) );
-        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.parameters.member.line2" ) );
-
-        for ( String output : memberList )
-            player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line3" ) );
+            for ( String output : result )
+                player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line3" )
+                                            .replace( "{MEMBERS}", output ) );
+        } );
     }
 
     @Override
@@ -588,7 +590,8 @@ public class GuildRecodeController implements GuildRecodeInterface {
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.parameters.officer.line2" ) );
 
         for ( String output : officerList )
-            player.sendMessage( this.fileBuilder.getKey( "guild.parameters.officer.line3" ) );
+            player.sendMessage( this.fileBuilder.getKey( "guild.parameters.officer.line3" )
+                                        .replace( "{OFFICERS}", output ) );
     }
 
     @Override
@@ -603,6 +606,32 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
         for ( String output : officerList )
             player.sendMessage( this.fileBuilder.getKey( "guild.parameters.officer.line3" ) );
+    }
+
+    @Override
+    public void sendGuildInfo( Player player ) {
+        final CacheUser user = CacheUser.getUser( player );
+
+        if ( !user.isInGuild() ) {
+            this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
+            return;
+        }
+
+        player.sendMessage( this.fileBuilder.getKey( "guild.send_guild_info.line1" )
+                                    .replace( "{HEADER}", this.guildBuilder.sendHeaderString( player ) ) );
+
+        this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.send_guild_info.line2" )
+                .replace( "{TAG}", this.getGuildTag( player ) ) );
+
+        player.sendMessage( this.fileBuilder.getKey( "guild.send_guild_info.line3" ) );
+        player.sendMessage( this.fileBuilder.getKey( "guild.send_guild_info.line4" )
+                                    .replace( "{MASTER}", this.getGuildMaster( player ) ) );
+
+        this.sendOfficers( player );
+        this.sendMembers( player );
+
+        player.sendMessage( this.fileBuilder.getKey( "guild.send_guild_info.line7" )
+                                    .replace( "{HEADER}", this.guildBuilder.sendHeaderString( player ) ) );
     }
 
     @Override
@@ -635,7 +664,7 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
     @Override
     public String getGuildMaster( Player player ) {
-        return null;
+        return this.guildAPI.getGuild( "guild_tag", this.getGuildTag( player ), "guild_leader" );
     }
 
     @Override

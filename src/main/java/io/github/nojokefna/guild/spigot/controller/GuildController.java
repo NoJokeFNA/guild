@@ -5,6 +5,7 @@ import io.github.nojokefna.guild.spigot.build.GuildBuilder;
 import io.github.nojokefna.guild.spigot.cache.CacheUser;
 import io.github.nojokefna.guild.spigot.config.FileBuilder;
 import io.github.nojokefna.guild.spigot.database.api.GuildAPI;
+import io.github.nojokefna.guild.spigot.database.api.GuildCoinsAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildInvitesAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildUserAPI;
 import io.github.nojokefna.guild.spigot.interfaces.GuildInterface;
@@ -30,6 +31,7 @@ public class GuildController implements GuildInterface {
     private final FileBuilder fileBuilder;
     private final GuildUserAPI guildUserAPI;
     private final GuildInvitesAPI guildInvitesAPI;
+    private final GuildCoinsAPI guildCoinsAPI;
     private final GuildBuilder guildBuilder;
 
     public GuildController() {
@@ -38,6 +40,7 @@ public class GuildController implements GuildInterface {
         this.fileBuilder = Guild.getPlugin().getFileBuilder();
         this.guildAPI = Guild.getPlugin().getGuildAPI();
         this.guildUserAPI = Guild.getPlugin().getGuildUserAPI();
+        this.guildCoinsAPI = Guild.getPlugin().getGuildCoinsAPI();
         this.guildInvitesAPI = Guild.getPlugin().getGuildInvitesAPI();
         this.guildBuilder = Guild.getPlugin().getGuildBuilder();
     }
@@ -752,6 +755,26 @@ public class GuildController implements GuildInterface {
     @Override
     public boolean isGuildMember( UUID uuid ) {
         return this.guildUserAPI.guildExists( uuid, "Member" );
+    }
+
+    @Override
+    public void updateCoins( UUID playerUuid, int coinsValue ) {
+        this.guildCoinsAPI.updateCoins( playerUuid, coinsValue );
+    }
+
+    @Override
+    public void addCoins( UUID playerUuid, int coinsValue ) {
+        this.guildCoinsAPI.addCoins( playerUuid, coinsValue );
+    }
+
+    @Override
+    public void removeCoins( UUID playerUuid, int coinsValue ) {
+        this.guildCoinsAPI.removeCoins( playerUuid, coinsValue );
+    }
+
+    @Override
+    public int getCoins( UUID playerUuid ) {
+        return this.guildCoinsAPI.getCoinsSync( playerUuid );
     }
 
     private boolean isInteger( String value ) {

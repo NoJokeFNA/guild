@@ -3,12 +3,11 @@ version: 3.5.1
 author: NoJokeFNA
 
 main: io.github.nojokefna.guild.spigot.Guild
-softdepend:
-  - Vault
+softdepend: [ Vault ]
 
 commands:
   test:
-    permission: Test
+    permission: guild.test
 
   guild:
     description: Send you the guild help message
@@ -17,11 +16,12 @@ commands:
 
   adminguild:
     description: Send you the admin guild help message
+    aliases: [ ag, aguild, adming ]
     permission: guild.admin
 
 permissions:
   guild.admin.*:
-    description: Gives access to all Guild commands
+    description: Gives access to all guild commands
     default: op
     children:
       guild.use: true
