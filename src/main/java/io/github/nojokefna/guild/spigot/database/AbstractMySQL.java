@@ -137,10 +137,7 @@ public abstract class AbstractMySQL {
 
         if ( this.keyExists( table, whereKey, setWhereKey ) ) {
             try {
-                try (
-                        PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider()
-                                .prepareStatement( "SELECT * FROM ? WHERE ? = ?" )
-                ) {
+                try ( PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider().prepareStatement( "SELECT * FROM ? WHERE ? = ?" ) ) {
 
                     preparedStatement.setString( 1, table );
                     preparedStatement.setString( 2, whereKey );
@@ -175,10 +172,7 @@ public abstract class AbstractMySQL {
 
         if ( this.keyExists( table, whereKey, setWhereKey ) ) {
             try {
-                try (
-                        PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider()
-                                .prepareStatement( "SELECT * FROM ? WHERE ? = ?" )
-                ) {
+                try ( PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider().prepareStatement( "SELECT * FROM ? WHERE ? = ?" ) ) {
 
                     preparedStatement.setString( 1, table );
                     preparedStatement.setString( 2, whereKey );
@@ -212,10 +206,7 @@ public abstract class AbstractMySQL {
         int result = 0;
 
         try {
-            try (
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider()
-                            .prepareStatement( "SELECT ? FROM ? ORDER BY ? DESC" )
-            ) {
+            try ( PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider().prepareStatement( "SELECT ? FROM ? ORDER BY ? DESC" ) ) {
 
                 preparedStatement.setString( 1, selectKey );
                 preparedStatement.setString( 2, table );
@@ -251,10 +242,7 @@ public abstract class AbstractMySQL {
         int result = 0;
 
         try {
-            try (
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider()
-                            .prepareStatement( "SELECT ? FROM ? ORDER BY ? DESC LIMIT ?" )
-            ) {
+            try ( PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider().prepareStatement( "SELECT ? FROM ? ORDER BY ? DESC LIMIT ?" ) ) {
 
                 preparedStatement.setString( 1, selectKey );
                 preparedStatement.setString( 2, table );
@@ -290,10 +278,7 @@ public abstract class AbstractMySQL {
         List<String> getList = new ArrayList<>();
 
         try {
-            try (
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider()
-                            .prepareStatement( "SELECT * FROM ? WHERE ? = ?" )
-            ) {
+            try ( PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider().prepareStatement( "SELECT * FROM ? WHERE ? = ?" ) ) {
 
                 preparedStatement.setString( 1, table );
                 preparedStatement.setString( 2, whereKey );
@@ -330,10 +315,7 @@ public abstract class AbstractMySQL {
         List<String> getList = new ArrayList<>();
 
         try {
-            try (
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider()
-                            .prepareStatement( "SELECT * FROM ? WHERE ? = ? AND ? = ?" )
-            ) {
+            try ( PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider().prepareStatement( "SELECT * FROM ? WHERE ? = ? AND ? = ?" ) ) {
 
                 preparedStatement.setString( 1, table );
                 preparedStatement.setString( 2, whereKey );
@@ -367,10 +349,7 @@ public abstract class AbstractMySQL {
         EXECUTOR_SERVICE.execute( () -> {
             if ( this.keyExists( table, whereKey, setWhereKey ) ) {
                 try {
-                    try (
-                            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider()
-                                    .prepareStatement( "DELETE FROM ? WHERE ? = ?" )
-                    ) {
+                    try ( PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider().prepareStatement( "DELETE FROM ? WHERE ? = ?" ) ) {
 
                         preparedStatement.setString( 1, table );
                         preparedStatement.setString( 2, whereKey );

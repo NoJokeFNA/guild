@@ -2,6 +2,7 @@ package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.database.AbstractMySQL;
+import io.github.nojokefna.guild.spigot.database.DatabaseProvider;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -16,25 +17,32 @@ import java.util.UUID;
  */
 public class GuildInvitesAPI extends AbstractMySQL {
 
+    private final DatabaseProvider databaseProvider;
+
+    public GuildInvitesAPI() {
+        this.databaseProvider = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider();
+    }
+
     public boolean keyExists( String keyValue, String guildKey ) {
-        return this.keyExists( "guild_invites", keyValue, guildKey );
+        return super.keyExists( "guild_invites", keyValue, guildKey );
     }
 
     public void createPlayer( UUID playerUuid, OfflinePlayer player, String invitedName, String guildName, String guildTag ) {
         Guild.getPlugin().getExecutorService().submit( () -> {
             try {
-                PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                        .getDatabaseProvider()
-                        .prepareStatement( "INSERT INTO `guild_invites` (player_uuid, player_name, invited_name, guild_name, guild_tag)" +
-                                                   " VALUES (?, ?, ?, ?, ?)" );
+                try (
+                        PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "INSERT INTO `guild_invites` (player_uuid, player_name, invited_name, guild_name, guild_tag) " +
+                                                                                                              "VALUES (?, ?, ?, ?, ?)" )
+                ) {
 
-                preparedStatement.setString( 1, playerUuid.toString() );
-                preparedStatement.setString( 2, player.getName() );
-                preparedStatement.setString( 3, invitedName );
-                preparedStatement.setString( 4, guildName );
-                preparedStatement.setString( 5, guildTag );
+                    preparedStatement.setString( 1, playerUuid.toString() );
+                    preparedStatement.setString( 2, player.getName() );
+                    preparedStatement.setString( 3, invitedName );
+                    preparedStatement.setString( 4, guildName );
+                    preparedStatement.setString( 5, guildTag );
 
-                Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider().queryUpdate( preparedStatement );
+                    this.databaseProvider.queryUpdate( preparedStatement );
+                }
             } catch ( SQLException ex ) {
                 ex.printStackTrace();
             }
@@ -42,18 +50,18 @@ public class GuildInvitesAPI extends AbstractMySQL {
     }
 
     public void deleteInvite( OfflinePlayer player ) {
-        this.deleteKey( "guild_invites", "player_name", player.getName() );
+        super.deleteKey( "guild_invites", "player_name", player.getName() );
     }
 
     public String getInvite( OfflinePlayer player, String key ) {
-        return this.getKey( "guild_invites", "player_name", player.getName(), "guild_name" );
+        return super.getKey( "guild_invites", "player_name", player.getName(), "guild_name" );
     }
 
     public List<String> getInvites( Player player, String key ) {
-        return this.getList( "guild_invites", "player_name", player.getName(), key );
+        return super.getList( "guild_invites", "player_name", player.getName(), key );
     }
 
     public List<String> getInvites( UUID playerUuid, String key ) {
-        return this.getList( "guild_invites", "player_uuid", playerUuid.toString(), key );
+        return super.getList( "guild_invites", "player_uuid", playerUuid.toString(), key );
     }
 }

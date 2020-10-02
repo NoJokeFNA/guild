@@ -40,15 +40,15 @@ public class GuildCoinsAPI extends AbstractMySQL {
     }
 
     public void updateCoins( UUID playerUuid, int coinsValue ) {
-        super.updateKey( "guild_coins", "player_coins", coinsValue, "player_uuid", playerUuid.toString() );
+        super.updateKey( "guild_coins", "player_uuid", playerUuid.toString(), "player_coins", coinsValue );
     }
 
     public CompletableFuture<Void> addCoins( UUID playerUuid, int coinsValue ) {
-        return super.addKeyAsync( "guild_coins", "player_coins", coinsValue, "player_uuid", playerUuid.toString() );
+        return super.addKeyAsync( "guild_coins", "player_uuid", playerUuid.toString(), "player_coins", coinsValue );
     }
 
     public CompletableFuture<Void> removeCoins( UUID playerUuid, int coinsValue ) {
-        return super.removeKeyAsync( "guild_coins", "player_coins", coinsValue, "player_uuid", playerUuid.toString() );
+        return super.removeKeyAsync( "guild_coins", "player_uuid", playerUuid.toString(), "player_coins", coinsValue );
     }
 
     public CompletableFuture<Integer> getCoins( UUID playerUuid ) {
