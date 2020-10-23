@@ -43,6 +43,10 @@ public class DatabaseBuilder {
             );
 
             this.databaseProvider.update(
+                    "CREATE TABLE IF NOT EXISTS `guild_coins` (player_uuid VARCHAR(64) UNIQUE, player_coins INT)"
+            );
+
+            this.databaseProvider.update(
                     "CREATE TABLE IF NOT EXISTS `guild_invites` (player_uuid VARCHAR(64), player_name VARCHAR(32), invited_name VARCHAR(32)," +
                             " guild_name VARCHAR(16), guild_tag VARCHAR(32))"
             );

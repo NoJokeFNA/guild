@@ -350,7 +350,7 @@ public class GuildController implements GuildInterface {
             return;
         }
 
-        if ( this.guildUserAPI.keyExists( target.getUniqueId() ) ) {
+        if ( this.guildUserAPI.playerExists( target.getUniqueId() ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.target_in_no_guild" ) );
             return;
         }
@@ -465,7 +465,7 @@ public class GuildController implements GuildInterface {
             return;
         }
 
-        if ( this.guildUserAPI.keyExists( target.getUniqueId() ) ) {
+        if ( this.guildUserAPI.playerExists( target.getUniqueId() ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.target_is_in_no_guild" ) );
             return;
         }

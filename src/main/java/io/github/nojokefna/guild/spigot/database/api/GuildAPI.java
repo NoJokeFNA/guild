@@ -34,7 +34,7 @@ public class GuildAPI extends AbstractMySQL {
                         preparedStatement.setString( 3, guildLeader );
                         preparedStatement.setInt( 4, 0 );
 
-                        this.databaseProvider.queryUpdate( preparedStatement );
+                        preparedStatement.executeUpdate();
                     }
                 } catch ( SQLException ex ) {
                     ex.printStackTrace();

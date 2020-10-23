@@ -2,10 +2,13 @@ package io.github.nojokefna.guild.spigot.commands;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.build.GuildBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author NoJokeFNA
@@ -37,12 +40,56 @@ public class AdminGuildCommand implements CommandExecutor {
                     }
                     break;
 
+                case 2:
+                    if ( args[0].equals( "info" ) ) {
+                        final Player targetPlayer = Bukkit.getPlayer( args[1] );
+
+                        if ( targetPlayer == null ) {
+                            guildBuilder.sendMessage( player, "§cThe target player is currently offline." );
+                            return true;
+                        }
+
+                        final int kills = 352;
+
+                        player.sendMessage( "§8§m----§r§6§l PLAYER INFORMATION §8§m----" );
+                        player.sendMessage( "§aName: §6" + targetPlayer.getName() );
+                        player.sendMessage( "§aUniqueId: §6" + targetPlayer.getUniqueId() );
+                        player.sendMessage( "§aKills: " + ( kills < 100 ? "§a" : "§c" ) + kills );
+                        player.sendMessage( "§aLevel: §6§lLevel §8» §6" );
+                        player.sendMessage( "§aFate: §6§lLevel §8» §650" );
+                        player.sendMessage( "§aSide: " + this.getRandomSide() );
+                        player.sendMessage( "§8§m----§r§6§l PLAYER INFORMATION §8§m----" );
+                    }
+                    break;
+
                 default:
                     this.sendHelpMessage( player, guildBuilder );
                     break;
             }
         }
         return false;
+    }
+
+    private String getRandomSide() {
+        final int random = ThreadLocalRandom.current().nextInt( 3 ) + 1;
+
+        String side = "";
+
+        switch ( random ) {
+            case 3:
+                side = "§6§lHERO";
+                break;
+
+            case 2:
+                side = "§4§lDEMONLORD";
+                break;
+
+            case 1:
+                side = "§aFARMER";
+                break;
+        }
+
+        return side;
     }
 
     private void sendHelpMessage( Player player, GuildBuilder guildBuilder ) {
@@ -57,8 +104,9 @@ public class AdminGuildCommand implements CommandExecutor {
         player.sendMessage( "" );
 
         guildBuilder.sendMessage( player, "§2Available admin commands:" );
-        guildBuilder.sendMessage( player, " §8- §c/guildadmin reload §8» §bReload the messages.yml and settings.yml" );
-        guildBuilder.sendMessage( player, " §8- §c/guildadmin info §8» §bSee the info message" );
+        guildBuilder.sendMessage( player, " §8- §c/adminguild reload §8» §bReload the messages.yml and settings.yml" );
+        guildBuilder.sendMessage( player, " §8- §c/adminguild info <player> §8» §bGet the information about the player" );
+        guildBuilder.sendMessage( player, " §8- §c/adminguild info §8» §bSee the info message" );
 
         guildBuilder.sendHeader( player );
     }

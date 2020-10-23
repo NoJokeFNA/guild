@@ -31,8 +31,9 @@ public class GuildInvitesAPI extends AbstractMySQL {
         Guild.getPlugin().getExecutorService().submit( () -> {
             try {
                 try (
-                        PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "INSERT INTO `guild_invites` (player_uuid, player_name, invited_name, guild_name, guild_tag) " +
-                                                                                                              "VALUES (?, ?, ?, ?, ?)" )
+                        PreparedStatement preparedStatement = this.databaseProvider.prepareStatement(
+                                "INSERT INTO `guild_invites` (player_uuid, player_name, invited_name, guild_name, guild_tag) VALUES (?, ?, ?, ?, ?)"
+                        )
                 ) {
 
                     preparedStatement.setString( 1, playerUuid.toString() );
@@ -41,7 +42,7 @@ public class GuildInvitesAPI extends AbstractMySQL {
                     preparedStatement.setString( 4, guildName );
                     preparedStatement.setString( 5, guildTag );
 
-                    this.databaseProvider.queryUpdate( preparedStatement );
+                    preparedStatement.executeUpdate();
                 }
             } catch ( SQLException ex ) {
                 ex.printStackTrace();

@@ -121,6 +121,7 @@ public class Guild extends JavaPlugin {
 
     private void initialize() {
         this.data = new Data();
+        this.databaseBuilder = new DatabaseBuilder();
         this.guildAPI = new GuildAPI();
         this.guildInvitesAPI = new GuildInvitesAPI();
         this.guildUserAPI = new GuildUserAPI();
@@ -128,7 +129,6 @@ public class Guild extends JavaPlugin {
         this.guildBuilder = new GuildBuilder();
         this.guildController = new GuildController();
         this.guildRecodeController = new GuildRecodeController();
-        this.databaseBuilder = new DatabaseBuilder();
     }
 
     private void loadConfig() {
@@ -193,7 +193,7 @@ public class Guild extends JavaPlugin {
         if ( this.getServer().getPluginManager().getPlugin( "Vault" ) == null )
             return false;
 
-        RegisteredServiceProvider<Economy> serviceProvider = this.getServer().getServicesManager().getRegistration( Economy.class );
+        final RegisteredServiceProvider<Economy> serviceProvider = this.getServer().getServicesManager().getRegistration( Economy.class );
         if ( serviceProvider == null )
             return false;
 
@@ -205,7 +205,7 @@ public class Guild extends JavaPlugin {
         if ( this.getServer().getPluginManager().getPlugin( plugin ) == null )
             return;
 
-        RegisteredServiceProvider<Permission> serviceProvider = this.getServer().getServicesManager().getRegistration( Permission.class );
+        final RegisteredServiceProvider<Permission> serviceProvider = this.getServer().getServicesManager().getRegistration( Permission.class );
         if ( serviceProvider == null )
             return;
 
@@ -213,7 +213,7 @@ public class Guild extends JavaPlugin {
     }
 
     private void setupChat() {
-        RegisteredServiceProvider<Chat> serviceProvider = this.getServer().getServicesManager().getRegistration( Chat.class );
+        final RegisteredServiceProvider<Chat> serviceProvider = this.getServer().getServicesManager().getRegistration( Chat.class );
         this.chat = serviceProvider.getProvider();
     }
 }

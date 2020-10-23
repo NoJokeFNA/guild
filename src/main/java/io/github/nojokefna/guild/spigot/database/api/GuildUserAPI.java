@@ -16,20 +16,24 @@ import java.util.UUID;
  */
 public class GuildUserAPI extends AbstractMySQL {
 
-    private final DatabaseProvider databaseProvider;
+    private DatabaseProvider databaseProvider;
 
     public GuildUserAPI() {
         this.databaseProvider = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider();
     }
 
-    public boolean keyExists( UUID playerUuid ) {
+    public boolean playerExists( UUID playerUuid ) {
         return super.keyExists( "guild_user", "player_uuid", playerUuid.toString() );
     }
 
     public boolean guildExists( UUID playerUuid, String key ) {
-        boolean value = false;
+        if ( databaseProvider == null )
+            this.databaseProvider = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider();
+
         if ( key == null )
             return false;
+
+        boolean value = false;
 
         try {
             try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT * FROM `guild_user` WHERE player_uuid = ? AND guild_rank = ?" ) ) {
@@ -41,8 +45,8 @@ public class GuildUserAPI extends AbstractMySQL {
                 if ( resultSet.next() )
                     value = true;
 
-                resultSet.close();
                 preparedStatement.close();
+                resultSet.close();
             }
         } catch ( SQLException ex ) {
             ex.printStackTrace();
@@ -52,7 +56,7 @@ public class GuildUserAPI extends AbstractMySQL {
 
     public void createPlayer( UUID playerUuid, String playerName, String guildName, String guildTag, String guildRank ) {
         Guild.getPlugin().getExecutorService().submit( () -> {
-            if ( this.keyExists( playerUuid ) ) {
+            if ( this.playerExists( playerUuid ) ) {
                 try {
                     try (
                             PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "INSERT INTO `guild_user` (" +
@@ -74,7 +78,7 @@ public class GuildUserAPI extends AbstractMySQL {
                         preparedStatement.setInt( 6, 0 );
                         preparedStatement.setInt( 7, 0 );
 
-                        this.databaseProvider.queryUpdate( preparedStatement );
+                        preparedStatement.executeUpdate();
                     }
                 } catch ( SQLException ex ) {
                     ex.printStackTrace();

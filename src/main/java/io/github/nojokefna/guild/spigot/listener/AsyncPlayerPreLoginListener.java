@@ -23,7 +23,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
         this.guildController = new GuildController();
     }
 
-    @EventHandler( priority = EventPriority.LOWEST )
+    @EventHandler( priority = EventPriority.HIGHEST )
     public void onAsyncPlayerPreLogin( AsyncPlayerPreLoginEvent event ) {
         final UUID playerUuid = event.getUniqueId();
         final String playerName = event.getName();
@@ -34,7 +34,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
         long startUp = System.currentTimeMillis();
 
         while ( !user.getLoaded().get() ) {
-            user.setInGuild( Guild.getPlugin().getGuildUserAPI().keyExists( playerUuid ) );
+            user.setInGuild( Guild.getPlugin().getGuildUserAPI().playerExists( playerUuid ) );
 
             user.setMaster( user.isInGuild() && this.guildController.isGuildMaster( playerUuid ) );
             user.setOfficer( user.isInGuild() && this.guildController.isGuildOfficer( playerUuid ) );
@@ -49,7 +49,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
         }
 
         System.out.println( " " );
-        System.out.println( "Login take: " + ( System.currentTimeMillis() - startUp ) + " ms" );
+        System.out.println( "Login took: " + ( System.currentTimeMillis() - startUp ) + " ms" );
         System.out.println( " " );
         System.out.println( "UUID: " + playerUuid );
         System.out.println( "Name: " + playerName );

@@ -1,6 +1,7 @@
 package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
+import io.github.nojokefna.guild.spigot.build.GuildBuilder;
 import io.github.nojokefna.guild.spigot.database.AbstractMySQL;
 import io.github.nojokefna.guild.spigot.database.DatabaseProvider;
 
@@ -12,9 +13,11 @@ import java.util.concurrent.CompletableFuture;
 public class GuildCoinsAPI extends AbstractMySQL {
 
     private final DatabaseProvider databaseProvider;
+    private final GuildBuilder guildBuilder;
 
     public GuildCoinsAPI() {
         this.databaseProvider = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider();
+        this.guildBuilder = Guild.getPlugin().getGuildBuilder();
     }
 
     public boolean playerExists( UUID playerUuid ) {
@@ -26,10 +29,11 @@ public class GuildCoinsAPI extends AbstractMySQL {
 
         try {
             try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "INSERT INTO `guild_coins` (player_uuid, player_coins) VALUES (?, ?)" ) ) {
+
                 preparedStatement.setString( 1, playerUuid.toString() );
                 preparedStatement.setInt( 2, coinsValue );
 
-                this.databaseProvider.queryUpdate( preparedStatement );
+                preparedStatement.executeUpdate();
             }
 
             System.out.println( "Successfully created a new player ( " + playerUuid.toString() + ", " + coinsValue + " )" );

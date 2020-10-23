@@ -3,10 +3,11 @@ package io.github.nojokefna.guild.spigot.database;
 import io.github.nojokefna.guild.spigot.Guild;
 import lombok.Setter;
 
-import java.sql.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.function.Consumer;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author NoJokeFNA
@@ -56,44 +57,8 @@ public class DatabaseProvider {
         this.plugin.getExecutorService().execute( () -> this.queryUpdate( preparedStatement ) );
     }
 
-    public void update( String preparedStatement ) {
-        this.plugin.getExecutorService().execute( () -> this.queryUpdate( preparedStatement ) );
-    }
-
-    public ResultSet query( String query ) {
-        this.checkConnection();
-
-        try {
-            return query( this.connection.prepareStatement( query ) );
-        } catch ( Exception ex ) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    public ResultSet query( PreparedStatement preparedStatement ) {
-        this.checkConnection();
-
-        try {
-            preparedStatement.close();
-        } catch ( Exception ex ) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    public void query( PreparedStatement preparedStatement, Consumer<ResultSet> consumer ) {
-        this.plugin.getExecutorService().execute( () -> {
-            ResultSet result = this.query( preparedStatement );
-            consumer.accept( result );
-        } );
-    }
-
-    public void query( String preparedStatement, Consumer<ResultSet> consumer ) {
-        this.plugin.getExecutorService().execute( () -> {
-            ResultSet result = this.query( preparedStatement );
-            consumer.accept( result );
-        } );
+    public void update( String query ) {
+        this.plugin.getExecutorService().execute( () -> this.queryUpdate( query ) );
     }
 
     public PreparedStatement prepareStatement( String query ) {
@@ -115,21 +80,17 @@ public class DatabaseProvider {
         }
     }
 
-    public ResultSet queryUpdate( PreparedStatement preparedStatement ) {
+    public void queryUpdate( PreparedStatement preparedStatement ) {
         this.checkConnection();
 
-        Future<ResultSet> resultSetFuture = this.plugin.getExecutorService().submit( () -> this.queryUpdate( preparedStatement ) );
-
         try {
-            resultSetFuture.get();
-            System.out.println( "debug => resultSetFeature -> " + resultSetFuture.get() );
+            final CompletableFuture<Integer> completableFuture = CompletableFuture.completedFuture( preparedStatement.executeUpdate() );
 
-            if ( resultSetFuture.isDone() )
+            if ( completableFuture.isDone() )
                 preparedStatement.close();
-        } catch ( InterruptedException | ExecutionException | SQLException ex ) {
+        } catch ( SQLException ex ) {
             ex.printStackTrace();
         }
-        return null;
     }
 
     public void checkConnection() {
@@ -139,9 +100,5 @@ public class DatabaseProvider {
         } catch ( Exception ex ) {
             ex.printStackTrace();
         }
-    }
-
-    public boolean isConnected() {
-        return this.connection != null;
     }
 }
