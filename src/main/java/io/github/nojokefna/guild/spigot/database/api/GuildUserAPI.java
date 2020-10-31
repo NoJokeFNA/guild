@@ -20,10 +20,11 @@ public class GuildUserAPI extends AbstractMySQL {
 
     public GuildUserAPI() {
         this.databaseProvider = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider();
+        super.setTable( "guild_user" );
     }
 
     public boolean playerExists( UUID playerUuid ) {
-        return super.keyExists( "guild_user", "player_uuid", playerUuid.toString() );
+        return super.keyExists( "player_uuid", playerUuid.toString() );
     }
 
     public boolean guildExists( UUID playerUuid, String key ) {
@@ -88,38 +89,38 @@ public class GuildUserAPI extends AbstractMySQL {
     }
 
     public void deleteKey( UUID playerUuid ) {
-        this.deleteKey( "guild_user", "player_uuid", playerUuid.toString() );
+        this.deleteKey( "player_uuid", playerUuid.toString() );
     }
 
-    public void updateKey( String setterKey, String setKey, UUID playerUuid ) {
-        super.updateKey( "guild_user", "player_uuid", playerUuid.toString(), setterKey, setKey );
+    public void updateKey( String setColumn, String setterColumn, UUID playerUuid ) {
+        super.updateKey( "player_uuid", playerUuid.toString(), setColumn, setterColumn );
     }
 
     public void updateKey( String setterKey, int setKey, UUID playerUuid ) {
-        super.updateKey( "guild_user", "player_uuid", playerUuid.toString(), setterKey, setKey );
+        super.updateKey( "player_uuid", playerUuid.toString(), setterKey, setKey );
     }
 
     public String getKey( UUID playerUuid, String key ) {
-        return super.getKey( "guild_user", "player_uuid", playerUuid.toString(), key );
+        return super.getKey( "player_uuid", playerUuid.toString(), key );
     }
 
     public int getKeyByInteger( UUID playerUuid, String key ) {
-        return super.getKeyByInteger( "guild_user", "player_uuid", playerUuid.toString(), key );
+        return super.getKeyByInteger( "player_uuid", playerUuid.toString(), key );
     }
 
     public List<String> getList( String whereKey, String setWhereKey, String secondWhereKey, String setSecondWhereKey, String getKey ) {
-        return super.getList( "guild_user", whereKey, setWhereKey, secondWhereKey, setSecondWhereKey, getKey );
+        return super.getList( whereKey, setWhereKey, secondWhereKey, setSecondWhereKey, getKey );
     }
 
     public List<String> getList( String whereKey, String setWhereKey, String getKey ) {
-        return super.getList( "guild_user", whereKey, setWhereKey, getKey );
+        return super.getList( whereKey, setWhereKey, getKey );
     }
 
     public void addKey( String type, int amount, UUID playerUuid ) {
-        super.addKey( "guild_user", "player_uuid", playerUuid.toString(), type, amount );
+        super.addKey( "player_uuid", playerUuid.toString(), type, amount );
     }
 
     public void removeKey( String type, int amount, UUID playerUuid ) {
-        super.removeKey( "guild_user", "player_uuid", playerUuid.toString(), type, amount );
+        super.removeKey( "player_uuid", playerUuid.toString(), type, amount );
     }
 }

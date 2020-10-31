@@ -21,10 +21,11 @@ public class GuildInvitesAPI extends AbstractMySQL {
 
     public GuildInvitesAPI() {
         this.databaseProvider = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider();
+        super.setTable( "guild_invites" );
     }
 
     public boolean keyExists( String keyValue, String guildKey ) {
-        return super.keyExists( "guild_invites", keyValue, guildKey );
+        return super.keyExists( keyValue, guildKey );
     }
 
     public void createPlayer( UUID playerUuid, OfflinePlayer player, String invitedName, String guildName, String guildTag ) {
@@ -51,18 +52,18 @@ public class GuildInvitesAPI extends AbstractMySQL {
     }
 
     public void deleteInvite( OfflinePlayer player ) {
-        super.deleteKey( "guild_invites", "player_name", player.getName() );
+        super.deleteKey( "player_name", player.getName() );
     }
 
     public String getInvite( OfflinePlayer player, String key ) {
-        return super.getKey( "guild_invites", "player_name", player.getName(), "guild_name" );
+        return super.getKey( "player_name", player.getName(), "guild_name" );
     }
 
     public List<String> getInvites( Player player, String key ) {
-        return super.getList( "guild_invites", "player_name", player.getName(), key );
+        return super.getList( "player_name", player.getName(), key );
     }
 
     public List<String> getInvites( UUID playerUuid, String key ) {
-        return super.getList( "guild_invites", "player_uuid", playerUuid.toString(), key );
+        return super.getList( "player_uuid", playerUuid.toString(), key );
     }
 }

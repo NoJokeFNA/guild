@@ -1,7 +1,6 @@
 package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
-import io.github.nojokefna.guild.spigot.build.GuildBuilder;
 import io.github.nojokefna.guild.spigot.database.AbstractMySQL;
 import io.github.nojokefna.guild.spigot.database.DatabaseProvider;
 
@@ -13,15 +12,14 @@ import java.util.concurrent.CompletableFuture;
 public class GuildCoinsAPI extends AbstractMySQL {
 
     private final DatabaseProvider databaseProvider;
-    private final GuildBuilder guildBuilder;
 
     public GuildCoinsAPI() {
         this.databaseProvider = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider();
-        this.guildBuilder = Guild.getPlugin().getGuildBuilder();
+        super.setTable( "guild_coins" );
     }
 
     public boolean playerExists( UUID playerUuid ) {
-        return super.keyExists( "guild_coins", "player_uuid", playerUuid.toString() );
+        return super.keyExists( "player_uuid", playerUuid.toString() );
     }
 
     public void createPlayer( UUID playerUuid, int coinsValue ) {
@@ -44,22 +42,22 @@ public class GuildCoinsAPI extends AbstractMySQL {
     }
 
     public void updateCoins( UUID playerUuid, int coinsValue ) {
-        super.updateKey( "guild_coins", "player_uuid", playerUuid.toString(), "player_coins", coinsValue );
+        super.updateKey( "player_uuid", playerUuid.toString(), "player_coins", coinsValue );
     }
 
-    public CompletableFuture<Void> addCoins( UUID playerUuid, int coinsValue ) {
-        return super.addKeyAsync( "guild_coins", "player_uuid", playerUuid.toString(), "player_coins", coinsValue );
+    public CompletableFuture<Void> addCoinsAsync( UUID playerUuid, int coinsValue ) {
+        return super.addKeyAsync( "player_uuid", playerUuid.toString(), "player_coins", coinsValue );
     }
 
-    public CompletableFuture<Void> removeCoins( UUID playerUuid, int coinsValue ) {
-        return super.removeKeyAsync( "guild_coins", "player_uuid", playerUuid.toString(), "player_coins", coinsValue );
+    public CompletableFuture<Void> removeCoinsAsync( UUID playerUuid, int coinsValue ) {
+        return super.removeKeyAsync( "player_uuid", playerUuid.toString(), "player_coins", coinsValue );
     }
 
-    public CompletableFuture<Integer> getCoins( UUID playerUuid ) {
-        return super.getIntegerAsync( "guild_coins", "player_uuid", playerUuid.toString(), "player_coins" );
+    public CompletableFuture<Integer> getCoinsAsync( UUID playerUuid ) {
+        return super.getIntegerAsync( "player_uuid", playerUuid.toString(), "player_coins" );
     }
 
     public int getCoinsSync( UUID playerUuid ) {
-        return super.getKeyByInteger( "guild_coins", "player_uuid", playerUuid.toString(), "player_coins" );
+        return super.getKeyByInteger( "player_uuid", playerUuid.toString(), "player_coins" );
     }
 }

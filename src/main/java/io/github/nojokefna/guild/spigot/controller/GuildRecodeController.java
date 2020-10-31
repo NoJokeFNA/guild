@@ -552,7 +552,7 @@ public class GuildRecodeController implements GuildRecodeInterface {
     @Override
     public void sendMembers( Player player ) {
         this.guildUserAPI.getListAsync(
-                "guild_user", "guild_name", this.getGuildName( player ),
+                "guild_name", this.getGuildName( player ),
                 "guild_rank", "Member", "player_name"
         ).thenAccept( result -> {
             player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line1" ) );
@@ -567,7 +567,7 @@ public class GuildRecodeController implements GuildRecodeInterface {
     @Override
     public void sendMembers( Player player, String guildTag ) {
         this.guildUserAPI.getListAsync(
-                "guild_user", "guild_tag", guildTag,
+                "guild_tag", guildTag,
                 "guild_rank", "Member", "player_name"
         ).thenAccept( result -> {
             player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line1" ) );

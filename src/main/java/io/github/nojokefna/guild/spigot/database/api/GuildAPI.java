@@ -17,10 +17,12 @@ public class GuildAPI extends AbstractMySQL {
 
     public GuildAPI() {
         this.databaseProvider = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider();
+        super.setTable( "guild" );
     }
 
+
     public boolean guildExists( String keyValue, String guildKey ) {
-        return this.keyExists( "guild", keyValue, guildKey );
+        return this.keyExists( keyValue, guildKey );
     }
 
     public void createGuild( String guildName, String guildTag, String guildLeader ) {
@@ -44,34 +46,34 @@ public class GuildAPI extends AbstractMySQL {
     }
 
     public void deleteGuild( String guildName ) {
-        super.deleteKey( "guild", "guild_name", guildName );
+        super.deleteKey( "guild_name", guildName );
     }
 
     public void updateGuild( String setterKey, String setKey, String guildName ) {
-        super.updateKey( "guild", "guild_name", guildName, setterKey, setKey );
+        super.updateKey( "guild_name", guildName, setterKey, setKey );
     }
 
     public void updateGuild( String setterKey, int setKey, String guildName ) {
-        super.updateKey( "guild", "guild_name", guildName, setterKey, setKey );
+        super.updateKey( "guild_name", guildName, setterKey, setKey );
     }
 
     public String getGuild( String guildKey, String key, String value ) {
-        return super.getKey( "guild", guildKey, key, value );
+        return super.getKey( guildKey, key, value );
     }
 
     public int getGuildByInteger( String guildKey, String key, String value ) {
-        return super.getKeyByInteger( "guild", guildKey, key, value );
+        return super.getKeyByInteger( guildKey, key, value );
     }
 
     public int getRanking( String selectKey, String orderKey ) {
-        return super.getRanking( selectKey, "guild", orderKey );
+        return super.getRanking( selectKey, orderKey );
     }
 
     public void addKey( String guildName, int amount ) {
-        super.addKey( "guild", "guild_name", guildName, "guild_money", amount );
+        super.addKey( "guild_name", guildName, "guild_money", amount );
     }
 
     public void removeKey( String guildName, int amount ) {
-        super.removeKey( "guild", "guild_name", guildName, "guild_money", amount );
+        super.removeKey( "guild_name", guildName, "guild_money", amount );
     }
 }

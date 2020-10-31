@@ -764,12 +764,12 @@ public class GuildController implements GuildInterface {
 
     @Override
     public void addCoins( UUID playerUuid, int coinsValue ) {
-        this.guildCoinsAPI.addCoins( playerUuid, coinsValue );
+        this.guildCoinsAPI.addCoinsAsync( playerUuid, coinsValue );
     }
 
     @Override
     public void removeCoins( UUID playerUuid, int coinsValue ) {
-        this.guildCoinsAPI.removeCoins( playerUuid, coinsValue );
+        this.guildCoinsAPI.removeCoinsAsync( playerUuid, coinsValue );
     }
 
     @Override
