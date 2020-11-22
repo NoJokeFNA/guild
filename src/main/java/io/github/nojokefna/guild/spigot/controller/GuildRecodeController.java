@@ -363,7 +363,7 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.set_master" ) );
 
-        this.guildAPI.updateGuild( "guild_leader", targetOfflinePlayer.getName(), this.getGuildName( player ) );
+        this.guildAPI.updateGuild( "guild_leader", this.getGuildName( player ), targetOfflinePlayer.getName() );
         this.guildUserAPI.updateKey( "guild_rank", "Officer", player.getUniqueId() );
         this.guildUserAPI.updateKey( "guild_rank", "Master", targetOfflinePlayer.getUniqueId() );
 
@@ -664,7 +664,7 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
     @Override
     public String getGuildMaster( Player player ) {
-        return this.guildAPI.getGuild( "guild_tag", this.getGuildTag( player ), "guild_leader" );
+        return this.guildAPI.getGuildByStringSync( "guild_tag", this.getGuildTag( player ), "guild_leader" );
     }
 
     @Override

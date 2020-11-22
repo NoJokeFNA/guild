@@ -382,9 +382,9 @@ public abstract class AbstractMySQL {
      *
      * @return the string async
      */
-/*    public CompletableFuture<String> getStringAsync( String whereKey, String setWhereKey, String getKey ) {
+    public CompletableFuture<String> getStringAsync( String whereKey, String setWhereKey, String getKey ) {
         return CompletableFuture.supplyAsync( () -> this.getKey( whereKey, setWhereKey, getKey ) );
-    }*/
+    }
 
     /**
      * Get the {@code getKey} you want async, without a {@code callback}

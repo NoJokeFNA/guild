@@ -6,6 +6,7 @@ import io.github.nojokefna.guild.spigot.database.DatabaseProvider;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author NoJokeFNA
@@ -20,49 +21,91 @@ public class GuildAPI extends AbstractMySQL {
         super.setTable( "guild" );
     }
 
-
-    public boolean guildExists( String keyValue, String guildKey ) {
-        return this.keyExists( keyValue, guildKey );
+    /**
+     * Check if the guild is present or not
+     *
+     * @param whereColumn    The column you want to check
+     * @param setWhereColumn The column you want to check
+     *
+     * @return {@code true} if the guild is present, otherwise {@code false}
+     */
+    public boolean guildExists( String whereColumn, String setWhereColumn ) {
+        return super.keyExists( whereColumn, setWhereColumn );
     }
 
+    /**
+     * Create a new guild
+     *
+     * @param guildName   The name of the guild
+     * @param guildTag    The tag of the guild
+     * @param guildLeader The guild leader
+     */
     public void createGuild( String guildName, String guildTag, String guildLeader ) {
+        if ( this.guildExists( "guild_name", guildName ) )
+            return;
+
         Guild.getPlugin().getExecutorService().submit( () -> {
-            if ( !this.guildExists( "guild_name", guildName ) ) {
-                try {
-                    try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "INSERT INTO `guild` (guild_name, guild_tag, guild_leader, guild_money) VALUES (?, ?, ?, ?)" ) ) {
+            try {
+                try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "INSERT INTO `guild` (guild_name, guild_tag, guild_leader, guild_money) VALUES (?, ?, ?, ?)" ) ) {
 
-                        preparedStatement.setString( 1, guildName );
-                        preparedStatement.setString( 2, guildTag );
-                        preparedStatement.setString( 3, guildLeader );
-                        preparedStatement.setInt( 4, 0 );
+                    preparedStatement.setString( 1, guildName );
+                    preparedStatement.setString( 2, guildTag );
+                    preparedStatement.setString( 3, guildLeader );
+                    preparedStatement.setInt( 4, 0 );
 
-                        preparedStatement.executeUpdate();
-                    }
-                } catch ( SQLException ex ) {
-                    ex.printStackTrace();
+                    preparedStatement.executeUpdate();
                 }
+            } catch ( SQLException ex ) {
+                ex.printStackTrace();
             }
         } );
     }
 
+    /**
+     * Delete the guild by the {@code guildName}
+     *
+     * @param guildName Name of the guild
+     */
     public void deleteGuild( String guildName ) {
         super.deleteKey( "guild_name", guildName );
     }
 
-    public void updateGuild( String setterKey, String setKey, String guildName ) {
-        super.updateKey( "guild_name", guildName, setterKey, setKey );
+    /**
+     * Update the guild information by the guild name
+     *
+     * @param guildName    THe name of the guild
+     * @param setColumn    The column you want to update
+     * @param setterColumn The value you want to set for the {@code setterColumn}
+     */
+    public void updateGuild( String guildName, String setColumn, String setterColumn ) {
+        super.updateKey( "guild_name", guildName, setColumn, setterColumn );
     }
 
-    public void updateGuild( String setterKey, int setKey, String guildName ) {
-        super.updateKey( "guild_name", guildName, setterKey, setKey );
+    /**
+     * Update the guild information by the guild name
+     *
+     * @param guildName    THe name of the guild
+     * @param setColumn    The column you want to update
+     * @param setterColumn The value you want to set for the {@code setterColumn}
+     */
+    public void updateGuild( String guildName, String setColumn, int setterColumn ) {
+        super.updateKey( "guild_name", guildName, setColumn, setterColumn );
     }
 
-    public String getGuild( String guildKey, String key, String value ) {
+    public String getGuildByStringSync( String guildKey, String key, String value ) {
         return super.getKey( guildKey, key, value );
     }
 
-    public int getGuildByInteger( String guildKey, String key, String value ) {
+    public int getGuildByIntegerSync( String guildKey, String key, String value ) {
         return super.getKeyByInteger( guildKey, key, value );
+    }
+
+    public CompletableFuture<String> getGuildByStringAsync( String guildKey, String key, String value ) {
+        return super.getStringAsync( guildKey, key, value );
+    }
+
+    public CompletableFuture<Integer> getGuildByIntegerAsync( String guildKey, String key, String value ) {
+        return super.getIntegerAsync( guildKey, key, value );
     }
 
     public int getRanking( String selectKey, String orderKey ) {

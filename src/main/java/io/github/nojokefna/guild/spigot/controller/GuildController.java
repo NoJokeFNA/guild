@@ -490,7 +490,7 @@ public class GuildController implements GuildInterface {
 
     @Override
     public String sendGuildMaster( Player player ) {
-        return this.guildAPI.getGuild( "guild_tag", this.sendGuildTag( player ), "guild_leader" );
+        return this.guildAPI.getGuildByStringSync( "guild_tag", this.sendGuildTag( player ), "guild_leader" );
     }
 
     @Override
@@ -680,7 +680,7 @@ public class GuildController implements GuildInterface {
 
         if ( user.isInGuild() )
             this.guildBuilder.sendMessage( player, "§aDeine Gilde hat aktuell einen Kontostand von §b$"
-                    + this.guildAPI.getGuildByInteger( "guild_name", this.sendGuildName( player ), "guild_money" ) + "§a." );
+                    + this.guildAPI.getGuildByIntegerSync( "guild_name", this.sendGuildName( player ), "guild_money" ) + "§a." );
         else
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
     }
@@ -726,7 +726,7 @@ public class GuildController implements GuildInterface {
         }
 
         try {
-            if ( !( this.guildAPI.getGuildByInteger( "guild_name", this.sendGuildName( player ), "guild_money" ) >= amount ) ) {
+            if ( !( this.guildAPI.getGuildByIntegerSync( "guild_name", this.sendGuildName( player ), "guild_money" ) >= amount ) ) {
                 this.guildBuilder.sendMessage( player, "§cAuf der Gilde sind keine §b$" + amount + " §ceingezahlt." );
                 return;
             }
