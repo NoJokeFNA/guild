@@ -13,8 +13,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import java.util.Objects;
-
 /**
  * @author NoJokeFNA
  * @version 1.0.0
@@ -52,7 +50,7 @@ public class AsyncPlayerChatListener implements Listener {
                         .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
                                 ? this.sendColoredMessage( event.getMessage() )
                                 : event.getMessage() )
-                        .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
+                        .replace( "{GROUPPLAYER}", Guild.getPlugin().getData().getGroup( player ) )
                         .replace( "%", "%%" );
 
                 if ( user.isInGuild() ) {
@@ -80,54 +78,56 @@ public class AsyncPlayerChatListener implements Listener {
                 }
 
             } else if ( this.section.getBoolean( "chat.use_chat_feature" ) ) {
-                this.section.getConfigurationSection( "chat.permissions" ).getKeys( false ).stream()
-                        .map( permissionName -> this.section.getStringList( "chat.permissions." + permissionName ) ).forEach( permissionNameValues -> {
+                this.section.getConfigurationSection( "chat.permissions" )
+                        .getKeys( false )
+                        .stream()
+                        .map( permissionName -> this.section.getStringList( "chat.permissions." + permissionName ) )
+                        .forEach( permissionNameValues -> {
+                            if ( player.hasPermission( permissionNameValues.get( 2 ) ) ) {
+                                String message = permissionNameValues.get( 0 )
+                                        .replace( "{PLAYER}", player.getName() )
+                                        .replace( "{DISPLAYNAME}", user.getNameTag() + player.getName() )
+                                        .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
+                                                ? this.sendColoredMessage( event.getMessage() )
+                                                : event.getMessage() )
+                                        .replace( "{GROUPPLAYER}", Guild.getPlugin().getData().getGroup( player ) )
+                                        .replace( "%", "%%" );
 
-                    if ( player.hasPermission( permissionNameValues.get( 2 ) ) ) {
-                        String message = permissionNameValues.get( 0 )
-                                .replace( "{PLAYER}", player.getName() )
-                                .replace( "{DISPLAYNAME}", user.getNameTag() + player.getName() )
-                                .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
-                                        ? this.sendColoredMessage( event.getMessage() )
-                                        : event.getMessage() )
-                                .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
-                                .replace( "%", "%%" );
+                                String messageTwo = permissionNameValues.get( 1 )
+                                        .replace( "{PLAYER}", player.getName() )
+                                        .replace( "{DISPLAYNAME}", user.getNameTag() + player.getName() )
+                                        .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
+                                                ? this.sendColoredMessage( event.getMessage() )
+                                                : event.getMessage() )
+                                        .replace( "{GROUPPLAYER}", Guild.getPlugin().getData().getGroup( player ) )
+                                        .replace( "%", "%%" );
 
-                        String messageTwo = permissionNameValues.get( 1 )
-                                .replace( "{PLAYER}", player.getName() )
-                                .replace( "{DISPLAYNAME}", user.getNameTag() + player.getName() )
-                                .replace( "{MESSAGE}", player.hasPermission( this.section.getString( "chat.guild_chat_color_permission" ) )
-                                        ? this.sendColoredMessage( event.getMessage() )
-                                        : event.getMessage() )
-                                .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
-                                .replace( "%", "%%" );
+                                if ( user.isInGuild() ) {
+                                    switch ( this.section.getString( "chat.guild_format" ) ) {
+                                        case "UpperCase":
+                                            message = message.replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildTag( player ).toUpperCase() );
+                                            event.setFormat( message );
+                                            break;
 
-                        if ( user.isInGuild() ) {
-                            switch ( this.section.getString( "chat.guild_format" ) ) {
-                                case "UpperCase":
-                                    message = message.replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildTag( player ).toUpperCase() );
-                                    event.setFormat( message );
-                                    break;
+                                        case "lowerCase":
+                                            message = message.replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildTag( player ).toLowerCase() );
+                                            event.setFormat( message );
+                                            break;
 
-                                case "lowerCase":
-                                    message = message.replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildTag( player ).toLowerCase() );
-                                    event.setFormat( message );
-                                    break;
+                                        case "normal":
+                                            message = message.replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildTag( player ) );
+                                            event.setFormat( message );
+                                            break;
 
-                                case "normal":
-                                    message = message.replace( "{GUILD}", Guild.getPlugin().getGuildController().sendGuildTag( player ) );
-                                    event.setFormat( message );
-                                    break;
+                                        default:
+                                            throw new IllegalStateException( "Unexpected value: " + this.section.getString( "chat.guild_format" ) );
+                                    }
 
-                                default:
-                                    throw new IllegalStateException( "Unexpected value: " + this.section.getString( "chat.guild_format" ) );
+                                } else {
+                                    event.setFormat( this.sendColoredMessage( messageTwo ) );
+                                }
                             }
-
-                        } else {
-                            event.setFormat( this.sendColoredMessage( messageTwo ) );
-                        }
-                    }
-                } );
+                        } );
             }
         }
 

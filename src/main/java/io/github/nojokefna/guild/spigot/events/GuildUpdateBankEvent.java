@@ -6,11 +6,12 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 @AllArgsConstructor
-public class GuildAcceptInvite extends Event {
+public class GuildUpdateBankEvent extends Event {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
     private final Player player;
+    private final int amount;
 
     public static HandlerList getHandlerList() {
         return HANDLER_LIST;

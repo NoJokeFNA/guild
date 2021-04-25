@@ -1,4 +1,4 @@
-package io.github.nojokefna.guild.spigot.database;
+package io.github.nojokefna.guild.spigot.database.provider;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import lombok.Setter;

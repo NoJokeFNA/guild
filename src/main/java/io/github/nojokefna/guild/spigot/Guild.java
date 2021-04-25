@@ -70,8 +70,6 @@ public class Guild extends JavaPlugin {
         this.getLogger().finest( String.format( "%s§aTry to start §c%s §a...", this.getData().getPrefix(), this.getDescription().getName() ) );
         this.executorService = Executors.newFixedThreadPool( 2 );
 
-        Data.registerRecipe();
-
         System.out.println(
                 "\n" +
                         "  ____       _ _     _ \n" +
@@ -142,8 +140,8 @@ public class Guild extends JavaPlugin {
         this.getConfig().options().copyDefaults( true );
         this.saveDefaultConfig();
 
-        String language = this.getConfig().getString( "language" );
-        String path = "languages/" + language.toLowerCase() + "_" + language.toUpperCase() + ".yml";
+        final String language = this.getConfig().getString( "language" );
+        final String path = "languages/" + language.toLowerCase() + "_" + language.toUpperCase() + ".yml";
 
         this.fileBuilder = new FileBuilder( path );
         this.chatSettingsBuilder = new FileBuilder( "chat_settings.yml" );
@@ -159,7 +157,7 @@ public class Guild extends JavaPlugin {
             return;
         }
 
-        this.getLogger().finest( String.format( "Successfully started %s", "Vault" ) );
+        this.getLogger().info( String.format( "Successfully started %s", "Vault" ) );
 
         switch ( this.getChatSettingsBuilder().getKey( "chat.permission_plugin" ) ) {
             case "PermissionsEx":
@@ -168,7 +166,7 @@ public class Guild extends JavaPlugin {
                     return;
                 }
 
-                this.getLogger().finest( String.format( "Successfully enabled %s and %s", "Vault-Chat", "PermissionsEx" ) );
+                this.getLogger().info( String.format( "Successfully enabled %s and %s", "Vault-Chat", "PermissionsEx" ) );
                 this.setupPerms( "PermissionsEx" );
                 this.setupChat();
                 break;
@@ -179,13 +177,17 @@ public class Guild extends JavaPlugin {
                     return;
                 }
 
-                this.getLogger().finest( String.format( "Successfully enabled %s and %s", "Vault-Chat", "LuckPerms" ) );
+                this.getLogger().info( String.format( "Successfully enabled %s and %s", "Vault-Chat", "LuckPerms" ) );
                 this.setupPerms( "LuckPerms" );
                 this.setupChat();
                 break;
 
-            case "CloudNet":
-                this.getLogger().finest( String.format( "Successfully enabled %s and %s", "CPerms-Chat", "CloudNet" ) );
+            case "CloudNetV2":
+                this.getLogger().info( String.format( "Successfully enabled %s and %s", "CPerms-Chat", "CloudNetV2" ) );
+                break;
+
+            case "CloudNetV3":
+                this.getLogger().info( String.format( "Successfully enabled %s and %s", "CPerms-Chat", "CloudNetV3C" ) );
                 break;
 
             default:

@@ -270,7 +270,7 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
         user.setInGuild( true );
 
-        Bukkit.getPluginManager().callEvent( new GuildAcceptInvite( player ) );
+        Bukkit.getPluginManager().callEvent( new GuildAcceptInviteEvent( player ) );
     }
 
     @Override
@@ -684,12 +684,12 @@ public class GuildRecodeController implements GuildRecodeInterface {
 
     @Override
     public void addGuildBank( Player player, int amount ) {
-        Bukkit.getPluginManager().callEvent( new GuildUpdateBank( player, amount ) );
+        Bukkit.getPluginManager().callEvent( new GuildUpdateBankEvent( player, amount ) );
     }
 
     @Override
     public void removeGuildBank( Player player, int amount ) {
-        Bukkit.getPluginManager().callEvent( new GuildUpdateBank( player, amount ) );
+        Bukkit.getPluginManager().callEvent( new GuildUpdateBankEvent( player, amount ) );
     }
 
     @Override

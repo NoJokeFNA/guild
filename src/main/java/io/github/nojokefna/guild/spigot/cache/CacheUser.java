@@ -20,23 +20,23 @@ public class CacheUser {
 
     private static final Map<UUID, CacheUser> USER_MAP = new HashMap<>();
 
-    // init
+    /* Startup */
+    private AtomicBoolean loaded;
+
+    /* Init */
     private final CacheMethods cacheMethods;
 
-    // settings
+    /* Settings */
     private final Map<UUID, Long> commandCoolDown, messageCoolDown;
     private final Map<UUID, String> message;
     private String[] helpMessage;
     private String headerMessage;
 
-    // startup
-    private AtomicBoolean loaded;
-
-    // tabList
+    /* Tablist */
     private String prefix, nameTag, suffix;
     private String tagId;
 
-    // guild
+    /* Guild */
     private boolean inGuild;
     private boolean isMember, isOfficer, isMaster;
     private String guildRank, guildName;

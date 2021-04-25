@@ -1,6 +1,7 @@
 package io.github.nojokefna.guild.spigot.database;
 
 import io.github.nojokefna.guild.spigot.Guild;
+import io.github.nojokefna.guild.spigot.database.provider.DatabaseProvider;
 import lombok.NonNull;
 import lombok.Setter;
 
@@ -15,10 +16,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * @author NoJokeFNA
- * @version 2.5.4
+ * @version 2.5.7
  */
 public abstract class AbstractMySQL {
 
@@ -52,12 +54,11 @@ public abstract class AbstractMySQL {
 
             preparedStatement.setString( 1, setWhereColumn );
 
-            try ( ResultSet resultSet = preparedStatement.executeQuery() ) {
-                if ( resultSet.next() )
-                    value = true;
-            }
-        } catch ( SQLException ex ) {
-            ex.printStackTrace();
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            if ( resultSet.next() )
+                value = true;
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
 
         return value;
@@ -84,8 +85,8 @@ public abstract class AbstractMySQL {
 
                     preparedStatement.executeUpdate();
                 }
-            } catch ( SQLException ex ) {
-                ex.printStackTrace();
+            } catch ( SQLException exception ) {
+                System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
             }
         } );
     }
@@ -111,8 +112,8 @@ public abstract class AbstractMySQL {
 
                     preparedStatement.executeUpdate();
                 }
-            } catch ( SQLException ex ) {
-                ex.printStackTrace();
+            } catch ( SQLException exception ) {
+                System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
             }
         } );
     }
@@ -140,14 +141,14 @@ public abstract class AbstractMySQL {
 
                 preparedStatement.setString( 1, setWhereKey );
 
-                try ( ResultSet resultSet = preparedStatement.executeQuery() ) {
-                    if ( resultSet.next() )
-                        value = resultSet.getString( whereKey );
-                }
+                final ResultSet resultSet = preparedStatement.executeQuery();
+                if ( resultSet.next() )
+                    value = resultSet.getString( whereKey );
             }
-        } catch ( SQLException ex ) {
-            ex.printStackTrace();
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return value;
     }
 
@@ -161,9 +162,8 @@ public abstract class AbstractMySQL {
      * @return return {@code getKey}
      */
     public int getKeyByInteger( String whereKey, String setWhereKey, String getKey ) {
-        if ( !this.keyExists( whereKey, setWhereKey ) ) {
+        if ( !this.keyExists( whereKey, setWhereKey ) )
             return -1;
-        }
 
         int value = 0;
 
@@ -174,12 +174,10 @@ public abstract class AbstractMySQL {
             final ResultSet resultSet = preparedStatement.executeQuery();
             if ( resultSet.next() )
                 value = resultSet.getInt( getKey );
-
-            preparedStatement.close();
-            resultSet.close();
-        } catch ( SQLException ex ) {
-            ex.printStackTrace();
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return value;
     }
 
@@ -195,25 +193,21 @@ public abstract class AbstractMySQL {
         Map<Integer, String> rank = new HashMap<>();
         int result = 0;
 
-        try {
-            try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT ? FROM `" + table + "` ORDER BY ? DESC" ) ) {
+        try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT ? FROM `" + table + "` ORDER BY ? DESC" ) ) {
 
-                preparedStatement.setString( 1, selectKey );
-                preparedStatement.setString( 2, table );
-                preparedStatement.setString( 3, orderKey );
+            preparedStatement.setString( 1, selectKey );
+            preparedStatement.setString( 2, table );
+            preparedStatement.setString( 3, orderKey );
 
-                final ResultSet resultSet = preparedStatement.executeQuery();
-                while ( resultSet.next() ) {
-                    result++;
-                    rank.put( result, resultSet.getString( selectKey ) );
-                }
-
-                preparedStatement.close();
-                resultSet.close();
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ) {
+                result++;
+                rank.put( result, resultSet.getString( selectKey ) );
             }
-        } catch ( Exception ex ) {
-            ex.printStackTrace();
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return Integer.parseInt( rank.get( result ) );
     }
 
@@ -230,26 +224,22 @@ public abstract class AbstractMySQL {
         final Map<Integer, String> rank = new HashMap<>();
         int result = 0;
 
-        try {
-            try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT ? FROM `" + table + "` ORDER BY ? DESC LIMIT ?" ) ) {
+        try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT ? FROM `" + table + "` ORDER BY ? DESC LIMIT ?" ) ) {
 
-                preparedStatement.setString( 1, selectKey );
-                preparedStatement.setString( 2, table );
-                preparedStatement.setString( 3, orderKey );
-                preparedStatement.setInt( 4, limit );
+            preparedStatement.setString( 1, selectKey );
+            preparedStatement.setString( 2, table );
+            preparedStatement.setString( 3, orderKey );
+            preparedStatement.setInt( 4, limit );
 
-                final ResultSet resultSet = preparedStatement.executeQuery();
-                while ( resultSet.next() ) {
-                    result++;
-                    rank.put( result, resultSet.getString( selectKey ) );
-                }
-
-                preparedStatement.close();
-                resultSet.close();
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ) {
+                result++;
+                rank.put( result, resultSet.getString( selectKey ) );
             }
-        } catch ( Exception ex ) {
-            ex.printStackTrace();
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return Integer.parseInt( rank.get( result ) );
     }
 
@@ -273,13 +263,11 @@ public abstract class AbstractMySQL {
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while ( resultSet.next() )
                     getList.add( resultSet.getString( getKey ) );
-
-                preparedStatement.close();
-                resultSet.close();
             }
-        } catch ( SQLException ex ) {
-            ex.printStackTrace();
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return getList;
     }
 
@@ -306,13 +294,11 @@ public abstract class AbstractMySQL {
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while ( resultSet.next() )
                     getList.add( resultSet.getString( getKey ) );
-
-                preparedStatement.close();
-                resultSet.close();
             }
-        } catch ( SQLException ex ) {
-            ex.printStackTrace();
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return getList;
     }
 
@@ -327,15 +313,13 @@ public abstract class AbstractMySQL {
             return;
 
         EXECUTOR_SERVICE.execute( () -> {
-            try {
-                try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "DELETE FROM `" + table + "` WHERE `" + whereKey + "` = ?" ) ) {
+            try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "DELETE FROM `" + table + "` WHERE `" + whereKey + "` = ?" ) ) {
 
-                    preparedStatement.setString( 1, setWhereKey );
+                preparedStatement.setString( 1, setWhereKey );
 
-                    preparedStatement.executeUpdate();
-                }
-            } catch ( SQLException ex ) {
-                ex.printStackTrace();
+                preparedStatement.executeUpdate();
+            } catch ( SQLException exception ) {
+                System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
             }
         } );
     }
@@ -349,6 +333,10 @@ public abstract class AbstractMySQL {
      * @param setKey      Enter the {@code setKey} you want to remove
      *
      * @return the completable future
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#runAsync(Runnable)
      */
     public CompletableFuture<Void> addKeyAsync( String whereKey, String setWhereKey, String getKey, int setKey ) {
         int value = this.getKeyByInteger( whereKey, setWhereKey, getKey ) + setKey;
@@ -364,6 +352,10 @@ public abstract class AbstractMySQL {
      * @param setKey      Enter the {@code setKey} you want to remove
      *
      * @return the completable future
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#runAsync(Runnable)
      */
     public CompletableFuture<Void> removeKeyAsync( String whereKey, String setWhereKey, String getKey, int setKey ) {
         int value = this.getKeyByInteger( whereKey, setWhereKey, getKey ) - setKey;
@@ -381,6 +373,10 @@ public abstract class AbstractMySQL {
      * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
      *
      * @return the string async
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#supplyAsync(Supplier)
      */
     public CompletableFuture<String> getStringAsync( String whereKey, String setWhereKey, String getKey ) {
         return CompletableFuture.supplyAsync( () -> this.getKey( whereKey, setWhereKey, getKey ) );
@@ -397,6 +393,10 @@ public abstract class AbstractMySQL {
      * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
      *
      * @return the integer async
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#supplyAsync(Supplier)
      */
     public CompletableFuture<Integer> getIntegerAsync( String whereKey, String setWhereKey, String getKey ) {
         return CompletableFuture.supplyAsync( () -> this.getKeyByInteger( whereKey, setWhereKey, getKey ) );
@@ -413,6 +413,11 @@ public abstract class AbstractMySQL {
      * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
      *
      * @return the list async
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see List
      */
     public CompletableFuture<List<String>> getListAsync( String whereKey, String setWhereKey, String getKey ) {
         return CompletableFuture.supplyAsync( () -> this.getList( whereKey, setWhereKey, getKey ) );
@@ -431,6 +436,11 @@ public abstract class AbstractMySQL {
      * @param getKey            Enter the value you wanna finally receive
      *
      * @return returns the current {@link java.util.List}
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see List
      */
     public CompletableFuture<List<String>> getListAsync( String whereKey, String setWhereKey, String secondWhereKey, String setSecondWhereKey, String getKey ) {
         return CompletableFuture.supplyAsync( () -> this.getList( whereKey, setWhereKey, secondWhereKey, setSecondWhereKey, getKey ) );
@@ -469,10 +479,12 @@ public abstract class AbstractMySQL {
      * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
      * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
      * @param callback    Create the {@code callback}
+     *
+     * @see CompletableFuture#runAsync(Runnable)
      */
-/*    public void getDataStringAsync( String whereKey, String setWhereKey, String getKey, Consumer<String> callback ) {
+    public void getDataStringAsync( String whereKey, String setWhereKey, String getKey, Consumer<String> callback ) {
         CompletableFuture.runAsync( () -> callback.accept( this.getKey( whereKey, setWhereKey, getKey ) ) );
-    }*/
+    }
 
     /**
      * Get the {@code setKey} you want asnyc
@@ -481,11 +493,24 @@ public abstract class AbstractMySQL {
      * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
      * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
      * @param callback    Create the {@code callback}
+     *
+     * @see CompletableFuture#runAsync(Runnable)
      */
     public void getDataIntegerAsync( String whereKey, String setWhereKey, String getKey, Consumer<Integer> callback ) {
         CompletableFuture.runAsync( () -> callback.accept( this.getKeyByInteger( whereKey, setWhereKey, getKey ) ) );
     }
 
+
+    /**
+     * Get the {@code setKey} you want asnyc
+     *
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
+     * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
+     * @param callback    Create the {@code callback}
+     *
+     * @see CompletableFuture#runAsync(Runnable)
+     */
     public void getDataObjectAsync( String whereKey, String setWhereKey, String getKey, Consumer<Object> callback ) {
         CompletableFuture.runAsync( () -> callback.accept( this.getKey( whereKey, setWhereKey, getKey ) ) );
     }
@@ -497,6 +522,8 @@ public abstract class AbstractMySQL {
      * @param setWhereKey Set the {@code setWhereKey} you want to set for the {@code whereKey}
      * @param getKey      Set the {@code getKey} you want to get from {@code setWhereKey}
      * @param callback    Create the {@code callback}
+     *
+     * @see CompletableFuture#runAsync(Runnable)
      */
     public void getDataListAsync( String whereKey, String setWhereKey, String getKey, Consumer<List<String>> callback ) {
         CompletableFuture.runAsync( () -> callback.accept( this.getList( whereKey, setWhereKey, getKey ) ) );

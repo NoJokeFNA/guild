@@ -3,7 +3,7 @@ version: 3.5.1
 author: NoJokeFNA
 
 main: io.github.nojokefna.guild.spigot.Guild
-softdepend: [ Vault ]
+softdepend: [ Vault, CloudNet-Perms, CloudNet-Bridge ]
 
 commands:
   test:

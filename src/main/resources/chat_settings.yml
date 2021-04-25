@@ -7,7 +7,7 @@ chat:
   use_chat: false
   use_chat_general: true
 
-  # You can only use LuckPerms, PermissionsEx, CloudNet (Only CloudNetV2)
+  # You can only use LuckPerms, PermissionsEx, CloudNetV2, CloudNetV3
   # Default: LuckPerms
   permission_plugin: 'LuckPerms'
 
@@ -18,7 +18,7 @@ chat:
   cloudnet:
     use: 'display'
 
-  # You can setup a custom command/chat cooldown
+  # You can setup a custom command & chat cooldown
   # Time in seconds
   chat_settings:
     chat: true

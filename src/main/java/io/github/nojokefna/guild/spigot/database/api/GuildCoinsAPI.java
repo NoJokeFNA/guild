@@ -2,7 +2,7 @@ package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.database.AbstractMySQL;
-import io.github.nojokefna.guild.spigot.database.DatabaseProvider;
+import io.github.nojokefna.guild.spigot.database.provider.DatabaseProvider;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -34,9 +34,9 @@ public class GuildCoinsAPI extends AbstractMySQL {
                 preparedStatement.executeUpdate();
             }
 
-            System.out.println( "Successfully created a new player ( " + playerUuid.toString() + ", " + coinsValue + " )" );
+            System.out.println( "Successfully created a new player ( " + playerUuid + ", " + coinsValue + " )" );
         } catch ( SQLException ex ) {
-            System.out.println( "Something went wrong while creating a new player ( " + playerUuid.toString() + ", " + coinsValue + " )" );
+            System.out.println( "Something went wrong while creating a new player ( " + playerUuid + ", " + coinsValue + " )" );
             ex.printStackTrace();
         }
     }

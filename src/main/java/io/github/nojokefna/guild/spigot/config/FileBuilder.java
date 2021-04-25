@@ -2,8 +2,8 @@ package io.github.nojokefna.guild.spigot.config;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import lombok.NonNull;
-import net.md_5.bungee.api.ChatColor;
-import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang.Validate;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -59,6 +59,11 @@ public class FileBuilder {
         return ChatColor.translateAlternateColorCodes( '&', new String( configValue.getBytes(), StandardCharsets.UTF_8 ) );
     }
 
+    public void setKey( @NonNull String path, @NonNull Object value ) {
+        this.fileConfiguration.set( path, value );
+        this.saveConfig();
+    }
+
     public int getInt( @NonNull String key ) {
         Validate.notNull( key, "§cError: §4Key " + key + " §edoes not exists." );
         return this.fileConfiguration.getInt( key );
@@ -73,9 +78,11 @@ public class FileBuilder {
         return this.fileConfiguration;
     }
 
-    public void setKey( @NonNull String path, @NonNull Object value ) {
-        this.fileConfiguration.set( path, value );
-        this.saveConfig();
+    public void deleteConfig() {
+        if ( this.file.delete() )
+            System.out.println( "Successfully deleted config" );
+        else
+            System.out.println( "Error while deleting config" );
     }
 
     public void loadConfig() {

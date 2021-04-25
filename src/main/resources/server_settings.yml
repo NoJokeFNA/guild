@@ -61,7 +61,7 @@ tablist:
   header: '{NL}&7•&8● &cGuild &8●&7•{NL}&8➥ &7Coded by NoJokeFNA{NL}'
   footer: '&8╘ &7This server uses the &cGuild-System'
 
-  # Use 'UpperCase' for [GUILD], 'lowerCase' for [guild] or 'normal' for [Guild]
+  # You can use 'UpperCase' ( [GUILD] ), 'lowerCase' ( [guild] ) or 'normal' ( [Guild] )
   guild_format: 'normal'
 
   # If you activate this, you use permissions instead of groups
@@ -72,7 +72,7 @@ tablist:
   # '&4Admin &8| &4'         is for the tablist prefix
   # '&4Administrator &8| &4' is for the tablist prefix
   # '&8[&6{GUILD}&8]'        is behind your nametag
-  # 'Admin'                  is the group which you need, when you've got LuckPerms, PermissionsEx or CloudPerms enabled
+  # 'Admin'                  is the group which you need, when you have got LuckPerms, PermissionsEx or CloudPerms enabled
   # 'guild.tab.admin'        is is the permission you need, when you have activated 'use_permissions'
   # '01'                     is your rank position || 01 = Highest
 

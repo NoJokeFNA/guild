@@ -9,12 +9,12 @@ import org.bukkit.scoreboard.Team;
  * @author NoJokeFNA
  * @version 1.0.0
  */
-public class TabListBuilder {
+public class TablistBuilder {
 
     public static void setNameTag() {
         for ( Player players : Bukkit.getOnlinePlayers() ) {
-            final CacheUser user = CacheUser.getUser( players );
 
+            final CacheUser user = CacheUser.getUser( players );
             if ( user.getPrefix() != null && user.getTagId() != null ) {
                 for ( Player all : Bukkit.getOnlinePlayers() ) {
                     String playerName = players.getName();
@@ -37,7 +37,6 @@ public class TabListBuilder {
                     }
 
                     final String prefix = user.getNameTag() + playerName;
-
                     players.setPlayerListName( prefix );
                     players.setDisplayName( prefix );
                 }

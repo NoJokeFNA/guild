@@ -2,7 +2,7 @@ package io.github.nojokefna.guild.spigot.listener;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.build.ScoreboardBuilder;
-import io.github.nojokefna.guild.spigot.build.TabListBuilder;
+import io.github.nojokefna.guild.spigot.build.TablistBuilder;
 import io.github.nojokefna.guild.spigot.cache.CacheUser;
 import io.github.nojokefna.guild.spigot.config.FileBuilder;
 import org.bukkit.Bukkit;
@@ -57,6 +57,7 @@ public class PlayerJoinListener implements Listener {
                     .addTeam( "rank", "§8» &c" + user.getGuildRank(), "§3", 1 )
 
                     .addScore( "§8§m⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊", 0 )
+
                     .sendScoreboard();
 
             Bukkit.getOnlinePlayers().forEach( onlinePlayers -> ScoreboardBuilder.updateTeam(
@@ -70,7 +71,7 @@ public class PlayerJoinListener implements Listener {
             user.getCacheMethods().initTeams( player );
             user.getCacheMethods().setPrefix( player );
 
-            TabListBuilder.setNameTag();
+            TablistBuilder.setNameTag();
         }
 
         if ( this.value )
@@ -80,8 +81,7 @@ public class PlayerJoinListener implements Listener {
             player.sendMessage( "Guild-System detected" );
 
         if ( this.serverBuilder.getBoolean( "join.enable" ) ) {
-            if ( this.serverBuilder.getBoolean( "join.admin.bypass" )
-                    && player.hasPermission( this.serverBuilder.getKey( "join.admin.permission" ) ) ) {
+            if ( this.serverBuilder.getBoolean( "join.admin.bypass" ) && player.hasPermission( this.serverBuilder.getKey( "join.admin.permission" ) ) ) {
                 event.setJoinMessage( null );
                 return;
             }

@@ -2,7 +2,7 @@ package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.database.AbstractMySQL;
-import io.github.nojokefna.guild.spigot.database.DatabaseProvider;
+import io.github.nojokefna.guild.spigot.database.provider.DatabaseProvider;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

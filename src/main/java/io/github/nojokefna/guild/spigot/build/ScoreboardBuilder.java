@@ -20,7 +20,7 @@ public class ScoreboardBuilder {
     private Team team;
 
     /**
-     * Initialize the class
+     * Create a new Scoreboard
      *
      * @param objectiveName Set the {@code objective} name you want
      * @param displaySlot   Set the {@code displaySlot} you want to use
@@ -29,7 +29,10 @@ public class ScoreboardBuilder {
      */
     public ScoreboardBuilder( String objectiveName, DisplaySlot displaySlot, String displayName, Player player ) {
         this.player = player;
-        this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
+        player.setScoreboard( Bukkit.getScoreboardManager().getNewScoreboard() );
+
+        this.scoreboard = player.getScoreboard();
         this.objective = this.scoreboard.registerNewObjective( objectiveName, "dummy" );
 
         this.objective.setDisplaySlot( displaySlot );
@@ -48,7 +51,7 @@ public class ScoreboardBuilder {
     }
 
     /**
-     * Update a team with a prefix
+     * Update a team with a {@code prefix}
      *
      * @param player Set the {@code player} from whom you want to update the {@code scoreboard}
      * @param team   Set the {@code team} you want to update
@@ -59,7 +62,7 @@ public class ScoreboardBuilder {
     }
 
     /**
-     * Update a team with a prefix & suffix
+     * Update a team with a {@code prefix} & {@code suffix}
      *
      * @param player Set the {@code player} from whom you want to update the {@code scoreboard}
      * @param team   Set the {@code team} you want to update

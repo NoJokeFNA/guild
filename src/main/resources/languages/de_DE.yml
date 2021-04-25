@@ -27,7 +27,7 @@ guild:
       line5: '&2/guild delete &8- &7Du löschst deine Gilde.'
       line6: '&2/guild info &8- &7Zeigt deine Gild Infos an.'
       line7: '&2/guild members &8- &7Zeigt die Gild Mitglieder an.'
-      line8: '&2/guild info <GildTag> &8- &7Zeigt die Infos über die Angegebenen Gilde an.'
+      line8: '&2/guild info <GuildTag> &8- &7Zeigt die Infos über die Angegebenen Gilde an.'
       line9: '&2/guild setMaster <Spieler> &8- &7Du setzt einen neuen Gilden Meister.'
       line10: '&2/guild kick <Spieler> &8- &7Werfe einen Spieler aus deiner Gilde.'
 
