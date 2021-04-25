@@ -25,7 +25,7 @@ public class PlayerKickListener implements Listener {
 
     @EventHandler
     public void onPlayerKick( PlayerKickEvent event ) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
 
         if ( this.fileBuilder.getBoolean( "kick.enable" ) ) {
             if ( this.fileBuilder.getBoolean( "kick.admin.bypass" ) && player.hasPermission( this.fileBuilder.getKey( "kick.admin.permission" ) ) ) {
@@ -34,9 +34,9 @@ public class PlayerKickListener implements Listener {
             }
 
             event.setLeaveMessage( Guild.getPlugin().getServerSettingsBuilder().getKey( "kick.message" )
-                    .replace( "{PLAYER}", player.getName() )
-                    .replace( "{DISPLAYNAME}", player.getDisplayName() )
-                    .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
+                                           .replace( "{PLAYER}", player.getName() )
+                                           .replace( "{DISPLAYNAME}", player.getDisplayName() )
+                                           .replace( "{GROUPPLAYER}", Objects.requireNonNull( Guild.getPlugin().getData().getGroup( player ) ) )
             );
         }
 

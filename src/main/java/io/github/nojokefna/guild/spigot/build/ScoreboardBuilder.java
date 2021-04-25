@@ -16,21 +16,23 @@ public class ScoreboardBuilder {
 
     private final Scoreboard scoreboard;
     private final Objective objective;
+    private final Player player;
     private Team team;
 
-    private final Player player;
-
     /**
-     * Initialize the class
+     * Create a new Scoreboard
      *
-     * @param objectiveName Set the {@code #objective} name you want
-     * @param displaySlot   Set the {@code #displaySlot} you want to use
-     * @param displayName   Set the {@code #displayName} of the {@code #scoreboard}
-     * @param player        Initialize the {@code #player} object
+     * @param objectiveName Set the {@code objective} name you want
+     * @param displaySlot   Set the {@code displaySlot} you want to use
+     * @param displayName   Set the {@code displayName} of the {@code scoreboard}
+     * @param player        Initialize the {@code player} object
      */
     public ScoreboardBuilder( String objectiveName, DisplaySlot displaySlot, String displayName, Player player ) {
         this.player = player;
-        this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
+        player.setScoreboard( Bukkit.getScoreboardManager().getNewScoreboard() );
+
+        this.scoreboard = player.getScoreboard();
         this.objective = this.scoreboard.registerNewObjective( objectiveName, "dummy" );
 
         this.objective.setDisplaySlot( displaySlot );
@@ -38,10 +40,50 @@ public class ScoreboardBuilder {
     }
 
     /**
-     * Add a team to the {@code #scoreboard}
+     * Remove the {@code entry} from the specified {@code team}
      *
-     * @param prefix   Set the {@code #prefix} of the {@code #score}
-     * @param score    Set the {@code #score} of the {@code #prefix}
+     * @param player Set the {@code player} from whom you want to get the {@code scoreboard}
+     * @param team   Specify the {@code team} from which you want to remove the {@code entry}
+     * @param entry  Set the {@code entry} from the {@code team}
+     */
+    public static void removeEntry( Player player, String team, String entry ) {
+        player.getScoreboard().getTeam( team ).removeEntry( entry );
+    }
+
+    /**
+     * Update a team with a {@code prefix}
+     *
+     * @param player Set the {@code player} from whom you want to update the {@code scoreboard}
+     * @param team   Set the {@code team} you want to update
+     * @param prefix Set the {@code prefix} from the {@code team}
+     */
+    public static void updateTeam( Player player, String team, String prefix ) {
+        player.getScoreboard().getTeam( team ).setPrefix( staticColoredMessage( prefix ) );
+    }
+
+    /**
+     * Update a team with a {@code prefix} & {@code suffix}
+     *
+     * @param player Set the {@code player} from whom you want to update the {@code scoreboard}
+     * @param team   Set the {@code team} you want to update
+     * @param prefix Set the {@code prefix} from the {@code team}
+     * @param suffix Set the {@code suffix} from the {@code team}
+     */
+    public static void updateTeam( Player player, String team, String prefix, String suffix ) {
+        player.getScoreboard().getTeam( team ).setPrefix( staticColoredMessage( prefix ) );
+        player.getScoreboard().getTeam( team ).setSuffix( staticColoredMessage( suffix ) );
+    }
+
+    private static String staticColoredMessage( String message ) {
+        return ChatColor.translateAlternateColorCodes( '&', message );
+    }
+
+    /**
+     * Add a team to the {@code scoreboard}
+     *
+     * @param prefix Set the {@code prefix} of the {@code score}
+     * @param score  Set the {@code score} of the {@code prefix}
+     *
      * @return returns the method
      */
     public ScoreboardBuilder addScore( String prefix, int score ) {
@@ -50,12 +92,13 @@ public class ScoreboardBuilder {
     }
 
     /**
-     * Add a team to the {@code #scoreboard}
+     * Add a team to the {@code scoreboard}
      *
-     * @param teamName Set the {@code #teamName} you want
-     * @param prefix   Set the {@code #prefix} of the {@code #team}
-     * @param entry    Set the {@code #entry} of the {@code #scoreboard}. Please use only §1, §2 (...)
-     * @param score    Set the {@code #score} in the following order
+     * @param teamName Set the {@code teamName} you want
+     * @param prefix   Set the {@code prefix} of the {@code team}
+     * @param entry    Set the {@code entry} of the {@code scoreboard}. Please use only §1, §2 (...)
+     * @param score    Set the {@code score} in the following order
+     *
      * @return returns the method
      */
     public ScoreboardBuilder addTeam( String teamName, String prefix, String entry, int score ) {
@@ -67,13 +110,14 @@ public class ScoreboardBuilder {
     }
 
     /**
-     * Add a team to the {@code #scoreboard}
+     * Add a team to the {@code scoreboard}
      *
-     * @param teamName Set the {@code #teamName} you want
-     * @param prefix   Set the {@code #prefix} of the {@code #team}
-     * @param suffix   Set the {@code #suffix} of the {@code #team}
-     * @param entry    Set the {@code #entry} of the {@code #scoreboard}. Please use only §1, §2, §3 (...)
-     * @param score    Set the {@code #score} in the following order
+     * @param teamName Set the {@code teamName} you want
+     * @param prefix   Set the {@code prefix} of the {@code team}
+     * @param suffix   Set the {@code suffix} of the {@code team}
+     * @param entry    Set the {@code entry} of the {@code scoreboard}. Please use only §1, §2, §3 (...)
+     * @param score    Set the {@code score} in the following order
+     *
      * @return returns the method
      */
     public ScoreboardBuilder addTeam( String teamName, String prefix, String suffix, String entry, int score ) {
@@ -86,41 +130,6 @@ public class ScoreboardBuilder {
     }
 
     /**
-     * Remove the {@code #entry} from the specified {@code #team}
-     *
-     * @param player Set the {@code #player} from whom you want to get the {@code #scoreboard}
-     * @param team   Specify the {@code #team} from which you want to remove the {@code #entry}
-     * @param entry  Set the {@code #entry} from the {@code #team}
-     */
-    public static void removeEntry( Player player, String team, String entry ) {
-        player.getScoreboard().getTeam( team ).removeEntry( entry );
-    }
-
-    /**
-     * Update a team with a prefix
-     *
-     * @param player Set the {@code #player} from whom you want to update the {@code #scoreboard}
-     * @param team   Set the {@code #team} you want to update
-     * @param prefix Set the {@code #prefix} from the {@code #team}
-     */
-    public static void updateTeam( Player player, String team, String prefix ) {
-        player.getScoreboard().getTeam( team ).setPrefix( staticColoredMessage( prefix ) );
-    }
-
-    /**
-     * Update a team with a prefix & suffix
-     *
-     * @param player Set the {@code #player} from whom you want to update the {@code #scoreboard}
-     * @param team   Set the {@code #team} you want to update
-     * @param prefix Set the {@code #prefix} from the {@code #team}
-     * @param suffix Set the {@code #suffix} from the {@code #team}
-     */
-    public static void updateTeam( Player player, String team, String prefix, String suffix ) {
-        player.getScoreboard().getTeam( team ).setPrefix( staticColoredMessage( prefix ) );
-        player.getScoreboard().getTeam( team ).setSuffix( staticColoredMessage( suffix ) );
-    }
-
-    /**
      * Finally send the scoreboard
      */
     public void sendScoreboard() {
@@ -128,10 +137,6 @@ public class ScoreboardBuilder {
     }
 
     private String coloredMessage( String message ) {
-        return ChatColor.translateAlternateColorCodes( '&', message );
-    }
-
-    private static String staticColoredMessage( String message ) {
         return ChatColor.translateAlternateColorCodes( '&', message );
     }
 }

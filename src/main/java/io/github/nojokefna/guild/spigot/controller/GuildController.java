@@ -5,6 +5,7 @@ import io.github.nojokefna.guild.spigot.build.GuildBuilder;
 import io.github.nojokefna.guild.spigot.cache.CacheUser;
 import io.github.nojokefna.guild.spigot.config.FileBuilder;
 import io.github.nojokefna.guild.spigot.database.api.GuildAPI;
+import io.github.nojokefna.guild.spigot.database.api.GuildCoinsAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildInvitesAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildUserAPI;
 import io.github.nojokefna.guild.spigot.interfaces.GuildInterface;
@@ -30,6 +31,7 @@ public class GuildController implements GuildInterface {
     private final FileBuilder fileBuilder;
     private final GuildUserAPI guildUserAPI;
     private final GuildInvitesAPI guildInvitesAPI;
+    private final GuildCoinsAPI guildCoinsAPI;
     private final GuildBuilder guildBuilder;
 
     public GuildController() {
@@ -38,6 +40,7 @@ public class GuildController implements GuildInterface {
         this.fileBuilder = Guild.getPlugin().getFileBuilder();
         this.guildAPI = Guild.getPlugin().getGuildAPI();
         this.guildUserAPI = Guild.getPlugin().getGuildUserAPI();
+        this.guildCoinsAPI = Guild.getPlugin().getGuildCoinsAPI();
         this.guildInvitesAPI = Guild.getPlugin().getGuildInvitesAPI();
         this.guildBuilder = Guild.getPlugin().getGuildBuilder();
     }
@@ -74,12 +77,12 @@ public class GuildController implements GuildInterface {
             return;
         }
 
-        if ( ! ( Guild.getPlugin().getEconomy().getBalance( player ) >= costs ) ) {
+        if ( !( Guild.getPlugin().getEconomy().getBalance( player ) >= costs ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.create_guild.not_enough_money" ) );
             return;
         }
 
-        if ( ! this.guildList.contains( player.getName() ) ) {
+        if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.create_guild.security_message_1" )
                     .replace( "{GUILD}", guildName ) );
@@ -106,19 +109,19 @@ public class GuildController implements GuildInterface {
 
         long time = Long.parseLong( this.fileBuilder.getKey( "guild.delete_guild.security_countdown" ) );
 
-        if ( ! this.guildAPI.guildExists( "guild_name", this.sendGuildName( player ) ) ) {
+        if ( !this.guildAPI.guildExists( "guild_name", this.sendGuildName( player ) ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
 
-        if ( ! user.isMaster() ) {
+        if ( !user.isMaster() ) {
             this.guildBuilder.sendMessage( player, fileBuilder.getKey( "guild.is_not_the_guild_master" ) );
             return;
         }
 
         user.setInGuild( false );
 
-        if ( ! this.guildList.contains( player.getName() ) ) {
+        if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.delete_guild.security_message_1" )
                     .replace( "{GUILD}", this.sendGuildName( player ) ) );
@@ -139,7 +142,7 @@ public class GuildController implements GuildInterface {
     public void sendInvite( Player player, Player target ) {
         CacheUser user = CacheUser.getUser( player );
 
-        if ( ! user.isInGuild() ) {
+        if ( !user.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
@@ -166,7 +169,7 @@ public class GuildController implements GuildInterface {
             return;
         }
 
-        if ( ! user.isOfficer() && ! user.isMaster() ) {
+        if ( !user.isOfficer() && !user.isMaster() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_invites.player_is_not_master" ) );
             return;
         }
@@ -206,17 +209,17 @@ public class GuildController implements GuildInterface {
     public void revokeInvite( Player player, OfflinePlayer target ) {
         CacheUser user = CacheUser.getUser( player );
 
-        if ( ! user.isInGuild() ) {
+        if ( !user.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
 
-        if ( ! this.guildInvitesAPI.keyExists( "player_name", target.getName() ) ) {
+        if ( !this.guildInvitesAPI.keyExists( "player_name", target.getName() ) ) {
             this.guildBuilder.sendMessage( player, "§cDer Angegebene Spieler wurde nicht eingeladen." );
             return;
         }
 
-        if ( ! user.isMaster() ) {
+        if ( !user.isMaster() ) {
             this.guildBuilder.sendMessage( player, fileBuilder.getKey( "guild.is_not_the_guild_master" ) );
             return;
         }
@@ -229,7 +232,7 @@ public class GuildController implements GuildInterface {
     public void acceptInvite( Player player ) {
         CacheUser user = CacheUser.getUser( player );
 
-        if ( ! this.guildInvitesAPI.keyExists( "player_name", player.getName() ) ) {
+        if ( !this.guildInvitesAPI.keyExists( "player_name", player.getName() ) ) {
             this.guildBuilder.sendMessage( player, "§cDu hast keine Einladungen erhalten." );
             return;
         }
@@ -272,12 +275,12 @@ public class GuildController implements GuildInterface {
     public void promotePlayer( Player player, OfflinePlayer target ) {
         CacheUser user = CacheUser.getUser( player );
 
-        if ( ! user.isInGuild() ) {
+        if ( !user.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
 
-        if ( ! user.isMaster() ) {
+        if ( !user.isMaster() ) {
             this.guildBuilder.sendMessage( player, fileBuilder.getKey( "guild.is_not_the_guild_master" ) );
             return;
         }
@@ -287,7 +290,7 @@ public class GuildController implements GuildInterface {
             return;
         }
 
-        if ( ! this.guildList.contains( player.getName() ) ) {
+        if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
             this.guildBuilder.sendMessage( player, "§aBist du dir Sicher, §6" + target.getName() + "§aals Gilden Offizier zu setzen?" );
             this.guildBuilder.sendMessage( player, "§aDu hast 10 Sekunden Zeit, um den Befehl erneut auszuführen." );
@@ -306,12 +309,12 @@ public class GuildController implements GuildInterface {
     public void demotePlayer( Player player, OfflinePlayer target ) {
         CacheUser user = CacheUser.getUser( player );
 
-        if ( ! user.isInGuild() ) {
+        if ( !user.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
 
-        if ( ! user.isMaster() ) {
+        if ( !user.isMaster() ) {
             this.guildBuilder.sendMessage( player, fileBuilder.getKey( "guild.is_not_the_guild_master" ) );
             return;
         }
@@ -321,7 +324,7 @@ public class GuildController implements GuildInterface {
             return;
         }
 
-        if ( ! this.guildList.contains( player.getName() ) ) {
+        if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
             this.guildBuilder.sendMessage( player, "§aBist du dir Sicher, §6" + target.getName() + "§aals Gilden Mitglied zu setzen?" );
             this.guildBuilder.sendMessage( player, "§aDu hast 10 Sekunden Zeit, um den Befehl erneut auszuführen." );
@@ -342,12 +345,12 @@ public class GuildController implements GuildInterface {
 
         long time = Long.parseLong( this.fileBuilder.getKey( "guild.delete_guild.security_countdown" ) );
 
-        if ( ! user.isInGuild() ) {
+        if ( !user.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
 
-        if ( this.guildUserAPI.keyExists( target.getUniqueId() ) ) {
+        if ( this.guildUserAPI.playerExists( target.getUniqueId() ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.target_in_no_guild" ) );
             return;
         }
@@ -357,12 +360,12 @@ public class GuildController implements GuildInterface {
             return;
         }
 
-        if ( ! user.isMaster() ) {
+        if ( !user.isMaster() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_not_the_guild_master" ) );
             return;
         }
 
-        if ( ! this.guildList.contains( player.getName() ) ) {
+        if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_kick.security_message_1" )
                     .replace( "{TARGET}", target.getName() ) );
@@ -384,12 +387,12 @@ public class GuildController implements GuildInterface {
     public void toggleChat( Player player ) {
         CacheUser user = CacheUser.getUser( player );
 
-        if ( ! user.isInGuild() ) {
+        if ( !user.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
 
-        if ( ! this.guildMessageList.contains( player.getName() ) ) {
+        if ( !this.guildMessageList.contains( player.getName() ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.guild_chat.toggle_chat_active" ) );
             this.guildMessageList.add( player.getName() );
             return;
@@ -416,9 +419,9 @@ public class GuildController implements GuildInterface {
                 "guild_rank", "Member", "player_name"
         );
 
-        if ( ! masterList.contains( player.getName() ) ) masterList.add( String.valueOf( masterList ) );
-        if ( ! officerList.contains( player.getName() ) ) officerList.add( String.valueOf( officerList ) );
-        if ( ! memberList.contains( player.getName() ) ) memberList.add( String.valueOf( memberList ) );
+        if ( !masterList.contains( player.getName() ) ) masterList.add( String.valueOf( masterList ) );
+        if ( !officerList.contains( player.getName() ) ) officerList.add( String.valueOf( officerList ) );
+        if ( !memberList.contains( player.getName() ) ) memberList.add( String.valueOf( memberList ) );
 
         StringBuilder builder = new StringBuilder();
         for ( String output : message )
@@ -452,22 +455,22 @@ public class GuildController implements GuildInterface {
 
         long time = Long.parseLong( this.fileBuilder.getKey( "guild.set_guild_master.security_countdown" ) );
 
-        if ( ! user.isInGuild() ) {
+        if ( !user.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
 
-        if ( ! user.isMaster() ) {
+        if ( !user.isMaster() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_not_the_guild_master" ) );
             return;
         }
 
-        if ( this.guildUserAPI.keyExists( target.getUniqueId() ) ) {
+        if ( this.guildUserAPI.playerExists( target.getUniqueId() ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.target_is_in_no_guild" ) );
             return;
         }
 
-        if ( ! this.guildList.contains( player.getName() ) ) {
+        if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.set_guild_master.security_message_1" )
                     .replace( "{TARGET}", target.getName() ) );
@@ -487,7 +490,7 @@ public class GuildController implements GuildInterface {
 
     @Override
     public String sendGuildMaster( Player player ) {
-        return this.guildAPI.getGuild( "guild_tag", this.sendGuildTag( player ), "guild_leader" );
+        return this.guildAPI.getGuildByStringSync( "guild_tag", this.sendGuildTag( player ), "guild_leader" );
     }
 
     @Override
@@ -496,7 +499,7 @@ public class GuildController implements GuildInterface {
 
         long time = Long.parseLong( this.fileBuilder.getKey( "guild.leave_guild.security_countdown" ) );
 
-        if ( ! this.guildAPI.guildExists( "guild_name", this.sendGuildName( player ) ) ) {
+        if ( !this.guildAPI.guildExists( "guild_name", this.sendGuildName( player ) ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
@@ -506,7 +509,7 @@ public class GuildController implements GuildInterface {
             return;
         }
 
-        if ( ! this.guildList.contains( player.getName() ) ) {
+        if ( !this.guildList.contains( player.getName() ) ) {
             this.guildList.add( player.getName() );
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.leave_guild.security_message_1" )
                     .replace( "{GUILD}", this.sendGuildName( player ) ) );
@@ -555,7 +558,8 @@ public class GuildController implements GuildInterface {
     @Override
     public void sendMembers( Player player, String guild ) {
         List<String> memberList = this.guildUserAPI.getList( "guild_tag", guild,
-                "guild_rank", "Member", "player_name" );
+                                                             "guild_rank", "Member", "player_name"
+        );
 
         player.sendMessage( this.fileBuilder.getKey( "guild.parameters.member.line1" ) );
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.parameters.member.line2" ) );
@@ -609,7 +613,7 @@ public class GuildController implements GuildInterface {
 
     @Override
     public void sendGuildInfo( Player player, String guild ) {
-        if ( ! this.guildAPI.guildExists( "guild_tag", guild ) ) {
+        if ( !this.guildAPI.guildExists( "guild_tag", guild ) ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild." ) );
             return;
         }
@@ -629,20 +633,20 @@ public class GuildController implements GuildInterface {
     public void sendGuildList( Player player ) {
         CacheUser user = CacheUser.getUser( player );
 
-        if ( ! user.isInGuild() ) {
+        if ( !user.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
 
         player.sendMessage( this.fileBuilder.getKey( "guild.send_guild_info.line1" )
-                .replace( "{HEADER}", this.guildBuilder.sendHeaderString( player ) ) );
+                                    .replace( "{HEADER}", this.guildBuilder.sendHeaderString( player ) ) );
 
         this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.send_guild_info.line2" )
                 .replace( "{HEADER}", this.sendGuildTag( player ) ) );
 
         player.sendMessage( this.fileBuilder.getKey( "guild.send_guild_info.line3" ) );
         player.sendMessage( this.fileBuilder.getKey( "guild.send_guild_info.line4" )
-                .replace( "{MASTER}", this.sendGuildMaster( player ) ) );
+                                    .replace( "{MASTER}", this.sendGuildMaster( player ) ) );
 
         this.sendOfficers( player );
         this.sendMembers( player );
@@ -656,6 +660,16 @@ public class GuildController implements GuildInterface {
     }
 
     @Override
+    public String sendGuildName( UUID playerUuid ) {
+        return this.guildUserAPI.getKey( playerUuid, "guild_name" );
+    }
+
+    @Override
+    public String sendGuildRank( UUID playerUuid ) {
+        return this.guildUserAPI.getKey( playerUuid, "guild_rank" );
+    }
+
+    @Override
     public String sendGuildTag( Player player ) {
         return this.guildUserAPI.getKey( player.getUniqueId(), "guild_tag" );
     }
@@ -666,7 +680,7 @@ public class GuildController implements GuildInterface {
 
         if ( user.isInGuild() )
             this.guildBuilder.sendMessage( player, "§aDeine Gilde hat aktuell einen Kontostand von §b$"
-                    + this.guildAPI.getGuildByInteger( "guild_name", this.sendGuildName( player ), "guild_money" ) + "§a." );
+                    + this.guildAPI.getGuildByIntegerSync( "guild_name", this.sendGuildName( player ), "guild_money" ) + "§a." );
         else
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
     }
@@ -675,13 +689,13 @@ public class GuildController implements GuildInterface {
     public void addGuildBank( Player player, int amount ) {
         CacheUser user = CacheUser.getUser( player );
 
-        if ( ! user.isInGuild() ) {
+        if ( !user.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
 
         try {
-            if ( ! ( Guild.getPlugin().getEconomy().getBalance( player ) >= amount ) ) {
+            if ( !( Guild.getPlugin().getEconomy().getBalance( player ) >= amount ) ) {
                 this.guildBuilder.sendMessage( player, "§cDu hast keine §b$" + amount + "§c." );
                 return;
             }
@@ -701,18 +715,18 @@ public class GuildController implements GuildInterface {
     public void removeGuildBank( Player player, int amount ) {
         final CacheUser user = CacheUser.getUser( player );
 
-        if ( ! user.isInGuild() ) {
+        if ( !user.isInGuild() ) {
             this.guildBuilder.sendMessage( player, this.fileBuilder.getKey( "guild.is_in_no_guild" ) );
             return;
         }
 
-        if ( ! user.isMaster() ) {
+        if ( !user.isMaster() ) {
             this.guildBuilder.sendMessage( player, fileBuilder.getKey( "guild.is_not_the_guild_master" ) );
             return;
         }
 
         try {
-            if ( ! ( this.guildAPI.getGuildByInteger( "guild_name", this.sendGuildName( player ), "guild_money" ) >= amount ) ) {
+            if ( !( this.guildAPI.getGuildByIntegerSync( "guild_name", this.sendGuildName( player ), "guild_money" ) >= amount ) ) {
                 this.guildBuilder.sendMessage( player, "§cAuf der Gilde sind keine §b$" + amount + " §ceingezahlt." );
                 return;
             }
@@ -741,6 +755,26 @@ public class GuildController implements GuildInterface {
     @Override
     public boolean isGuildMember( UUID uuid ) {
         return this.guildUserAPI.guildExists( uuid, "Member" );
+    }
+
+    @Override
+    public void updateCoins( UUID playerUuid, int coinsValue ) {
+        this.guildCoinsAPI.updateCoins( playerUuid, coinsValue );
+    }
+
+    @Override
+    public void addCoins( UUID playerUuid, int coinsValue ) {
+        this.guildCoinsAPI.addCoinsAsync( playerUuid, coinsValue );
+    }
+
+    @Override
+    public void removeCoins( UUID playerUuid, int coinsValue ) {
+        this.guildCoinsAPI.removeCoinsAsync( playerUuid, coinsValue );
+    }
+
+    @Override
+    public int getCoins( UUID playerUuid ) {
+        return this.guildCoinsAPI.getCoinsSync( playerUuid );
     }
 
     private boolean isInteger( String value ) {

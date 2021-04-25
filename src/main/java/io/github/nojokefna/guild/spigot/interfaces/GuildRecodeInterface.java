@@ -7,15 +7,33 @@ import java.util.UUID;
 
 public interface GuildRecodeInterface {
 
+    /**
+     * Create a guild with the name and tag you want
+     *
+     * @param player      Define the player, whos creates the guild
+     * @param guildName   Enter the guild name, you want to use
+     * @param guildTag    Enter the guild tag, you want to use
+     * @param guildLeader Set the guild leader from the guild, you've created
+     */
     void createGuild( Player player, String guildName, String guildTag, String guildLeader );
 
+    /**
+     * Delete your own guild
+     *
+     * @param player Define the player, whos deleting the guild
+     */
     void deleteGuild( Player player );
 
+    /**
+     * Leave the guild, in which you are
+     *
+     * @param player Define the player, whos leaving the guild
+     */
     void leaveGuild( Player player );
 
-    void sendInvite( Player player, Player target );
+    void sendInvite( Player player, Player targetPlayer );
 
-    void revokeInvite( Player player, OfflinePlayer target );
+    void revokeInvite( Player player, OfflinePlayer targetOfflinePlayer );
 
     void acceptInvite( Player player );
 
@@ -23,17 +41,17 @@ public interface GuildRecodeInterface {
 
     void getInvites( Player player );
 
-    String getInvitedGuildName( OfflinePlayer player );
+    String getInvitedGuildName( OfflinePlayer targetOfflinePlayer );
 
-    String getInvitedGuildTag( OfflinePlayer player );
+    String getInvitedGuildTag( OfflinePlayer targetOfflinePlayer );
 
-    void setGuildMaster( Player player, OfflinePlayer target );
+    void setGuildMaster( Player player, OfflinePlayer targetOfflinePlayer );
 
-    void promotePlayer( Player player, OfflinePlayer target );
+    void promotePlayer( Player player, OfflinePlayer targetOfflinePlayer );
 
-    void demotePlayer( Player player, OfflinePlayer target );
+    void demotePlayer( Player player, OfflinePlayer targetOfflinePlayer );
 
-    void kickPlayer( Player player, OfflinePlayer target );
+    void kickPlayer( Player player, OfflinePlayer targetOfflinePlayer );
 
     void toggleChat( Player player );
 
@@ -46,6 +64,8 @@ public interface GuildRecodeInterface {
     void sendOfficers( Player player );
 
     void sendOfficers( Player player, String guild );
+
+    void sendGuildInfo( Player player );
 
     void sendGuildInfo( Player player, String guild );
 

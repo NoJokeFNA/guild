@@ -1,6 +1,7 @@
 package io.github.nojokefna.guild.spigot.cache;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 
@@ -19,25 +20,27 @@ public class CacheUser {
 
     private static final Map<UUID, CacheUser> USER_MAP = new HashMap<>();
 
-    // init
+    /* Startup */
+    private AtomicBoolean loaded;
+
+    /* Init */
     private final CacheMethods cacheMethods;
-    
-    // settings
+
+    /* Settings */
     private final Map<UUID, Long> commandCoolDown, messageCoolDown;
     private final Map<UUID, String> message;
     private String[] helpMessage;
     private String headerMessage;
 
-    // startup
-    private AtomicBoolean loaded;
-
-    // tabList
-    private String[] prefix, nameTag, suffix;
+    /* Tablist */
+    private String prefix, nameTag, suffix;
     private String tagId;
 
-    // guild
+    /* Guild */
     private boolean inGuild;
     private boolean isMember, isOfficer, isMaster;
+    private String guildRank, guildName;
+    private int coins;
 
     public CacheUser() {
         this.cacheMethods = new CacheMethods();
@@ -46,17 +49,17 @@ public class CacheUser {
         this.message = new HashMap<>();
     }
 
-    public static CacheUser getUser( Player player ) {
+    public static CacheUser getUser( @NonNull Player player ) {
         return getUserByUuid( player.getUniqueId() );
     }
 
-    public static CacheUser getUserByUuid( UUID uuid ) {
-        if ( ! USER_MAP.containsKey( uuid ) )
+    public static CacheUser getUserByUuid( @NonNull UUID uuid ) {
+        if ( !USER_MAP.containsKey( uuid ) )
             USER_MAP.put( uuid, new CacheUser() );
         return USER_MAP.get( uuid );
     }
 
-    public static void deleteUser( Player player ) {
+    public static void deleteUser( @NonNull Player player ) {
         USER_MAP.remove( player.getUniqueId() );
     }
 }

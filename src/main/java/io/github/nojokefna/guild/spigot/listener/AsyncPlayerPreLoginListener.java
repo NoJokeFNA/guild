@@ -25,24 +25,41 @@ public class AsyncPlayerPreLoginListener implements Listener {
 
     @EventHandler( priority = EventPriority.HIGHEST )
     public void onAsyncPlayerPreLogin( AsyncPlayerPreLoginEvent event ) {
-        UUID playerUuid = event.getUniqueId();
-        CacheUser user = CacheUser.getUserByUuid( playerUuid );
+        final UUID playerUuid = event.getUniqueId();
+        final String playerName = event.getName();
+        final CacheUser user = CacheUser.getUserByUuid( playerUuid );
 
         user.setLoaded( new AtomicBoolean( false ) );
 
-        while ( ! user.getLoaded().get() ) {
-            user.setInGuild( Guild.getPlugin().getGuildUserAPI().keyExists( playerUuid ) );
+        long startUp = System.currentTimeMillis();
 
-            user.setMaster( this.guildController.isGuildMaster( playerUuid ) );
-            user.setOfficer( this.guildController.isGuildOfficer( playerUuid ) );
-            user.setMember( this.guildController.isGuildMember( playerUuid ) );
+        while ( !user.getLoaded().get() ) {
+            user.setInGuild( Guild.getPlugin().getGuildUserAPI().playerExists( playerUuid ) );
+
+            user.setMaster( user.isInGuild() && this.guildController.isGuildMaster( playerUuid ) );
+            user.setOfficer( user.isInGuild() && this.guildController.isGuildOfficer( playerUuid ) );
+            user.setMember( user.isInGuild() && this.guildController.isGuildMember( playerUuid ) );
+
+            user.setGuildRank( user.isInGuild() ? this.guildController.sendGuildRank( playerUuid ) : "none" );
+            user.setGuildName( user.isInGuild() ? this.guildController.sendGuildName( playerUuid ) : "none" );
+
+            user.setCoins( this.guildController.getCoins( playerUuid ) );
 
             user.setLoaded( new AtomicBoolean( true ) );
-
-            System.out.println( "Guild: " + user.isInGuild() );
-            System.out.println( "Master: " + user.isMaster() );
-            System.out.println( "Officer: " + user.isOfficer() );
-            System.out.println( "Member: " + user.isMember() );
         }
+
+        System.out.println( " " );
+        System.out.println( "Login took: " + ( System.currentTimeMillis() - startUp ) + " ms" );
+        System.out.println( " " );
+        System.out.println( "UUID: " + playerUuid );
+        System.out.println( "Name: " + playerName );
+        System.out.println( "Coins: " + user.getCoins() );
+        System.out.println( "Guild: " + user.isInGuild() );
+        System.out.println( "Master: " + user.isMaster() );
+        System.out.println( "Officer: " + user.isOfficer() );
+        System.out.println( "Member: " + user.isMember() );
+        System.out.println( "Guild name: " + user.getGuildName() );
+        System.out.println( "Guild rank: " + user.getGuildRank() );
+        System.out.println( " " );
     }
 }

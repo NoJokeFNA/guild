@@ -5,18 +5,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
-import java.util.Arrays;
-
 /**
  * @author NoJokeFNA
  * @version 1.0.0
  */
-public class TabListBuilder {
+public class TablistBuilder {
 
     public static void setNameTag() {
         for ( Player players : Bukkit.getOnlinePlayers() ) {
-            CacheUser user = CacheUser.getUser( players );
 
+            final CacheUser user = CacheUser.getUser( players );
             if ( user.getPrefix() != null && user.getTagId() != null ) {
                 for ( Player all : Bukkit.getOnlinePlayers() ) {
                     String playerName = players.getName();
@@ -24,25 +22,21 @@ public class TabListBuilder {
                     if ( playerName.length() >= 10 )
                         playerName = players.getName().substring( 0, 10 );
 
-                    Team team = all.getScoreboard().getTeam( user.getTagId() + playerName ) != null
+                    final Team team = all.getScoreboard().getTeam( user.getTagId() + playerName ) != null
                             ? all.getScoreboard().getTeam( user.getTagId() + playerName )
                             : all.getScoreboard().registerNewTeam( user.getTagId() + playerName );
 
-                    if ( ! team.getEntries().contains( playerName ) )
+                    if ( !team.getEntries().contains( playerName ) )
                         team.addEntry( playerName );
 
-                    if ( ! user.isInGuild() )
-                        team.setPrefix( user.getPrefix()[0] );
+                    if ( !user.isInGuild() )
+                        team.setPrefix( user.getPrefix() );
                     else {
-                        team.setPrefix( user.getPrefix()[0] );
-                        team.setSuffix( user.getSuffix()[0] );
+                        team.setPrefix( user.getPrefix() );
+                        team.setSuffix( user.getSuffix() );
                     }
 
-                    String prefix = "" + Arrays.toString( user.getNameTag() )
-                            .replace( "[", "" )
-                            .replace( "]", "" )
-                            + playerName;
-
+                    final String prefix = user.getNameTag() + playerName;
                     players.setPlayerListName( prefix );
                     players.setDisplayName( prefix );
                 }

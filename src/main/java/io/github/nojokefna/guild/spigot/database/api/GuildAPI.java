@@ -2,10 +2,11 @@ package io.github.nojokefna.guild.spigot.database.api;
 
 import io.github.nojokefna.guild.spigot.Guild;
 import io.github.nojokefna.guild.spigot.database.AbstractMySQL;
-import org.bukkit.Bukkit;
+import io.github.nojokefna.guild.spigot.database.provider.DatabaseProvider;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author NoJokeFNA
@@ -13,60 +14,109 @@ import java.sql.SQLException;
  */
 public class GuildAPI extends AbstractMySQL {
 
-    public boolean guildExists( String keyValue, String guildKey ) {
-        return this.keyExists( "guild", keyValue, guildKey );
+    private final DatabaseProvider databaseProvider;
+
+    public GuildAPI() {
+        this.databaseProvider = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider();
+        super.setTable( "guild" );
     }
 
+    /**
+     * Check if the guild is present or not
+     *
+     * @param whereColumn    The column you want to check
+     * @param setWhereColumn The column you want to check
+     *
+     * @return {@code true} if the guild is present, otherwise {@code false}
+     */
+    public boolean guildExists( String whereColumn, String setWhereColumn ) {
+        return super.keyExists( whereColumn, setWhereColumn );
+    }
+
+    /**
+     * Create a new guild
+     *
+     * @param guildName   The name of the guild
+     * @param guildTag    The tag of the guild
+     * @param guildLeader The guild leader
+     */
     public void createGuild( String guildName, String guildTag, String guildLeader ) {
-        Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
-            if ( ! this.guildExists( "guild_name", guildName ) ) {
-                try {
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                            .getDatabase()
-                            .prepareStatement( "INSERT INTO `guild` (guild_name, guild_tag, guild_leader, guild_money) VALUES (?, ?, ?, ?)" );
+        if ( this.guildExists( "guild_name", guildName ) )
+            return;
+
+        Guild.getPlugin().getExecutorService().submit( () -> {
+            try {
+                try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "INSERT INTO `guild` (guild_name, guild_tag, guild_leader, guild_money) VALUES (?, ?, ?, ?)" ) ) {
 
                     preparedStatement.setString( 1, guildName );
                     preparedStatement.setString( 2, guildTag );
                     preparedStatement.setString( 3, guildLeader );
                     preparedStatement.setInt( 4, 0 );
 
-                    Guild.getPlugin().getDatabaseBuilder().getDatabase().queryUpdate( preparedStatement );
-                } catch ( SQLException ex ) {
-                    ex.printStackTrace();
+                    preparedStatement.executeUpdate();
                 }
+            } catch ( SQLException ex ) {
+                ex.printStackTrace();
             }
         } );
     }
 
+    /**
+     * Delete the guild by the {@code guildName}
+     *
+     * @param guildName Name of the guild
+     */
     public void deleteGuild( String guildName ) {
-        this.deleteKey( "guild", "guild_name", guildName );
+        super.deleteKey( "guild_name", guildName );
     }
 
-    public void updateGuild( String setterKey, String setKey, String guildName ) {
-        this.updateKey( "guild", setterKey, setKey, "guild_name", guildName );
+    /**
+     * Update the guild information by the guild name
+     *
+     * @param guildName    THe name of the guild
+     * @param setColumn    The column you want to update
+     * @param setterColumn The value you want to set for the {@code setterColumn}
+     */
+    public void updateGuild( String guildName, String setColumn, String setterColumn ) {
+        super.updateKey( "guild_name", guildName, setColumn, setterColumn );
     }
 
-    public void updateGuild( String setterKey, int setKey, String guildName ) {
-        this.updateKey( "guild", setterKey, setKey, "guild_name", guildName );
+    /**
+     * Update the guild information by the guild name
+     *
+     * @param guildName    THe name of the guild
+     * @param setColumn    The column you want to update
+     * @param setterColumn The value you want to set for the {@code setterColumn}
+     */
+    public void updateGuild( String guildName, String setColumn, int setterColumn ) {
+        super.updateKey( "guild_name", guildName, setColumn, setterColumn );
     }
 
-    public String getGuild( String guildKey, String key, String value ) {
-        return this.getKey( "guild", guildKey, key, value );
+    public String getGuildByStringSync( String guildKey, String key, String value ) {
+        return super.getKey( guildKey, key, value );
     }
 
-    public int getGuildByInteger( String guildKey, String key, String value ) {
-        return this.getKeyByInteger( "guild", guildKey, key, value );
+    public int getGuildByIntegerSync( String guildKey, String key, String value ) {
+        return super.getKeyByInteger( guildKey, key, value );
+    }
+
+    public CompletableFuture<String> getGuildByStringAsync( String guildKey, String key, String value ) {
+        return super.getStringAsync( guildKey, key, value );
+    }
+
+    public CompletableFuture<Integer> getGuildByIntegerAsync( String guildKey, String key, String value ) {
+        return super.getIntegerAsync( guildKey, key, value );
     }
 
     public int getRanking( String selectKey, String orderKey ) {
-        return this.getRanking( selectKey, "guild", orderKey );
+        return super.getRanking( selectKey, orderKey );
     }
 
     public void addKey( String guildName, int amount ) {
-        this.addKey( "guild", "guild_money", amount, "guild_name", guildName );
+        super.addKey( "guild_name", guildName, "guild_money", amount );
     }
 
     public void removeKey( String guildName, int amount ) {
-        this.removeKey( "guild", "guild_money", amount, "guild_name", guildName );
+        super.removeKey( "guild_name", guildName, "guild_money", amount );
     }
 }

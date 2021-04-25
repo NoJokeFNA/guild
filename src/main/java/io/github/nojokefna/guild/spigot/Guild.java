@@ -4,15 +4,16 @@ import io.github.nojokefna.guild.spigot.build.GuildBuilder;
 import io.github.nojokefna.guild.spigot.commands.AdminGuildCommand;
 import io.github.nojokefna.guild.spigot.commands.GuildCommand;
 import io.github.nojokefna.guild.spigot.commands.TestCommand;
+import io.github.nojokefna.guild.spigot.commands.complete.TabComplete;
 import io.github.nojokefna.guild.spigot.config.FileBuilder;
 import io.github.nojokefna.guild.spigot.controller.GuildController;
 import io.github.nojokefna.guild.spigot.controller.GuildRecodeController;
 import io.github.nojokefna.guild.spigot.database.DatabaseBuilder;
 import io.github.nojokefna.guild.spigot.database.api.GuildAPI;
+import io.github.nojokefna.guild.spigot.database.api.GuildCoinsAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildInvitesAPI;
 import io.github.nojokefna.guild.spigot.database.api.GuildUserAPI;
 import io.github.nojokefna.guild.spigot.listener.*;
-import io.github.nojokefna.guild.spigot.utils.ANSIColors;
 import io.github.nojokefna.guild.spigot.utils.Data;
 import lombok.Getter;
 import net.milkbowl.vault.chat.Chat;
@@ -20,14 +21,13 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
-
-import static java.util.concurrent.Executors.newFixedThreadPool;
+import java.util.concurrent.Executors;
 
 /**
  * @author NoJokeFNA
@@ -46,8 +46,9 @@ public class Guild extends JavaPlugin {
 
     private Data data;
     private GuildAPI guildAPI;
-    private FileBuilder fileBuilder, settingsManager, serverSettingsBuilder;
+    private FileBuilder fileBuilder, chatSettingsBuilder, serverSettingsBuilder;
     private GuildUserAPI guildUserAPI;
+    private GuildCoinsAPI guildCoinsAPI;
     private GuildBuilder guildBuilder;
     private GuildController guildController;
     private GuildRecodeController guildRecodeController;
@@ -57,16 +58,17 @@ public class Guild extends JavaPlugin {
     @Override
     public void onLoad() {
         plugin = this;
+
         this.loadConfig();
         this.initialize();
     }
 
     @Override
     public void onEnable() {
-        long startupTime = System.currentTimeMillis();
+        final long startupTime = System.currentTimeMillis();
 
         this.getLogger().finest( String.format( "%s§aTry to start §c%s §a...", this.getData().getPrefix(), this.getDescription().getName() ) );
-        this.executorService = newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
+        this.executorService = Executors.newFixedThreadPool( 2 );
 
         System.out.println(
                 "\n" +
@@ -79,12 +81,11 @@ public class Guild extends JavaPlugin {
 
         try {
             this.getDatabaseBuilder().createTables();
-            System.out.println( ANSIColors.ANSI_RED + "MySQL connected in " + ( System.currentTimeMillis() - startupTime ) + "ms" + ANSIColors.ANSI_RESET );
+            System.out.println( "MySQL connected in " + ( System.currentTimeMillis() - startupTime ) + "ms" );
 
             this.initializeVault();
             this.register();
-            System.out.println( ANSIColors.ANSI_RED + "Commands & Listener were loaded in " + ( System.currentTimeMillis() - startupTime ) + "ms"
-                    + ANSIColors.ANSI_RESET );
+            System.out.println( "Commands & Listener were loaded in " + ( System.currentTimeMillis() - startupTime ) + "ms" );
 
             this.getLogger().finest( String.format( "%s§a%s §ahas started.", this.getData().getPrefix(), this.getDescription().getName() ) );
         } catch ( Exception ex ) {
@@ -93,7 +94,7 @@ public class Guild extends JavaPlugin {
             ex.printStackTrace();
         }
 
-        System.out.println( ANSIColors.ANSI_RED + "The plugin were loaded in " + ( System.currentTimeMillis() - startupTime ) + "ms" + ANSIColors.ANSI_RESET );
+        System.out.println( "The plugin were loaded in " + ( System.currentTimeMillis() - startupTime ) + "ms" );
     }
 
     @Override
@@ -107,6 +108,9 @@ public class Guild extends JavaPlugin {
         this.getCommand( "adminguild" ).setExecutor( new AdminGuildCommand() );
         this.getCommand( "test" ).setExecutor( new TestCommand() );
 
+        //tab complete
+        this.getCommand( "guild" ).setTabCompleter( new TabComplete() );
+
         //listener
         Listener[] listeners = new Listener[] {
                 new AsyncPlayerChatListener(), new AsyncPlayerPreLoginListener(), new PlayerCommandPreprocessListener(),
@@ -119,62 +123,75 @@ public class Guild extends JavaPlugin {
 
     private void initialize() {
         this.data = new Data();
+        this.databaseBuilder = new DatabaseBuilder();
         this.guildAPI = new GuildAPI();
         this.guildInvitesAPI = new GuildInvitesAPI();
         this.guildUserAPI = new GuildUserAPI();
+        this.guildCoinsAPI = new GuildCoinsAPI();
         this.guildBuilder = new GuildBuilder();
         this.guildController = new GuildController();
         this.guildRecodeController = new GuildRecodeController();
-        this.databaseBuilder = new DatabaseBuilder();
     }
 
     private void loadConfig() {
-        if ( ! this.getDataFolder().exists() )
+        if ( !this.getDataFolder().exists() )
             this.getDataFolder().mkdirs();
 
         this.getConfig().options().copyDefaults( true );
         this.saveDefaultConfig();
 
-        String language = this.getConfig().getString( "language" );
-        String path = "languages/" + language.toLowerCase() + "_" + language.toUpperCase() + ".yml";
-
-        this.save( path );
-        this.save( "chat_settings.yml" );
-        this.save( "server_settings.yml" );
+        final String language = this.getConfig().getString( "language" );
+        final String path = "languages/" + language.toLowerCase() + "_" + language.toUpperCase() + ".yml";
 
         this.fileBuilder = new FileBuilder( path );
-        this.settingsManager = new FileBuilder( "chat_settings.yml" );
+        this.chatSettingsBuilder = new FileBuilder( "chat_settings.yml" );
         this.serverSettingsBuilder = new FileBuilder( "server_settings.yml" );
     }
 
     private void initializeVault() {
-        if ( ! this.setupEconomy() ) {
+        final PluginManager pluginManager = Bukkit.getPluginManager();
+
+        if ( this.serverSettingsBuilder.getBoolean( "economy.use_economy_support" ) && !this.setupEconomy() ) {
             this.getLogger().severe( String.format( "[%s] - Disabled due to no Vault dependency found!", this.getDescription().getName() ) );
             this.getServer().getPluginManager().disablePlugin( this );
             return;
         }
 
-        this.getLogger().finest( String.format( "Successfully started %s", "Vault" ) );
+        this.getLogger().info( String.format( "Successfully started %s", "Vault" ) );
 
-        switch ( this.getSettingsManager().getKey( "chat.permission_plugin" ) ) {
+        switch ( this.getChatSettingsBuilder().getKey( "chat.permission_plugin" ) ) {
             case "PermissionsEx":
-                this.getLogger().finest( String.format( "Successfully enabled %s and %s", "Vault-Chat", "PermissionsEx" ) );
+                if ( pluginManager.getPlugin( "PermissionsEx" ) == null ) {
+                    this.getLogger().severe( String.format( "%s can't be activated, because the plugin %s could be found", "PermissionsEx", "PermissionsEx" ) );
+                    return;
+                }
+
+                this.getLogger().info( String.format( "Successfully enabled %s and %s", "Vault-Chat", "PermissionsEx" ) );
                 this.setupPerms( "PermissionsEx" );
                 this.setupChat();
                 break;
 
             case "LuckPerms":
-                this.getLogger().finest( String.format( "Successfully enabled %s and %s", "Vault-Chat", "LuckPerms" ) );
+                if ( pluginManager.getPlugin( "LuckPerms" ) == null ) {
+                    this.getLogger().severe( String.format( "%s can't be activated, because the plugin %s could be found", "LuckPerms", "LuckPerms" ) );
+                    return;
+                }
+
+                this.getLogger().info( String.format( "Successfully enabled %s and %s", "Vault-Chat", "LuckPerms" ) );
                 this.setupPerms( "LuckPerms" );
                 this.setupChat();
                 break;
 
-            case "CloudNet":
-                this.getLogger().finest( String.format( "Successfully enabled %s and %s", "CPerms-Chat", "CloudNet" ) );
+            case "CloudNetV2":
+                this.getLogger().info( String.format( "Successfully enabled %s and %s", "CPerms-Chat", "CloudNetV2" ) );
+                break;
+
+            case "CloudNetV3":
+                this.getLogger().info( String.format( "Successfully enabled %s and %s", "CPerms-Chat", "CloudNetV3C" ) );
                 break;
 
             default:
-                throw new IllegalStateException( "Unexpected value: " + this.getSettingsManager().getKey( "chat.permission_plugin" ) );
+                throw new IllegalStateException( "Unexpected value: " + this.getChatSettingsBuilder().getKey( "chat.permission_plugin" ) );
         }
     }
 
@@ -182,12 +199,11 @@ public class Guild extends JavaPlugin {
         if ( this.getServer().getPluginManager().getPlugin( "Vault" ) == null )
             return false;
 
-        RegisteredServiceProvider<Economy> serviceProvider = this.getServer().getServicesManager().getRegistration( Economy.class );
+        final RegisteredServiceProvider<Economy> serviceProvider = this.getServer().getServicesManager().getRegistration( Economy.class );
         if ( serviceProvider == null )
             return false;
 
         this.economy = serviceProvider.getProvider();
-
         return this.economy != null;
     }
 
@@ -195,7 +211,7 @@ public class Guild extends JavaPlugin {
         if ( this.getServer().getPluginManager().getPlugin( plugin ) == null )
             return;
 
-        RegisteredServiceProvider<Permission> serviceProvider = this.getServer().getServicesManager().getRegistration( Permission.class );
+        final RegisteredServiceProvider<Permission> serviceProvider = this.getServer().getServicesManager().getRegistration( Permission.class );
         if ( serviceProvider == null )
             return;
 
@@ -203,15 +219,7 @@ public class Guild extends JavaPlugin {
     }
 
     private void setupChat() {
-        RegisteredServiceProvider<Chat> serviceProvider = this.getServer().getServicesManager().getRegistration( Chat.class );
+        final RegisteredServiceProvider<Chat> serviceProvider = this.getServer().getServicesManager().getRegistration( Chat.class );
         this.chat = serviceProvider.getProvider();
-    }
-
-    private void save( String path ) {
-        File file = new File( this.getDataFolder().getAbsolutePath(), path );
-        if ( ! file.exists() ) {
-            this.saveResource( path, false );
-            this.saveConfig();
-        }
     }
 }

@@ -1,6 +1,7 @@
 package io.github.nojokefna.guild.spigot.cache;
 
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +14,8 @@ import java.util.Map;
 public class RankCache {
 
     private static final Map<String, RankCache> CACHE_MAP = new HashMap<>();
-    private final String[] prefix, nameTag, suffix;
-    private final String tagId;
+
+    private final String prefix, nameTag, suffix, tagId;
 
     /**
      * Initialize all information
@@ -25,11 +26,12 @@ public class RankCache {
      * @param suffix  Enter the {@code #suffix}, that appears after the {@code #prefix}
      * @param tagId   Enter the {@code #tagId}, in which order the groups should be displayed
      */
-    public RankCache( String group, String[] prefix, String[] nameTag, String[] suffix, String tagId ) {
+    public RankCache( String group, String prefix, String nameTag, String suffix, String tagId ) {
         this.prefix = prefix;
         this.nameTag = nameTag;
         this.suffix = suffix;
         this.tagId = tagId;
+
         CACHE_MAP.put( group, this );
     }
 
@@ -37,9 +39,10 @@ public class RankCache {
      * Get the current rank
      *
      * @param key Enter the {@code #key} you want to get by a {@code #group}
-     * @return returns the {@code #key} if it exists
+     *
+     * @return returns the {@code #key} if it exists, otherwise it will return null
      */
-    public static RankCache getRank( String key ) {
+    public static RankCache getRank( @NonNull String key ) {
         if ( CACHE_MAP.containsKey( key ) )
             return CACHE_MAP.get( key );
         return null;

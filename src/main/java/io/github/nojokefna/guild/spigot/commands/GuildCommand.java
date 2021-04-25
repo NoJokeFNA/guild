@@ -9,208 +9,194 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author NoJokeFNA
  * @version 1.0.0
  */
-public class GuildCommand implements CommandExecutor, TabCompleter {
+public class GuildCommand implements CommandExecutor {
+
+    private final Guild plugin;
+
+    private final GuildBuilder guildBuilder;
+    private final GuildController guildController;
+    private final GuildRecodeController guildRecodeController;
+
+    public GuildCommand() {
+        this.plugin = Guild.getPlugin();
+
+        this.guildBuilder = this.plugin.getGuildBuilder();
+        this.guildController = this.plugin.getGuildController();
+        this.guildRecodeController = this.plugin.getGuildRecodeController();
+    }
 
     @Override
     public boolean onCommand( CommandSender sender, Command command, String label, String[] args ) {
-        if ( sender instanceof Player ) {
-            Player player = ( Player ) sender;
+        if ( !( sender instanceof Player ) ) {
+            sender.sendMessage( label );
+            return true;
+        }
 
-            GuildBuilder guildBuilder = Guild.getPlugin().getGuildBuilder();
-            GuildController guildController = Guild.getPlugin().getGuildController();
-            GuildRecodeController guildRecodeController = Guild.getPlugin().getGuildRecodeController();
+        final Player player = ( Player ) sender;
 
-            if ( ! Guild.getPlugin().getDatabaseBuilder().isMySqlConfigured() ) {
-                guildBuilder.sendMessage( player, "§cThe database is not configured! Please contact an administrator!" );
-                return true;
-            }
+        if ( !this.plugin.getDatabaseBuilder().isMySqlConfigured() ) {
+            this.guildBuilder.sendMessage( player, "§cThe database is not configured! Please contact an administrator!" );
+            return true;
+        }
 
-            switch ( args.length ) {
-                case 1:
+        switch ( args.length ) {
+            case 1:
+                switch ( args[0].toLowerCase() ) {
+                    case "info":
+                        this.guildRecodeController.sendGuildInfo( player );
+                        break;
+
+                    case "invites":
+                        this.guildRecodeController.getInvites( player );
+                        break;
+
+                    case "master":
+                        this.guildController.sendGuildMaster( player );
+                        break;
+
+                    case "officers":
+                        this.guildRecodeController.sendOfficers( player );
+                        break;
+
+                    case "members":
+                        this.guildRecodeController.sendMembers( player );
+                        break;
+
+                    case "leave":
+                        this.guildController.leaveGuild( player );
+                        break;
+
+                    case "delete":
+                        this.guildController.deleteGuild( player );
+                        break;
+
+                    case "chat":
+                        this.guildController.toggleChat( player );
+                        break;
+
+                    default:
+                        this.guildBuilder.sendHelpMessage( player, 1 );
+                        break;
+                }
+                break;
+
+            case 2:
+                Bukkit.getServer().getScheduler().runTaskAsynchronously( this.plugin, () -> {
+                    final OfflinePlayer targetOfflinePlayer = Bukkit.getOfflinePlayer( args[1] );
+
                     switch ( args[0].toLowerCase() ) {
+                        case "help":
+                            int value = Integer.parseInt( args[1] );
+                            this.guildBuilder.sendHelpMessage( player, value );
+                            break;
+
                         case "info":
-                            guildController.sendGuildList( player );
+                            this.guildController.sendGuildInfo( player, args[1] );
                             break;
 
-                        case "invites":
-                            guildRecodeController.getInvites( player );
+                        case "invite":
+                            Player targetOnline = Bukkit.getPlayerExact( args[1] );
+                            this.guildController.sendInvite( player, targetOnline );
                             break;
 
-                        case "members":
-                            guildController.sendMembers( player );
+                        case "revoke":
+                            this.guildController.revokeInvite( player, targetOfflinePlayer );
                             break;
 
-                        case "master":
-                            guildController.sendGuildMaster( player );
+                        case "accept":
+                            this.guildController.acceptInvite( player );
                             break;
 
-                        case "officers":
-                            guildController.sendOfficers( player );
+                        case "deny":
+                            this.guildController.denyInvite( player );
                             break;
 
-                        case "leave":
-                            guildController.leaveGuild( player );
+                        case "setmaster":
+                            this.guildController.setGuildMaster( player, targetOfflinePlayer );
                             break;
 
-                        case "delete":
-                            guildController.deleteGuild( player );
+                        case "kick":
+                            this.guildController.kickPlayer( player, targetOfflinePlayer );
                             break;
 
-                        case "chat":
-                            guildController.toggleChat( player );
+                        case "promote":
+                            this.guildController.promotePlayer( player, targetOfflinePlayer );
                             break;
 
-                        default:
-                            guildBuilder.sendHelpMessage( player, 1 );
-                            break;
-                    }
-                    break;
-
-                case 2:
-                    Bukkit.getServer().getScheduler().runTaskAsynchronously( Guild.getPlugin(), () -> {
-                        OfflinePlayer target = Bukkit.getOfflinePlayer( args[1] );
-                        switch ( args[0].toLowerCase() ) {
-                            case "help":
-                                int value = Integer.parseInt( args[1] );
-                                guildBuilder.sendHelpMessage( player, value );
-                                break;
-
-                            case "info":
-                                guildController.sendGuildInfo( player, args[1] );
-                                break;
-
-                            case "invite":
-                                Player targetOnline = Bukkit.getPlayerExact( args[1] );
-                                guildController.sendInvite( player, targetOnline );
-                                break;
-
-                            case "revoke":
-                                guildController.revokeInvite( player, target );
-                                break;
-
-                            case "accept":
-                                guildController.acceptInvite( player );
-                                break;
-
-                            case "deny":
-                                guildController.denyInvite( player );
-                                break;
-
-                            case "setmaster":
-                                guildController.setGuildMaster( player, target );
-                                break;
-
-                            case "kick":
-                                guildController.kickPlayer( player, target );
-                                break;
-
-                            case "promote":
-                                guildController.promotePlayer( player, target );
-                                break;
-
-                            case "demote":
-                                guildController.demotePlayer( player, target );
-                                break;
-
-                            case "bank":
-                                switch ( args[1].toLowerCase() ) {
-                                    case "credit":
-                                    case "guthaben":
-                                        guildController.sendGuildBank( player );
-                                        break;
-
-                                    default:
-                                        guildBuilder.sendHelpMessage( player, 1 );
-                                        break;
-                                }
-                                break;
-
-                            case "quests":
-                            /*if ( args[1].equalsIgnoreCase( "info" ) ) {
-                                manager.sendMessage( player, "Zeigt die Absolvierten Gilden Aufgaben an." );
-                            }*/
-                                guildBuilder.sendMessage( player, "§cThis feature is currently under development." );
-                                break;
-
-                            default:
-                                guildBuilder.sendHelpMessage( player, 1 );
-                                break;
-                        }
-                    } );
-                    break;
-
-                case 3:
-                    switch ( args[0].toLowerCase() ) {
-                        case "create":
-                            guildController.createGuild( player, args[1], args[2], player.getName() );
+                        case "demote":
+                            this.guildController.demotePlayer( player, targetOfflinePlayer );
                             break;
 
                         case "bank":
-                            var amount = Integer.parseInt( args[2] );
                             switch ( args[1].toLowerCase() ) {
-                                case "deposit":
-                                case "einzahlen":
-                                    guildController.addGuildBank( player, amount );
-                                    break;
-
-                                case "withdraw":
-                                case "auszahlen":
-                                    guildController.removeGuildBank( player, amount );
+                                case "credit":
+                                case "guthaben":
+                                    this.guildController.sendGuildBank( player );
                                     break;
 
                                 default:
-                                    guildBuilder.sendHelpMessage( player, 1 );
+                                    this.guildBuilder.sendHelpMessage( player, 1 );
                                     break;
                             }
                             break;
 
+                        case "quests":
+                            /*if ( args[1].equalsIgnoreCase( "info" ) ) {
+                                this.guildBuilder.sendMessage( player, "Zeigt die Absolvierten Gilden Aufgaben an." );
+                            }*/
+                            this.guildBuilder.sendMessage( player, "§cThis feature is currently under development." );
+                            break;
+
                         default:
-                            guildBuilder.sendHelpMessage( player, 1 );
+                            this.guildBuilder.sendHelpMessage( player, 1 );
                             break;
                     }
-                    break;
+                } );
+                break;
 
-                default:
-                    guildBuilder.sendHelpMessage( player, 1 );
-                    break;
-            }
+            case 3:
+                switch ( args[0].toLowerCase() ) {
+                    case "create":
+                        this.guildController.createGuild( player, args[1], args[2], player.getName() );
+                        break;
 
-        } else {
-            sender.sendMessage( label );
+                    case "bank":
+                        final int amount = Integer.parseInt( args[2] );
+
+                        switch ( args[1].toLowerCase() ) {
+                            case "deposit":
+                            case "einzahlen":
+                                this.guildController.addGuildBank( player, amount );
+                                break;
+
+                            case "withdraw":
+                            case "auszahlen":
+                                this.guildController.removeGuildBank( player, amount );
+                                break;
+
+                            default:
+                                this.guildBuilder.sendHelpMessage( player, 1 );
+                                break;
+                        }
+                        break;
+
+                    default:
+                        this.guildBuilder.sendHelpMessage( player, 1 );
+                        break;
+                }
+                break;
+
+            default:
+                this.guildBuilder.sendHelpMessage( player, 1 );
+                break;
         }
+
         return false;
-    }
-
-    @Override
-    public List<String> onTabComplete( CommandSender sender, Command command, String label, String[] args ) {
-        if ( command.getName().equalsIgnoreCase( "guild" ) ) {
-            List<String> commandList = new ArrayList<>();
-
-            switch ( args.length ) {
-                case 0:
-                    commandList.addAll( commandList );
-                    break;
-
-                case 1:
-                    break;
-
-                case 2:
-                    break;
-
-                default:
-                    throw new IllegalStateException( "Unexpected value: " + args.length );
-            }
-        }
-        return null;
     }
 }

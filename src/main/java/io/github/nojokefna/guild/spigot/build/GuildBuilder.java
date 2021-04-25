@@ -38,26 +38,30 @@ public class GuildBuilder {
     }
 
     private void sendPage( Player player, String page ) {
-        CacheUser user = CacheUser.getUser( player );
+        final CacheUser user = CacheUser.getUser( player );
 
         IntStream.range( 1, 11 ).mapToObj( i -> new String[] {
                 this.fileManager.getKey( "guild.help_message_guild.page" + page + ".line" + i )
         } ).forEachOrdered( user::setHelpMessage );
 
-        player.sendMessage( user.getHelpMessage() );
+        for ( int i = 1; i < 11; i++ )
+            player.sendMessage( this.fileManager.getKey( "guild.help_message_guild.page" + page + ".line" + i ) );
     }
 
     public void sendHeader( Player player ) {
-        CacheUser user = CacheUser.getUser( player );
+        final CacheUser user = CacheUser.getUser( player );
 
         if ( user.getHeaderMessage() == null )
             IntStream.range( 1, 4 ).mapToObj( i -> fileManager.getKey( "guild.help_message_guild.header.line" + i ) ).forEachOrdered( user::setHeaderMessage );
 
-        player.sendMessage( user.getHeaderMessage() );
+        for ( int i = 1; i < 4; i++ )
+            player.sendMessage( fileManager.getKey( "guild.help_message_guild.header.line" + i ) );
+
+        /*player.sendMessage( user.getHeaderMessage() );*/
     }
 
     public String sendHeaderString( Player player ) {
-        CacheUser user = CacheUser.getUser( player );
+        final CacheUser user = CacheUser.getUser( player );
 
         if ( user.getHeaderMessage() == null )
             IntStream.range( 1, 4 ).mapToObj( i -> fileManager.getKey( "guild.help_message_guild.header.line" + i ) ).forEachOrdered( user::setHeaderMessage );

@@ -1,7 +1,9 @@
 package io.github.nojokefna.guild.spigot.database;
 
 import io.github.nojokefna.guild.spigot.Guild;
-import org.bukkit.Bukkit;
+import io.github.nojokefna.guild.spigot.database.provider.DatabaseProvider;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,169 +12,172 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * @author NoJokeFNA
- * @version 1.0.0
+ * @version 2.5.7
  */
 public abstract class AbstractMySQL {
 
-    private int modifiers;
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool( 2 );
+
+    private DatabaseProvider databaseProvider = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider();
+
+    @Setter
+    @NonNull
+    private String table;
 
     /**
-     * Checks whether your {@code #setKey} is present or not.
-     * <p>It then returns true if the value is present, or false if it is not present.</p>
+     * Checks whether your {@code whereColumn} is present or not
+     * If the value is present, {@code true} will be returned, otherwise {@code false}
      *
-     * @param table       Set the {@code #table} that you want to use
-     * @param whereKey    Specify the value you want to query
-     * @param setWhereKey Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @return returns true or false
+     * @param whereColumn    The value you want to query
+     * @param setWhereColumn The {@code setWhereColumn} you want to set for the {@code whereColumn}
+     *
+     * @return returns {@code true}, if the {@code whereColumn} is present, or {@code false} if it's not present
      */
-    public boolean keyExists( String table, String whereKey, String setWhereKey ) {
+    public boolean keyExists( String whereColumn, String setWhereColumn ) {
+        if ( databaseProvider == null )
+            this.databaseProvider = Guild.getPlugin().getDatabaseBuilder().getDatabaseProvider();
+
+        if ( setWhereColumn == null )
+            return false;
+
         boolean value = false;
-        if ( setWhereKey == null )
-            value = false;
 
-        try {
-            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                    .getDatabase()
-                    .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
+        try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT * FROM `" + table + "` WHERE `" + whereColumn + "` = ?" ) ) {
 
-            preparedStatement.setString( 1, setWhereKey );
+            preparedStatement.setString( 1, setWhereColumn );
 
-            ResultSet resultSet = preparedStatement.executeQuery();
+            final ResultSet resultSet = preparedStatement.executeQuery();
             if ( resultSet.next() )
                 value = true;
-
-            resultSet.close();
-            preparedStatement.close();
-        } catch ( SQLException ex ) {
-            ex.printStackTrace();
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return value;
     }
 
     /**
-     * Update the desired {@code #setKey} as a String.
+     * Update the desired {@code setColumn} as a String
      *
-     * @param table       Set the table that you want to use
-     * @param setKey      Specify the value you want to update
-     * @param setSetKey   Set the {@code #setSetKey} you want to set for the {@code #setterKey}
-     * @param whereKey    Enter the value you want to receive
-     * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * @param whereColumn    Enter the value you want to receive
+     * @param setWhereColumn Set the {@code setWhereColumn} you want to set for the {@code whereColumn}
+     * @param setColumn      Specify the value you want to update
+     * @param setSetColumn   Set the {@code setSetColumn} you want to set for the {@code setColumn}
      */
-    public void updateKey( String table, String setKey, String setSetKey, String whereKey, String setWhereKey ) {
-        Guild.getPlugin().getExecutorService().execute( () -> {
-            if ( this.keyExists( table, whereKey, setWhereKey ) ) {
-                try {
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                            .getDatabase()
-                            .prepareStatement( "UPDATE `" + table + "` SET " + setKey + " = ? WHERE " + whereKey + " = ?" );
+    public void updateKey( String whereColumn, String setWhereColumn, Object setColumn, String setSetColumn ) {
+        if ( !this.keyExists( whereColumn, setWhereColumn ) )
+            return;
 
-                    preparedStatement.setString( 1, setSetKey );
-                    preparedStatement.setString( 2, setWhereKey );
+        EXECUTOR_SERVICE.execute( () -> {
+            try {
+                try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "UPDATE `" + table + "` SET `" + setColumn + "` = ? WHERE `" + whereColumn + "` = ?" ) ) {
 
-                    Guild.getPlugin().getDatabaseBuilder().getDatabase().queryUpdate( preparedStatement );
-                } catch ( SQLException ex ) {
-                    ex.printStackTrace();
+                    preparedStatement.setObject( 1, setSetColumn );
+                    preparedStatement.setString( 2, setWhereColumn );
+
+                    preparedStatement.executeUpdate();
                 }
+            } catch ( SQLException exception ) {
+                System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
             }
         } );
     }
 
     /**
-     * Update the desired {@code #setterKey} as a {@link java.lang.Integer}.
+     * Update the desired {@code setColumn} as a {@link Integer}
      *
-     * @param table       Set the table that you want to use
-     * @param setterKey   Set the value you want to update
-     * @param setSetKey   Set the {@code #setSetKey} you want to set for the {@code #setterKey}
-     * @param whereKey    Enter the value you want to receive
-     * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * @param whereColumn    Enter the value you want to receive
+     * @param setWhereColumn Set the {@code setWhereColumn} you want to set for the {@code whereColumn}
+     * @param setColumn      Set the value you want to update
+     * @param setSetColumn   Set the {@code setSetColumn} you want to set for the {@code setColumn}
      */
-    public void updateKey( String table, String setterKey, int setSetKey, String whereKey, String setWhereKey ) {
-        Guild.getPlugin().getExecutorService().execute( () -> {
-            if ( this.keyExists( table, whereKey, setWhereKey ) ) {
-                try {
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                            .getDatabase()
-                            .prepareStatement( "UPDATE `" + table + "` SET " + setterKey + " = ? WHERE " + whereKey + " = ?" );
+    public void updateKey( String whereColumn, String setWhereColumn, String setColumn, int setSetColumn ) {
+        if ( !this.keyExists( whereColumn, setWhereColumn ) )
+            return;
 
-                    preparedStatement.setInt( 1, setSetKey );
-                    preparedStatement.setString( 2, setWhereKey );
+        EXECUTOR_SERVICE.execute( () -> {
+            try {
+                try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "UPDATE `" + table + "` SET `" + setColumn + "` = ? WHERE `" + whereColumn + "` = ?" ) ) {
 
-                    Guild.getPlugin().getDatabaseBuilder().getDatabase().queryUpdate( preparedStatement );
-                } catch ( SQLException ex ) {
-                    ex.printStackTrace();
+                    preparedStatement.setInt( 1, setSetColumn );
+                    preparedStatement.setString( 2, setWhereColumn );
+
+                    preparedStatement.executeUpdate();
                 }
+            } catch ( SQLException exception ) {
+                System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
             }
         } );
     }
 
     /**
-     * Get the {@code #setKey} you want as an String.
+     * Get the {@code setKey} you want as an String.
      *
-     * @param table    Set the {@code #table} that you want to use
-     * @param whereKey Enter the value you want to receive
-     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
-     * @return return {@code #getKey}
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
+     * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
+     *
+     * @return return {@code getKey}
      */
-    public String getKey( String table, String whereKey, String setKey, String getKey ) {
-        String value = "";
+    public String getKey( String whereKey, String setWhereKey, String getKey ) {
         if ( getKey == null )
             throw new NullPointerException( "Value cannot be null" );
 
-        if ( this.keyExists( table, whereKey, setKey ) ) {
-            try {
-                PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                        .getDatabase()
-                        .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
+        if ( !this.keyExists( whereKey, setWhereKey ) )
+            return null;
 
-                preparedStatement.setString( 1, setKey );
+        String value = "";
 
-                ResultSet resultSet = preparedStatement.executeQuery();
+        try {
+            try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT * FROM `" + table + "` WHERE `" + whereKey + "` = ?" ) ) {
+
+                preparedStatement.setString( 1, setWhereKey );
+
+                final ResultSet resultSet = preparedStatement.executeQuery();
                 if ( resultSet.next() )
-                    value = resultSet.getString( getKey );
-
-                resultSet.close();
-                preparedStatement.close();
-            } catch ( SQLException ex ) {
-                ex.printStackTrace();
+                    value = resultSet.getString( whereKey );
             }
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return value;
     }
 
     /**
-     * Get the {@code #setKey} you want as an {@link java.lang.Integer}.
+     * Get the {@code setKey} you want as an {@link Integer}.
      *
-     * @param table    Set the {@code #table} that you want to use
-     * @param whereKey Enter the value you want to receive
-     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
-     * @return return {@code #getKey}
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
+     * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
+     *
+     * @return return {@code getKey}
      */
-    public int getKeyByInteger( String table, String whereKey, String setKey, String getKey ) {
+    public int getKeyByInteger( String whereKey, String setWhereKey, String getKey ) {
+        if ( !this.keyExists( whereKey, setWhereKey ) )
+            return -1;
+
         int value = 0;
-        if ( this.keyExists( table, whereKey, setKey ) ) {
-            try {
-                PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                        .getDatabase()
-                        .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
 
-                preparedStatement.setString( 1, setKey );
+        try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT * FROM `" + table + "` WHERE `" + whereKey + "` = ?" ) ) {
 
-                ResultSet resultSet = preparedStatement.executeQuery();
-                if ( resultSet.next() )
-                    value = resultSet.getInt( getKey );
+            preparedStatement.setString( 1, setWhereKey );
 
-                resultSet.close();
-                preparedStatement.close();
-            } catch ( SQLException ex ) {
-                ex.printStackTrace();
-            }
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            if ( resultSet.next() )
+                value = resultSet.getInt( getKey );
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return value;
     }
 
@@ -180,29 +185,29 @@ public abstract class AbstractMySQL {
      * Get the ranking of your current value.
      *
      * @param selectKey Enter the key you want to select
-     * @param table     Set the {@code #table} you want to use
-     * @param orderKey  Set the {@code #orderKey} you want to get
-     * @return return the rank of your position from {@code #orderkey}
+     * @param orderKey  Set the {@code orderKey} you want to get
+     *
+     * @return return the rank of your position from {@code orderKey}
      */
-    public int getRanking( String selectKey, String table, String orderKey ) {
+    public int getRanking( String selectKey, String orderKey ) {
         Map<Integer, String> rank = new HashMap<>();
         int result = 0;
 
-        try {
-            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                    .getDatabase()
-                    .prepareStatement( "SELECT " + selectKey + " FROM `" + table + "` ORDER BY " + orderKey + " DESC" );
+        try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT ? FROM `" + table + "` ORDER BY ? DESC" ) ) {
 
-            ResultSet resultSet = preparedStatement.executeQuery();
+            preparedStatement.setString( 1, selectKey );
+            preparedStatement.setString( 2, table );
+            preparedStatement.setString( 3, orderKey );
+
+            final ResultSet resultSet = preparedStatement.executeQuery();
             while ( resultSet.next() ) {
                 result++;
                 rank.put( result, resultSet.getString( selectKey ) );
             }
-
-            resultSet.close();
-        } catch ( Exception ex ) {
-            ex.printStackTrace();
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return Integer.parseInt( rank.get( result ) );
     }
 
@@ -210,191 +215,317 @@ public abstract class AbstractMySQL {
      * Get the ranking of your current value.
      *
      * @param selectKey Enter the key you want to select
-     * @param table     Set the {@code #table} you want to use
-     * @param orderKey  Set the {@code #orderKey} you want to get
-     * @param limit     Set the {@code #limit} you want to get
-     * @return return the rank of your position from {@code #orderkey}
+     * @param orderKey  Set the {@code orderKey} you want to get
+     * @param limit     Set the {@code limit} you want to get
+     *
+     * @return return the rank of your position from {@code orderKey}
      */
-    public int getRanking( String selectKey, String table, String orderKey, int limit ) {
-        Map<Integer, String> rank = new HashMap<>();
+    public int getRanking( String selectKey, String orderKey, int limit ) {
+        final Map<Integer, String> rank = new HashMap<>();
         int result = 0;
 
-        try {
-            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                    .getDatabase()
-                    .prepareStatement( "SELECT " + selectKey + " FROM `" + table + "` ORDER BY " + orderKey + " DESC LIMIT " + limit );
+        try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT ? FROM `" + table + "` ORDER BY ? DESC LIMIT ?" ) ) {
 
-            ResultSet resultSet = preparedStatement.executeQuery();
+            preparedStatement.setString( 1, selectKey );
+            preparedStatement.setString( 2, table );
+            preparedStatement.setString( 3, orderKey );
+            preparedStatement.setInt( 4, limit );
+
+            final ResultSet resultSet = preparedStatement.executeQuery();
             while ( resultSet.next() ) {
                 result++;
                 rank.put( result, resultSet.getString( selectKey ) );
             }
-
-            resultSet.close();
-        } catch ( Exception ex ) {
-            ex.printStackTrace();
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return Integer.parseInt( rank.get( result ) );
     }
 
     /**
      * Get a {@link java.util.List} from your values.
      *
-     * @param table       Set the {@code #table} you want to use
      * @param whereKey    Enter the value you want to receive
-     * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * @param setWhereKey Set the {@code setWhereKey} you want to set for the {@code whereKey}
      * @param getKey      Enter the value you wanna finally receive
+     *
      * @return returns the current {@link java.util.List}
      */
-    public List<String> getList( String table, String whereKey, String setWhereKey, String getKey ) {
-        List<String> getList = new ArrayList<>();
+    public List<String> getList( String whereKey, String setWhereKey, String getKey ) {
+        final List<String> getList = new ArrayList<>();
 
         try {
-            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                    .getDatabase()
-                    .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ?" );
+            try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT * FROM `" + table + "` WHERE `" + whereKey + "` = ?" ) ) {
 
-            preparedStatement.setString( 1, setWhereKey );
+                preparedStatement.setString( 1, setWhereKey );
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while ( resultSet.next() )
-                getList.add( resultSet.getString( getKey ) );
-
-            resultSet.close();
-            preparedStatement.close();
-
-            Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), getList::clear, 40L );
-        } catch ( SQLException ex ) {
-            ex.printStackTrace();
+                final ResultSet resultSet = preparedStatement.executeQuery();
+                while ( resultSet.next() )
+                    getList.add( resultSet.getString( getKey ) );
+            }
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return getList;
     }
 
     /**
      * Get a {@link java.util.List} from your values.
      *
-     * @param table             Set the {@code #table} you want to use
      * @param whereKey          Enter the value you want to receive
-     * @param setWhereKey       Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * @param setWhereKey       Set the {@code setWhereKey} you want to set for the {@code whereKey}
      * @param secondWhereKey    Enter the second value you want to receive
-     * @param setSecondWhereKey Set the {@code #setSecondWhereKey} you want to set for the {@code #whereKey}
+     * @param setSecondWhereKey Set the {@code setSecondWhereKey} you want to set for the {@code whereKey}
      * @param getKey            Enter the value you wanna finally receive
+     *
      * @return returns the current {@link java.util.List}
      */
-    public List<String> getList( String table, String whereKey, String setWhereKey, String secondWhereKey, String setSecondWhereKey, String getKey ) {
-        List<String> getList = new ArrayList<>();
+    public List<String> getList( String whereKey, String setWhereKey, String secondWhereKey, String setSecondWhereKey, String getKey ) {
+        final List<String> getList = new ArrayList<>();
 
         try {
-            PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                    .getDatabase()
-                    .prepareStatement( "SELECT * FROM `" + table + "` WHERE " + whereKey + " = ? AND " + secondWhereKey + " = ?" );
+            try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "SELECT * FROM `" + table + "` WHERE `" + whereKey + "` = ? AND `" + secondWhereKey + "` = ?" ) ) {
 
-            preparedStatement.setString( 1, setWhereKey );
-            preparedStatement.setString( 2, setSecondWhereKey );
+                preparedStatement.setString( 1, setWhereKey );
+                preparedStatement.setString( 2, setSecondWhereKey );
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while ( resultSet.next() )
-                getList.add( resultSet.getString( getKey ) );
-
-            resultSet.close();
-            preparedStatement.close();
-
-            Bukkit.getServer().getScheduler().runTaskLater( Guild.getPlugin(), getList::clear, 40L );
-        } catch ( SQLException ex ) {
-            ex.printStackTrace();
+                final ResultSet resultSet = preparedStatement.executeQuery();
+                while ( resultSet.next() )
+                    getList.add( resultSet.getString( getKey ) );
+            }
+        } catch ( SQLException exception ) {
+            System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
         }
+
         return getList;
     }
 
     /**
      * Delete the desired entry.
      *
-     * @param table    Set the {@code #table} that you want to use
-     * @param whereKey Enter the value you want to receive
-     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
      */
-    public void deleteKey( String table, String whereKey, String setKey ) {
-        Guild.getPlugin().getExecutorService().execute( () -> {
-            if ( this.keyExists( table, whereKey, setKey ) ) {
-                try {
-                    PreparedStatement preparedStatement = Guild.getPlugin().getDatabaseBuilder()
-                            .getDatabase()
-                            .prepareStatement( "DELETE FROM `" + table + "` WHERE " + whereKey + " = ?" );
+    public void deleteKey( String whereKey, String setWhereKey ) {
+        if ( !this.keyExists( whereKey, setWhereKey ) )
+            return;
 
-                    preparedStatement.setString( 1, setKey );
+        EXECUTOR_SERVICE.execute( () -> {
+            try ( PreparedStatement preparedStatement = this.databaseProvider.prepareStatement( "DELETE FROM `" + table + "` WHERE `" + whereKey + "` = ?" ) ) {
 
-                    Guild.getPlugin().getDatabaseBuilder().getDatabase().queryUpdate( preparedStatement );
-                } catch ( SQLException ex ) {
-                    ex.printStackTrace();
-                }
+                preparedStatement.setString( 1, setWhereKey );
+
+                preparedStatement.executeUpdate();
+            } catch ( SQLException exception ) {
+                System.out.println( "Error while executing method '" + exception.getStackTrace()[0].getMethodName() + "': " + exception );
             }
         } );
     }
 
     /**
-     * Add a value from {@code #getKey}
+     * Add a value from {@code getKey} async
      *
-     * @param table       Set the {@code #table} that you want to use
-     * @param getKey      Enter the value you want recerive
-     * @param setKey      Enter the {@code #setKey} you want to remove
      * @param whereKey    Enter the value you want to receive from
-     * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * @param setWhereKey Set the {@code setWhereKey} you want to set for the {@code whereKey}
+     * @param getKey      Enter the value you want receive
+     * @param setKey      Enter the {@code setKey} you want to remove
+     *
+     * @return the completable future
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#runAsync(Runnable)
      */
-    public void addKey( String table, String getKey, int setKey, String whereKey, String setWhereKey ) {
-        int value = this.getKeyByInteger( table, whereKey, setWhereKey, getKey ) + setKey;
-        this.updateKey( table, getKey, value, whereKey, setWhereKey );
+    public CompletableFuture<Void> addKeyAsync( String whereKey, String setWhereKey, String getKey, int setKey ) {
+        int value = this.getKeyByInteger( whereKey, setWhereKey, getKey ) + setKey;
+        return CompletableFuture.runAsync( () -> this.updateKey( whereKey, setWhereKey, getKey, value ) );
     }
 
     /**
-     * Remove a value from {@code #getKey}
+     * Remove a value from {@code getKey} async
      *
-     * @param table       Set the {@code #table} that you want to use
-     * @param getKey      Enter the value you want recerive
-     * @param setKey      Enter the {@code #setKey} you want to remove
      * @param whereKey    Enter the value you want to receive from
-     * @param setWhereKey Set the {@code #setWhereKey} you want to set for the {@code #whereKey}
+     * @param setWhereKey Set the {@code setWhereKey} you want to set for the {@code whereKey}
+     * @param getKey      Enter the value you want receive
+     * @param setKey      Enter the {@code setKey} you want to remove
+     *
+     * @return the completable future
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#runAsync(Runnable)
      */
-    public void removeKey( String table, String getKey, int setKey, String whereKey, String setWhereKey ) {
-        int value = this.getKeyByInteger( table, whereKey, setWhereKey, getKey ) - setKey;
-        this.updateKey( table, getKey, value, whereKey, setWhereKey );
+    public CompletableFuture<Void> removeKeyAsync( String whereKey, String setWhereKey, String getKey, int setKey ) {
+        int value = this.getKeyByInteger( whereKey, setWhereKey, getKey ) - setKey;
+        return CompletableFuture.runAsync( () -> this.updateKey( whereKey, setWhereKey, getKey, value ) );
     }
 
     /**
-     * Get the {@code #getKey} you want async.
+     * Get the {@code getKey} you want async, without a {@code completableFeature}.
+     * <p>
+     * To use this methode correctly, I really recommend to use:
+     * {@code getStringAsync( String whereKey, String setKey, String getKey ).thenAccept( result -> { Your code } )};
      *
-     * @param table    Set the {@code #table} that you want to use
-     * @param whereKey Enter the value you want to receive
-     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
-     * @param callback Create the {@code callback}
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
+     * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
+     *
+     * @return the string async
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#supplyAsync(Supplier)
      */
-    public void getDataStringAsync( String table, String whereKey, String setKey, String getKey, Consumer<String> callback ) {
-        Guild.getPlugin().getExecutorService().execute( () -> callback.accept( this.getKey( table, whereKey, setKey, getKey ) ) );
+    public CompletableFuture<String> getStringAsync( String whereKey, String setWhereKey, String getKey ) {
+        return CompletableFuture.supplyAsync( () -> this.getKey( whereKey, setWhereKey, getKey ) );
     }
 
     /**
-     * Get the {@code #setKey} you want asnyc.
+     * Get the {@code getKey} you want async, without a {@code callback}
+     * <p>
+     * To use this methode correctly, I really recommend to use:
+     * {@code getIntegerAsync( String whereKey, String setKey, String getKey ).thenAccept( result -> { Your code } )};
      *
-     * @param table    Set the {@code #table} that you want to use
-     * @param whereKey Enter the value you want to receive
-     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
-     * @param callback Create the {@code callback}
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
+     * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
+     *
+     * @return the integer async
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#supplyAsync(Supplier)
      */
-    public void getDataIntegerAsync( String table, String whereKey, String setKey, String getKey, Consumer<Integer> callback ) {
-        Guild.getPlugin().getExecutorService().execute( () -> callback.accept( this.getKeyByInteger( table, whereKey, setKey, getKey ) ) );
+    public CompletableFuture<Integer> getIntegerAsync( String whereKey, String setWhereKey, String getKey ) {
+        return CompletableFuture.supplyAsync( () -> this.getKeyByInteger( whereKey, setWhereKey, getKey ) );
     }
 
     /**
-     * Get the {@code #setKey} you want async.
+     * Get the {@code getKey} you want async, without a {@code callback}
+     * <p>
+     * To use this methode correctly, I really recommend to use:
+     * {@code getListAsync( String whereKey, String setKey, String getKey ).thenAccept( result -> { Your code } )};
      *
-     * @param table    Set the {@code #table} that you want to use
-     * @param whereKey Enter the value you want to receive
-     * @param setKey   Set the {@code #setKey} you want to set for the {@code #whereKey}
-     * @param getKey   Set the {@code #getKey} you want to get from {@code #setKey}
-     * @param callback Create the {@code callback}
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
+     * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
+     *
+     * @return the list async
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see List
      */
-    public void getDataListAsync( String table, String whereKey, String setKey, String getKey, Consumer<List<String>> callback ) {
-        Guild.getPlugin().getExecutorService().execute( () -> callback.accept( this.getList( table, whereKey, setKey, getKey ) ) );
+    public CompletableFuture<List<String>> getListAsync( String whereKey, String setWhereKey, String getKey ) {
+        return CompletableFuture.supplyAsync( () -> this.getList( whereKey, setWhereKey, getKey ) );
+    }
+
+    /**
+     * Get the {@code getKey} you want async, without a {@code callback}
+     * <p>
+     * To use this methode correctly, I really recommend to use:
+     * {@code getListAsync( String whereKey, String setKey, String getKey ).thenAccept( result -> { Your code } )};
+     *
+     * @param whereKey          Enter the value you want to receive
+     * @param setWhereKey       Set the {@code setWhereKey} you want to set for the {@code whereKey}
+     * @param secondWhereKey    Enter the second value you want to receive
+     * @param setSecondWhereKey Set the {@code setSecondWhereKey} you want to set for the {@code whereKey}
+     * @param getKey            Enter the value you wanna finally receive
+     *
+     * @return returns the current {@link java.util.List}
+     *
+     * @see CompletableFuture
+     * @see CompletableFuture#thenAccept(Consumer)
+     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see List
+     */
+    public CompletableFuture<List<String>> getListAsync( String whereKey, String setWhereKey, String secondWhereKey, String setSecondWhereKey, String getKey ) {
+        return CompletableFuture.supplyAsync( () -> this.getList( whereKey, setWhereKey, secondWhereKey, setSecondWhereKey, getKey ) );
+    }
+
+    /**
+     * Add a value from {@code getKey}
+     *
+     * @param getKey      Enter the value you want recerive
+     * @param setKey      Enter the {@code setKey} you want to remove
+     * @param whereKey    Enter the value you want to receive from
+     * @param setWhereKey Set the {@code setWhereKey} you want to set for the {@code whereKey}
+     */
+    public void addKey( String whereKey, String setWhereKey, String getKey, int setKey ) {
+        int value = this.getKeyByInteger( whereKey, setWhereKey, getKey ) + setKey;
+        this.updateKey( whereKey, setWhereKey, getKey, value );
+    }
+
+    /**
+     * Remove a value from {@code getKey}
+     *
+     * @param getKey      Enter the value you want recerive
+     * @param setKey      Enter the {@code setKey} you want to remove
+     * @param whereKey    Enter the value you want to receive from
+     * @param setWhereKey Set the {@code setWhereKey} you want to set for the {@code whereKey}
+     */
+    public void removeKey( String whereKey, String setWhereKey, String getKey, int setKey ) {
+        int value = this.getKeyByInteger( whereKey, setWhereKey, getKey ) - setKey;
+        this.updateKey( whereKey, setWhereKey, getKey, value );
+    }
+
+    /**
+     * Get the {@code getKey} you want async
+     *
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
+     * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
+     * @param callback    Create the {@code callback}
+     *
+     * @see CompletableFuture#runAsync(Runnable)
+     */
+    public void getDataStringAsync( String whereKey, String setWhereKey, String getKey, Consumer<String> callback ) {
+        CompletableFuture.runAsync( () -> callback.accept( this.getKey( whereKey, setWhereKey, getKey ) ) );
+    }
+
+    /**
+     * Get the {@code setKey} you want asnyc
+     *
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
+     * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
+     * @param callback    Create the {@code callback}
+     *
+     * @see CompletableFuture#runAsync(Runnable)
+     */
+    public void getDataIntegerAsync( String whereKey, String setWhereKey, String getKey, Consumer<Integer> callback ) {
+        CompletableFuture.runAsync( () -> callback.accept( this.getKeyByInteger( whereKey, setWhereKey, getKey ) ) );
+    }
+
+
+    /**
+     * Get the {@code setKey} you want asnyc
+     *
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code setKey} you want to set for the {@code whereKey}
+     * @param getKey      Set the {@code getKey} you want to get from {@code setKey}
+     * @param callback    Create the {@code callback}
+     *
+     * @see CompletableFuture#runAsync(Runnable)
+     */
+    public void getDataObjectAsync( String whereKey, String setWhereKey, String getKey, Consumer<Object> callback ) {
+        CompletableFuture.runAsync( () -> callback.accept( this.getKey( whereKey, setWhereKey, getKey ) ) );
+    }
+
+    /**
+     * Get the {@code setKey} you want async
+     *
+     * @param whereKey    Enter the value you want to receive
+     * @param setWhereKey Set the {@code setWhereKey} you want to set for the {@code whereKey}
+     * @param getKey      Set the {@code getKey} you want to get from {@code setWhereKey}
+     * @param callback    Create the {@code callback}
+     *
+     * @see CompletableFuture#runAsync(Runnable)
+     */
+    public void getDataListAsync( String whereKey, String setWhereKey, String getKey, Consumer<List<String>> callback ) {
+        CompletableFuture.runAsync( () -> callback.accept( this.getList( whereKey, setWhereKey, getKey ) ) );
     }
 }
